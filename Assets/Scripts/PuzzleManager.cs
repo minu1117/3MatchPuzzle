@@ -7,7 +7,7 @@ public class PuzzleManager : MonoBehaviour
     // puzzle : Object Pooling
     [SerializeField] private GameObject backgroundTilePrefab;
     [SerializeField] private Puzzle puzzlePrefab;
-    [SerializeField] private Sprite[] PuzzleSprites;
+    public Sprite[] puzzleSprites;
     private GameObject[,] board;
     private Puzzle[,] puzzles;
     public int width;
@@ -15,11 +15,12 @@ public class PuzzleManager : MonoBehaviour
 
     private void Start()
     {
-        CreateBoardVector(width, height);
+        CreateGrid(width, height);
         CreateBackgroundTiles(width, height);
+        StartCoroutine(CreateAllPuzzles(width, height));
     }
 
-    private void CreateBoardVector(int width, int height)
+    private void CreateGrid(int width, int height)
     {
         board = new GameObject[width, height];
         puzzles = new Puzzle[width, height];
@@ -80,9 +81,18 @@ public class PuzzleManager : MonoBehaviour
          */
         for (int i = 0; i < height; i++)
         {
-            Puzzle[] puzzles = CreateHorizontalLinePuzzle(width);
-            Array.Copy(puzzles, 0, puzzles, i, puzzles.Length);
+            Puzzle[] rowPuzzles = CreateHorizontalLinePuzzle(width);
+            Array.Copy(puzzles, i, rowPuzzles, 0, rowPuzzles.Length); // error
             yield return null;
+        }
+
+        for (int i = 0; i < height; i++)
+        {
+            for (int j = 0; j < width; j++)
+            {
+                puzzles[j, i].gameObject.transform.position = board[j, i].transform.position;
+                yield return null;
+            }
         }
     }
 
@@ -104,12 +114,8 @@ public class PuzzleManager : MonoBehaviour
     private Puzzle CreatePuzzle()
     {
         Puzzle p = Instantiate(puzzlePrefab);
-
         PuzzleType pt = (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count);
-        int randomIndex = UnityEngine.Random.Range(0, PuzzleSprites.Length);
-
         p.SetType(pt);
-        // p.SetSprite(PuzzleSprites[randomIndex]);
 
         return p;
     }

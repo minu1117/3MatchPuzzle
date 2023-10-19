@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Puzzle : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class Puzzle : MonoBehaviour
         type = pt;
     }
 
-    public void SetSprite(Sprite sp)
+    private void SetSprite(Sprite sp)
     {
         sprite.sprite = sp;
     }
