@@ -169,8 +169,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   backgroundTilePrefab: {fileID: 7194984542755967076, guid: bfbc71d24898bee4a8a98f8f24141f8d, type: 3}
   tilePrefab: {fileID: 0}
-  width: 10
-  height: 10
+  width: 4
+  height: 3
 --- !u!1 &1582779927
 GameObject:
   m_ObjectHideFlags: 0
