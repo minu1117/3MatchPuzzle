@@ -169,10 +169,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   backgroundTilePrefab: {fileID: 7194984542755967076, guid: bfbc71d24898bee4a8a98f8f24141f8d, type: 3}
   puzzlePrefab: {fileID: 1365283234713325428, guid: be31f3e5a1e5cb94293c0f14d5d51b16, type: 3}
-  puzzleSprites:
-  - {fileID: 21300000, guid: 60cfd84ae231a4943b3f0f6cf0dcf409, type: 3}
-  - {fileID: 21300000, guid: 040be0e474e09894ca320b08d9462cc8, type: 3}
-  - {fileID: 21300000, guid: 28c51f93b6260224c867f45f411a0e85, type: 3}
+  puzzleSpritePrefabs:
+  - {fileID: 7048912934572926809, guid: 8bf4431e50eb41b4e84a7d774cc7f858, type: 3}
+  - {fileID: 8145918074101079370, guid: 9c4be72c1b5290c4f84af085907f60fd, type: 3}
+  - {fileID: 3053917014902692925, guid: 9fd87c8cba451c347acacd32eacb64bd, type: 3}
   width: 4
   height: 3
 --- !u!1 &1582779927

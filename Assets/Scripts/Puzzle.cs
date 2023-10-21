@@ -1,25 +1,39 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class Puzzle : MonoBehaviour
 {
-    private SpriteRenderer sprite;
+    private SpriteRenderer sr;
     public bool isMatched = false;
     public bool isConnected = false;
     public PuzzleType type = PuzzleType.None;
 
-    public void Awake()
+    public void SetType(PuzzleType pt, SpriteRenderer[] sprites)
     {
-        sprite = GetComponent<SpriteRenderer>();
-    }
+        sr = GetComponent<SpriteRenderer>();
 
-    public void SetType(PuzzleType pt)
-    {
         type = pt;
+        string tag = type.ToString().ToLower();
+        Sprite sp = FindSprite(sprites, tag);
+        if (sp != null)
+        {
+            sr.sprite = sp;
+        }
+        else
+        {
+            Debug.Log("Not Found");
+        }
     }
 
-    private void SetSprite(Sprite sp)
+    private Sprite FindSprite(SpriteRenderer[] sprites, string findTag)
     {
-        sprite.sprite = sp;
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            if (sprites[i].tag.ToLower() == findTag)
+            {
+                return sprites[i].sprite;
+            }
+        }
+
+        return null;
     }
 }

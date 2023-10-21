@@ -1,13 +1,12 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
-public class PuzzleManager : MonoBehaviour
+public partial class PuzzleManager : MonoBehaviour
 {
     // puzzle : Object Pooling
     [SerializeField] private GameObject backgroundTilePrefab;
     [SerializeField] private Puzzle puzzlePrefab;
-    public Sprite[] puzzleSprites;
+    public SpriteRenderer[] puzzleSpritePrefabs;
     private GameObject[,] board;
     private Puzzle[,] puzzles;
     public int width;
@@ -17,13 +16,13 @@ public class PuzzleManager : MonoBehaviour
     {
         CreateGrid(width, height);
         CreateBackgroundTiles(width, height);
-        StartCoroutine(CreateAllPuzzles(width, height));
+        StartCoroutine(CoCreateAllPuzzles(width, height));
     }
 
     private void CreateGrid(int width, int height)
     {
-        board = new GameObject[width, height];
-        puzzles = new Puzzle[width, height];
+        board = new GameObject[height, width];
+        puzzles = new Puzzle[height, width];
     }
 
     private Vector2 GetSpriteBounds(SpriteRenderer sprite)
@@ -59,55 +58,42 @@ public class PuzzleManager : MonoBehaviour
                 Vector2 tilePosition = new Vector2(posX, posY);
 
                 GameObject backgroundtile = Instantiate(backgroundTilePrefab, tilePosition, Quaternion.identity);
-                board[j, i] = backgroundtile;
+                board[i, j] = backgroundtile;
             }
         }
     }
 
     // Create all puzzles
-    private IEnumerator CreateAllPuzzles(int width, int height)
+    private IEnumerator CoCreateAllPuzzles(int width, int height)
     {
-        if (width == 0 || height == 0)
-            yield break;
-
-        /*
-         
-                  �ۡۡۡۡ�
-                  �ۡۡۡۡ�
-                  �ۡۡۡۡ�
-                  �ۡۡۡۡ�
-           i -> { �ܡܡܡܡ� }
-
-         */
         for (int i = 0; i < height; i++)
         {
-            Puzzle[] rowPuzzles = CreateHorizontalLinePuzzle(width);
-            Array.Copy(puzzles, i, rowPuzzles, 0, rowPuzzles.Length); // error
+            CreateRowPuzzles(i, width);
             yield return null;
-        }
-
-        for (int i = 0; i < height; i++)
-        {
-            for (int j = 0; j < width; j++)
-            {
-                puzzles[j, i].gameObject.transform.position = board[j, i].transform.position;
-                yield return null;
-            }
         }
     }
 
     // Create one row puzzles
-    private Puzzle[] CreateHorizontalLinePuzzle(int width)
+    private void CreateRowPuzzles(int rowIndex, int width)
     {
-        Puzzle[] tiles = new Puzzle[width];
+        /*
 
-        // 1 2 3 4 5 ---> one row
-        for (int i = 0; i < width; i++)
+                        �ۡۡۡۡ�
+                        �ۡۡۡۡ�
+                        �ۡۡۡۡ�
+                        �ۡۡۡۡ�
+          rowindex -> { �ܡܡܡܡ� }
+
+        */
+
+        if (this.width == 0 || this.height == 0)
+            return;
+
+        for (int j = 0; j < width; j++)
         {
-            tiles[i] = CreatePuzzle();
+            puzzles[rowIndex, j] = CreatePuzzle();
+            puzzles[rowIndex, j].gameObject.transform.position = board[rowIndex, j].transform.position;
         }
-
-        return tiles;
     }
 
     // Create one puzzle
@@ -115,8 +101,10 @@ public class PuzzleManager : MonoBehaviour
     {
         Puzzle p = Instantiate(puzzlePrefab);
         PuzzleType pt = (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count);
-        p.SetType(pt);
+        p.SetType(pt, puzzleSpritePrefabs);
 
         return p;
     }
+
+    /*----------------------------------------------------------------------------------------------------------------------------*/
 }
