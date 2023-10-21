@@ -6,6 +6,7 @@ public class Puzzle : MonoBehaviour
     public bool isMatched = false;
     public bool isConnected = false;
     public PuzzleType type = PuzzleType.None;
+    public (int, int) gridNum;
 
     public void SetType(PuzzleType pt, SpriteRenderer[] sprites)
     {
