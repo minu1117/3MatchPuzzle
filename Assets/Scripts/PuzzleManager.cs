@@ -98,9 +98,20 @@ public partial class PuzzleManager : MonoBehaviour
 
         for (int j = 0; j < width; j++)
         {
-            puzzles[rowIndex, j] = CreatePuzzle();
-            puzzles[rowIndex, j].gameObject.transform.position = board[rowIndex, j].transform.position;
-            puzzles[rowIndex, j].gridNum = (rowIndex, j);
+            Puzzle pz = puzzles[rowIndex, j] = CreatePuzzle();
+            Puzzle lp = null;
+            Puzzle bp = null;
+
+            if (j > 0)
+                lp = puzzles[rowIndex, j-1];
+            if (rowIndex > 0)
+                bp = puzzles[rowIndex-1, j];
+
+            SetNotDuplicationPuzzleType(pz, lp);
+            SetNotDuplicationPuzzleType(pz, bp);
+
+            pz.gameObject.transform.position = board[rowIndex, j].transform.position;
+            pz.gridNum = (rowIndex, j);
         }
     }
 
@@ -108,10 +119,36 @@ public partial class PuzzleManager : MonoBehaviour
     private Puzzle CreatePuzzle()
     {
         Puzzle p = Instantiate(puzzlePrefab);
-        PuzzleType pt = (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count);
-        p.SetType(pt, puzzleSpritePrefabs);
-
         return p;
+    }
+
+    private void SetNotDuplicationPuzzleType(Puzzle p, Puzzle cheakP)
+    {
+        PuzzleType pt = (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count);
+        if (cheakP != null)
+        {
+            if (pt == cheakP.type)
+            {
+                if (p.isConnected)
+                {
+                    bool isMatched = true;
+                    while (isMatched)
+                    {
+                        pt = (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count);
+                        if (pt != cheakP.type)
+                            isMatched = false;
+                    }
+                }
+                else if (!p.isConnected && !cheakP.isConnected)
+                {
+                    p.isConnected = true;
+                    cheakP.isConnected = true;
+                }
+            }
+        }
+
+        p.SetType(pt);
+        p.SetSprite(puzzleSpritePrefabs);
     }
 
     /*----------------------------------------------------------------------------------------------------------------------------*/

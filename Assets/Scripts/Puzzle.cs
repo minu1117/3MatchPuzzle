@@ -9,11 +9,18 @@ public class Puzzle : MonoBehaviour
     public PuzzleType type = PuzzleType.None;
     public (int, int) gridNum;
 
-    public void SetType(PuzzleType pt, SpriteRenderer[] sprites)
+    public void SetType(PuzzleType pt)
     {
-        sr = GetComponent<SpriteRenderer>();
-
         type = pt;
+    }
+
+    public void SetSprite(SpriteRenderer[] sprites)
+    {
+        if (sr == null)
+        {
+            sr = GetComponent<SpriteRenderer>();
+        }
+
         string tag = type.ToString().ToLower();
         Sprite sp = FindSprite(sprites, tag);
         if (sp != null)
