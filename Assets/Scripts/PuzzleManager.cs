@@ -12,13 +12,14 @@ public partial class PuzzleManager : MonoBehaviour
     public SpriteRenderer[] puzzleSpritePrefabs;
     private GameObject[,] board;
     private Puzzle[,] puzzles;
-    private Vector2 puzzleSpriteBound;
+    private Vector2 puzzleSpriteSize;
     public int width;
     public int height;
 
     private void Start()
     {
-        puzzleSpriteBound = GetSpriteBounds(puzzlePrefab.GetComponent<SpriteRenderer>());
+        Texture2D puzzle = puzzlePrefab.GetComponent<SpriteRenderer>().sprite.texture;
+        puzzleSpriteSize = new Vector2(puzzle.width, puzzle.height);
 
         CreateGrid(width, height);
         CreateBackgroundTiles(width, height);
@@ -118,6 +119,7 @@ public partial class PuzzleManager : MonoBehaviour
     private Vector2 clickStartPos;
     private Vector2 currMousePos;
     private Puzzle clickedPuzzle;
+    private bool isMoved = false;
 
     private enum MouseMoveDir
     {
@@ -135,6 +137,8 @@ public partial class PuzzleManager : MonoBehaviour
             clickStartPos = Input.mousePosition;
             Vector3 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(clickStartPos.x, clickStartPos.y, 0));
             clickedPuzzle = GetClickedPuzzle(worldPos);
+
+            isMoved = false;
         }
         else if (Input.GetMouseButton(0))
         {
@@ -142,9 +146,13 @@ public partial class PuzzleManager : MonoBehaviour
             Vector3 moveDir = currMousePos - clickStartPos;
             MouseMoveDir dir = CalcMouseMoveDirection(moveDir);
 
-            if (dir != MouseMoveDir.None && clickedPuzzle != null)
+            if (!isMoved)
             {
-                ChangePuzzle(dir);
+                if (dir != MouseMoveDir.None && clickedPuzzle != null)
+                {
+                    ChangePuzzle(dir);
+                    isMoved = true;
+                }
             }
         }
     }
@@ -174,9 +182,10 @@ public partial class PuzzleManager : MonoBehaviour
         switch (dir)
         {
             case MouseMoveDir.Left:
-                if (currGn.Item2 < 0)
+                if (currGn.Item2 > 0)
                 {
                     newGn = puzzles[currGn.Item1, currGn.Item2 - 1].gridNum;
+                    Debug.Log("Left");
                 }
                 else
                     return;
@@ -185,6 +194,7 @@ public partial class PuzzleManager : MonoBehaviour
                 if (currGn.Item2 < width-1)
                 {
                     newGn = puzzles[currGn.Item1, currGn.Item2 + 1].gridNum;
+                    Debug.Log("Rigth");
                 }
                 else
                     return;
@@ -193,6 +203,7 @@ public partial class PuzzleManager : MonoBehaviour
                 if (currGn.Item1 < height-1)
                 {
                     newGn = puzzles[currGn.Item1 + 1, currGn.Item2].gridNum;
+                    Debug.Log("Up");
                 }
                 else
                     return;
@@ -200,7 +211,8 @@ public partial class PuzzleManager : MonoBehaviour
             case MouseMoveDir.Down:
                 if (currGn.Item2 >= 0)
                 {
-                    newGn = puzzles[currGn.Item1, currGn.Item2-1].gridNum;
+                    newGn = puzzles[currGn.Item1 - 1, currGn.Item2].gridNum;
+                    Debug.Log("Down");
                 }
                 else
                     return;
@@ -209,46 +221,62 @@ public partial class PuzzleManager : MonoBehaviour
                 break;
         }
 
-        puzzles[currGn.Item1, currGn.Item2].gridNum = newGn;
-        puzzles[currGn.Item1, currGn.Item2].gridNum = currGn;
+        Puzzle currPuzzle = puzzles[currGn.Item1, currGn.Item2];
+        Puzzle movePuzzle = puzzles[newGn.Item1, newGn.Item2];
 
-        Vector2 currPos = board[currGn.Item1, currGn.Item2].transform.position;
-        Vector2 movePos = board[newGn.Item1, newGn.Item2].transform.position;
+        Vector2 currBoardPos = board[currGn.Item1, currGn.Item2].transform.position;
+        Vector2 moveBoardPos = board[newGn.Item1, newGn.Item2].transform.position;
 
-        puzzles[currGn.Item1, currGn.Item2].gameObject.transform.position = Vector2.Lerp(currPos, movePos, 1f);
-        puzzles[newGn.Item1, newGn.Item2].gameObject.transform.position = Vector2.Lerp(movePos, currPos, 1f);
+        currPuzzle.SetGridNum(newGn);
+        movePuzzle.SetGridNum(currGn);
+
+        // change
+        Puzzle tempPuzzle = puzzles[currGn.Item1, currGn.Item2];
+        puzzles[currGn.Item1, currGn.Item2] = puzzles[newGn.Item1, newGn.Item2];
+        puzzles[newGn.Item1, newGn.Item2] = tempPuzzle;
+
+        float speed = 5f;
+        StartCoroutine(currPuzzle.CoMove(moveBoardPos, speed));
+        StartCoroutine(movePuzzle.CoMove(currBoardPos, speed));
     }
 
-    private MouseMoveDir CalcMouseMoveDirection(Vector3 moveDir)
+    private MouseMoveDir CalcMouseMoveDirection(Vector2 moveDir)
     {
         // 이동 각도 계산 (라디안에서 도로 변환)
         float angleInDegrees = Mathf.Atan2(moveDir.y, moveDir.x) * Mathf.Rad2Deg;
 
         MouseMoveDir dir = MouseMoveDir.None;
+
+        float absX = Mathf.Abs(moveDir.x);
+        float absY = Mathf.Abs(moveDir.y);
+
+        float spriteX = puzzleSpriteSize.x / 9;
+        float spriteY = puzzleSpriteSize.y / 9;
+
         if (angleInDegrees > 45 && angleInDegrees < 135) // Up
         {
-            if (Mathf.Abs(moveDir.y) >= puzzleSpriteBound.y / 2)
+            if (absY >= spriteY)
             {
                 dir = MouseMoveDir.Up;
             }
         }
         else if (angleInDegrees > -135 && angleInDegrees < -45) // Down
         {
-            if (Mathf.Abs(moveDir.y) >= puzzleSpriteBound.y / 2)
+            if (absY >= spriteY)
             {
                 dir = MouseMoveDir.Down;
             }
         }
         else if ((angleInDegrees >= 135 && angleInDegrees <= 180) || (angleInDegrees >= -180 && angleInDegrees <= -135)) // Left
         {
-            if (Mathf.Abs(moveDir.x) >= puzzleSpriteBound.x / 2)
+            if (absX >= spriteX)
             {
                 dir = MouseMoveDir.Left;
             }
         }
         else if (angleInDegrees >= -45 && angleInDegrees <= 45) // Right
         {
-            if (Mathf.Abs(moveDir.x) >= puzzleSpriteBound.x / 2)
+            if (absX >= spriteX)
             {
                 dir = MouseMoveDir.Right;
             }

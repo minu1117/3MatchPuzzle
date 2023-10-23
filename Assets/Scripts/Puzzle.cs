@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Puzzle : MonoBehaviour
@@ -36,5 +37,31 @@ public class Puzzle : MonoBehaviour
         }
 
         return null;
+    }
+
+    public void SetGridNum((int, int) gn)
+    {
+        gridNum = gn;
+    }
+
+    public IEnumerator CoMove(Vector2 movePos, float speed)
+    {
+        float startTime = Time.time;
+        float journeyLength = Vector3.Distance(gameObject.transform.position, movePos);
+
+        while (true)
+        {
+            float distanceCovered = (Time.time - startTime) * speed;
+            float journeyFraction = distanceCovered / journeyLength;
+
+            gameObject.transform.position = Vector2.Lerp(gameObject.transform.position, movePos, journeyFraction);
+
+            if (journeyFraction >= 1.0f)
+            {
+                yield break;
+            }
+
+            yield return null;
+        }
     }
 }
