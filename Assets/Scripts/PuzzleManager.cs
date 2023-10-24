@@ -133,34 +133,31 @@ public partial class PuzzleManager : MonoBehaviour
         PuzzleType cheakPType = cheakP == null ? PuzzleType.None : cheakP.type;
         PuzzleType prevPType = prevP == null ? PuzzleType.None : prevP.type;
 
-        if (pt == cheakPType)
+        pt = CheckAndSetPuzzleType(p, pt, cheakP, cheakPType, prevPType);
+        pt = CheckAndSetPuzzleType(p, pt, prevP, prevPType, cheakPType);
+
+        p.SetType(pt);
+        p.SetSprite(puzzleSpritePrefabs);
+    }
+
+    private PuzzleType CheckAndSetPuzzleType(Puzzle p, PuzzleType pt, Puzzle cheakP, PuzzleType cheakPType, PuzzleType prevPType)
+    {
+        PuzzleType newPt = pt;
+
+        if (newPt == cheakPType)
         {
-            if (cheakP.isConnected && !p.isConnected || pt == prevPType)
+            if (cheakP.isConnected && !p.isConnected || newPt == prevPType)
             {
-                pt = GetNotDuplicationPuzzleType(cheakPType, prevPType);
+                newPt = GetNotDuplicationPuzzleType(cheakPType, prevPType);
             }
-            else if (pt != prevPType)
+            else if (newPt != prevPType)
             {
                 p.isConnected = true;
                 cheakP.isConnected = true;
             }
         }
 
-        if (pt == prevPType)
-        {
-            if (prevP.isConnected && !p.isConnected || pt == cheakPType)
-            {
-                pt = GetNotDuplicationPuzzleType(cheakPType, prevPType);
-            }
-            else if (pt != cheakPType)
-            {
-                p.isConnected = true;
-                prevP.isConnected = true;
-            }
-        }
-
-        p.SetType(pt);
-        p.SetSprite(puzzleSpritePrefabs);
+        return newPt;
     }
 
     private PuzzleType GetNotDuplicationPuzzleType(PuzzleType t, PuzzleType prevT)
@@ -218,6 +215,19 @@ public partial class PuzzleManager : MonoBehaviour
                     isMoved = true;
                 }
             }
+        }
+
+        // Test
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            foreach (var puzzle in puzzles)
+            {
+                Destroy(puzzle.gameObject);
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            StartCoroutine(CoCreateAllPuzzles(width, height));
         }
     }
 
