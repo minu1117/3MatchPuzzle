@@ -130,35 +130,32 @@ public partial class PuzzleManager : MonoBehaviour
     private void SetNotDuplicationPuzzleType(Puzzle p, Puzzle cheakP, Puzzle prevP)
     {
         PuzzleType pt = p.type == PuzzleType.None ? (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count) : p.type;
+        PuzzleType cheakPType = cheakP == null ? PuzzleType.None : cheakP.type;
         PuzzleType prevPType = prevP == null ? PuzzleType.None : prevP.type;
 
-        if (cheakP != null)
+        if (pt == cheakPType)
         {
-            if (pt == cheakP.type)
+            if (cheakP.isConnected && !p.isConnected || pt == prevPType)
             {
-                if (cheakP.isConnected && !p.isConnected ||
-                    prevP != null && pt == prevPType)
-                {
-                    pt = GetNotDuplicationPuzzleType(cheakP.type, prevPType);
-                }
-                else if (pt != prevPType)
-                {
-                    p.isConnected = true;
-                    cheakP.isConnected = true;
-                }
+                pt = GetNotDuplicationPuzzleType(cheakPType, prevPType);
             }
-
-            if (prevP != null && pt == prevPType)
+            else if (pt != prevPType)
             {
-                if (!prevP.isConnected && !p.isConnected)
-                {
-                    p.isConnected = true;
-                    prevP.isConnected = true;
-                }
-                else
-                {
-                    pt = GetNotDuplicationPuzzleType(cheakP.type, prevPType);
-                }
+                p.isConnected = true;
+                cheakP.isConnected = true;
+            }
+        }
+
+        if (pt == prevPType)
+        {
+            if (prevP.isConnected && !p.isConnected || pt == cheakPType)
+            {
+                pt = GetNotDuplicationPuzzleType(cheakPType, prevPType);
+            }
+            else if (pt != cheakPType)
+            {
+                p.isConnected = true;
+                prevP.isConnected = true;
             }
         }
 
