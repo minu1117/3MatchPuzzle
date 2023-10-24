@@ -3,6 +3,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
+using static UnityEditor.MaterialProperty;
 
 public partial class PuzzleManager : MonoBehaviour
 {
@@ -103,12 +104,16 @@ public partial class PuzzleManager : MonoBehaviour
             Puzzle bp = null;
 
             if (j > 0)
-                lp = puzzles[rowIndex, j-1];
+            {
+                lp = puzzles[rowIndex, j - 1];
+            }
             if (rowIndex > 0)
-                bp = puzzles[rowIndex-1, j];
+            {
+                bp = puzzles[rowIndex - 1, j];
+            }
 
-            SetNotDuplicationPuzzleType(pz, lp);
-            SetNotDuplicationPuzzleType(pz, bp);
+            SetNotDuplicationPuzzleType(pz, lp, bp);
+            SetNotDuplicationPuzzleType(pz, bp, lp);
 
             pz.gameObject.transform.position = board[rowIndex, j].transform.position;
             pz.gridNum = (rowIndex, j);
@@ -122,33 +127,58 @@ public partial class PuzzleManager : MonoBehaviour
         return p;
     }
 
-    private void SetNotDuplicationPuzzleType(Puzzle p, Puzzle cheakP)
+    private void SetNotDuplicationPuzzleType(Puzzle p, Puzzle cheakP, Puzzle prevP)
     {
-        PuzzleType pt = (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count);
+        PuzzleType pt = p.type == PuzzleType.None ? (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count) : p.type;
+        PuzzleType prevPType = prevP == null ? PuzzleType.None : prevP.type;
+
         if (cheakP != null)
         {
             if (pt == cheakP.type)
             {
-                if (p.isConnected)
+                if (cheakP.isConnected && !p.isConnected ||
+                    prevP != null && pt == prevPType)
                 {
-                    bool isMatched = true;
-                    while (isMatched)
-                    {
-                        pt = (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count);
-                        if (pt != cheakP.type)
-                            isMatched = false;
-                    }
+                    pt = GetNotDuplicationPuzzleType(cheakP.type, prevPType);
                 }
-                else if (!p.isConnected && !cheakP.isConnected)
+                else if (pt != prevPType)
                 {
                     p.isConnected = true;
                     cheakP.isConnected = true;
+                }
+            }
+
+            if (prevP != null && pt == prevPType)
+            {
+                if (!prevP.isConnected && !p.isConnected)
+                {
+                    p.isConnected = true;
+                    prevP.isConnected = true;
+                }
+                else
+                {
+                    pt = GetNotDuplicationPuzzleType(cheakP.type, prevPType);
                 }
             }
         }
 
         p.SetType(pt);
         p.SetSprite(puzzleSpritePrefabs);
+    }
+
+    private PuzzleType GetNotDuplicationPuzzleType(PuzzleType t, PuzzleType prevT)
+    {
+        bool isDuplicate = true;
+        PuzzleType p = PuzzleType.None;
+
+        while (isDuplicate)
+        {
+            p = (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count);
+            if (p != t && p != prevT)
+                isDuplicate = false;
+        }
+
+        return p;
     }
 
     /*----------------------------------------------------------------------------------------------------------------------------*/
