@@ -1,7 +1,8 @@
 using System.Collections;
 using UnityEngine;
+using System.Collections.Generic;
 
-public partial class PuzzleManager : MonoBehaviour
+public class PuzzleManager : MonoBehaviour
 {
     // puzzle : Object Pooling
     [SerializeField] private GameObject backgroundTilePrefab;
@@ -179,6 +180,9 @@ public partial class PuzzleManager : MonoBehaviour
     private bool isMoved = false;
     private float moveSpeed = 5f;
 
+    private Coroutine moveCo1 = null;
+    private Coroutine moveCo2 = null;
+
     private enum MouseMoveDir
     {
         None = -1,
@@ -290,8 +294,8 @@ public partial class PuzzleManager : MonoBehaviour
         Puzzle currPuzzle = puzzles[currGn.Item1, currGn.Item2];
         Puzzle movePuzzle = puzzles[newGn.Item1, newGn.Item2];
 
-        Vector2 currPos = board[currGn.Item1, currGn.Item2].transform.position;
-        Vector2 movePos = board[newGn.Item1, newGn.Item2].transform.position;
+        Vector2 currPos = currPuzzle.transform.position;
+        Vector2 movePos = movePuzzle.transform.position;
 
         currPuzzle.SetGridNum(newGn);
         movePuzzle.SetGridNum(currGn);
@@ -301,77 +305,107 @@ public partial class PuzzleManager : MonoBehaviour
         puzzles[currGn.Item1, currGn.Item2] = puzzles[newGn.Item1, newGn.Item2];
         puzzles[newGn.Item1, newGn.Item2] = tempPuzzle;
 
-        StartCoroutine(currPuzzle.CoMove(movePos, moveSpeed));
-        StartCoroutine(movePuzzle.CoMove(currPos, moveSpeed));
+        moveCo1 = StartCoroutine(currPuzzle.CoMove(movePos, moveSpeed));
+        moveCo2 = StartCoroutine(movePuzzle.CoMove(currPos, moveSpeed));
 
-        //List<Puzzle> puzzleList = new();
-        //List<(int, int)> grids = new();
-        //GetPeripheralPuzzles(ref puzzleList, ref grids, currPuzzle);
-        //CheakPeripheralPuzzlesType(currPuzzle, puzzleList);
+        List<Puzzle> puzzleList = new();
+        List<(int, int)> grids = new();
+        GetPeripheralPuzzles(puzzleList, grids, currPuzzle);
+        CheakPeripheralPuzzlesType(currPuzzle, puzzleList);
     }
 
-    //private void GetPeripheralPuzzles(ref List<Puzzle> puzzleList, ref List<(int, int)> grids, Puzzle mainPuzzle)
-    //{
-    //    (int, int) gn = mainPuzzle.gridNum;
+    private void GetPeripheralPuzzles(List<Puzzle> puzzleList, List<(int, int)> grids, Puzzle mainPuzzle)
+    {
+        (int, int) gn = mainPuzzle.gridNum;
+        mainPuzzle.isVisit = true;
+        Puzzle p = null;
 
-    //    if (gn.Item2 > 0)
-    //    {
-    //        grids.Add((gn.Item1, gn.Item2 - 1));
-    //        GetPeripheralPuzzles(ref puzzleList, ref grids, puzzles[gn.Item1, gn.Item2 - 1]);
-    //    }
-    //    if (gn.Item2 < width - 1)
-    //    {
-    //        grids.Add((gn.Item1, gn.Item2 + 1));
-    //        GetPeripheralPuzzles(ref puzzleList, ref grids, puzzles[gn.Item1, gn.Item2 + 1]);
-    //    }
-    //    if (gn.Item1 < height - 1)
-    //    {
-    //        grids.Add((gn.Item1 + 1, gn.Item2));
-    //        GetPeripheralPuzzles(ref puzzleList, ref grids, puzzles[gn.Item1 + 1, gn.Item2]);
-    //    }
-    //    if (gn.Item1 > 0)
-    //    {
-    //        grids.Add((gn.Item1 - 1, gn.Item2));
-    //        GetPeripheralPuzzles(ref puzzleList, ref grids, puzzles[gn.Item1 - 1, gn.Item2]);
-    //    }
+        if (gn.Item2 > 0)
+        {
+            p = puzzles[gn.Item1, gn.Item2 - 1];
+            if (CheakVisitGrid(mainPuzzle, p, grids, gn))
+            {
+                GetPeripheralPuzzles(puzzleList, grids, puzzles[gn.Item1, gn.Item2 - 1]);
+            }
+        }
+        if (gn.Item2 < width - 1)
+        {
+            p = puzzles[gn.Item1, gn.Item2 + 1];
+            if (CheakVisitGrid(mainPuzzle, p, grids, gn))
+            {
+                GetPeripheralPuzzles(puzzleList, grids, puzzles[gn.Item1, gn.Item2 + 1]);
+            }
+        }
+        if (gn.Item1 < height - 1)
+        {
+            p = puzzles[gn.Item1 + 1, gn.Item2];
+            if (CheakVisitGrid(mainPuzzle, p, grids, gn))
+            {
+                GetPeripheralPuzzles(puzzleList, grids, puzzles[gn.Item1 + 1, gn.Item2]);
+            }
+        }
+        if (gn.Item1 > 0)
+        {
+            p = puzzles[gn.Item1 - 1, gn.Item2];
+            if (CheakVisitGrid(mainPuzzle, p, grids, gn))
+            {
+                GetPeripheralPuzzles(puzzleList, grids, puzzles[gn.Item1 - 1, gn.Item2]);
+            }
+        }
 
-    //    for (int i = 0; i < grids.Count; i++)
-    //    {
-    //        (int, int) grid = grids[i];
-    //        puzzleList.Add(puzzles[grid.Item1, grid.Item2]);
-    //    }
-    //}
+        for (int i = 0; i < grids.Count; i++)
+        {
+            (int, int) grid = grids[i];
+            p = puzzles[grid.Item1, grid.Item2];
+            p.isVisit = false;
+            puzzleList.Add(p);
+        }
+    }
 
-    //private void CheakPeripheralPuzzlesType(Puzzle mainPuzzle, List<Puzzle> peripheralPuzzles)
-    //{
-    //    int matchCount = 0;
-    //    for (int i = 0; i < peripheralPuzzles.Count; i++) 
-    //    {
-    //        if (mainPuzzle.type == peripheralPuzzles[i].type)
-    //        {
-    //            mainPuzzle.isConnected = true;
-    //            peripheralPuzzles[i].isConnected = true;
-    //            matchCount++;
-    //        }
-    //    }
+    private bool CheakVisitGrid(Puzzle mainPuzzle, Puzzle nextPuzzle, List<(int, int)> grids, (int, int) grid)
+    {
+        if (mainPuzzle.type == nextPuzzle.type && !nextPuzzle.isVisit)
+        {
+            nextPuzzle.isVisit = true;
+            grids.Add((grid.Item1, grid.Item2));
+            return true;
+        }
 
-    //    if (matchCount == 0)
-    //    {
-    //        mainPuzzle.isConnected = false;
-    //        return;
-    //    }
-    //    else if (matchCount >= 3)
-    //    {
-    //        Destroy(mainPuzzle.gameObject);
-    //        for (int i = peripheralPuzzles.Count - 1; i >= 0; i--)
-    //        {
-    //            if (peripheralPuzzles[i].isMatched)
-    //            {
-    //                Destroy(peripheralPuzzles[i].gameObject);
-    //            }
-    //        }
-    //    }
-    //}
+        return false;
+    }
+
+    private void CheakPeripheralPuzzlesType(Puzzle mainPuzzle, List<Puzzle> puzzleList)
+    {
+        int count = puzzleList.Count;
+
+        for (int i = 0; i < count; i++)
+        {
+            mainPuzzle.isConnected = true;
+            puzzleList[i].isConnected = true;
+        }
+
+        if (count == 0)
+        {
+            mainPuzzle.isConnected = false;
+            return;
+        }
+        else if (count >= 3)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                puzzleList[i].isMatched = true;
+            }
+
+            Destroy(mainPuzzle.gameObject);
+            for (int i = puzzleList.Count - 1; i > 0; i--)
+            {
+                if (puzzleList[i].isMatched)
+                {
+                    Destroy(puzzleList[i].gameObject);
+                }
+            }
+        }
+    }
 
     private MouseMoveDir CalcMouseMoveDirection(Vector2 moveDir)
     {

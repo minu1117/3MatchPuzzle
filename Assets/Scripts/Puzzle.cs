@@ -8,6 +8,7 @@ public class Puzzle : MonoBehaviour
     public bool isConnected = false;
     public PuzzleType type = PuzzleType.None;
     public (int, int) gridNum;
+    public bool isVisit = false;
 
     public void SetType(PuzzleType pt)
     {
