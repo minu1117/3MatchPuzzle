@@ -52,24 +52,22 @@ public class Puzzle : MonoBehaviour
         gridNum = gn;
     }
 
-    public IEnumerator CoMove(Vector2 movePos, float speed)
+    public IEnumerator CoMove(Vector2 movePos, float speed, (int, int) gn)
     {
         float startTime = Time.time;
         float journeyLength = Vector3.Distance(gameObject.transform.position, movePos);
+        float journeyFraction = 0f;
 
-        while (true)
+        while (journeyFraction < 1.0f)
         {
             float distanceCovered = (Time.time - startTime) * speed;
-            float journeyFraction = distanceCovered / journeyLength;
+            journeyFraction = distanceCovered / journeyLength;
+            journeyFraction = Mathf.Clamp01(journeyFraction);
 
             gameObject.transform.position = Vector2.Lerp(gameObject.transform.position, movePos, journeyFraction);
-
-            if (journeyFraction >= 1.0f)
-            {
-                yield break;
-            }
-
             yield return null;
         }
+
+        SetGridNum(gn);
     }
 }

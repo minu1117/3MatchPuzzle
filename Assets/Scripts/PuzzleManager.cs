@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using static Unity.Burst.Intrinsics.Arm;
 
 public class PuzzleManager : MonoBehaviour
 {
@@ -212,7 +213,7 @@ public class PuzzleManager : MonoBehaviour
             {
                 if (dir != MouseMoveDir.None && clickedPuzzle != null)
                 {
-                    SwapPuzzle(dir);
+                    SwapPuzzles(dir);
                     isMoved = true;
                 }
             }
@@ -229,6 +230,65 @@ public class PuzzleManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.S))
         {
             StartCoroutine(CoCreateAllPuzzles(width, height));
+        }
+
+        CheakThreeMatchPuzzle();
+    }
+
+    private void CheakThreeMatchPuzzle()
+    {
+        if (puzzles.Length < board.Length)
+            return;
+
+        Queue<Puzzle> destroyQueue = new Queue<Puzzle>();
+
+        for (int y = 0; y < board.GetLength(0); y++) 
+        {
+            for (int x = 0; x < board.GetLength(1); x++)
+            {
+                Puzzle p1 = puzzles[y, x];
+
+                if (x < width - 2)
+                {
+                    Puzzle p2 = puzzles[y, x+1];
+                    Puzzle p3 = puzzles[y, x+2];
+
+                    if (p2 != null && p3 != null)
+                    {
+                        if (p1.type == p2.type && p1.type == p3.type)
+                        {
+                            destroyQueue.Enqueue(p1);
+                            destroyQueue.Enqueue(p2);
+                            destroyQueue.Enqueue(p3);
+                        }
+                    }
+                }
+
+                if (y < height - 2)
+                {
+                    Puzzle p2 = puzzles[y+1, x];
+                    Puzzle p3 = puzzles[y+2, x];
+
+                    if (p2 != null && p3 != null)
+                    {
+                        if (p1.type == p2.type && p1.type == p3.type)
+                        {
+                            destroyQueue.Enqueue(p1);
+                            destroyQueue.Enqueue(p2);
+                            destroyQueue.Enqueue(p3);
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int i = destroyQueue.Count; i > 0; i--) 
+        {
+            Puzzle p = destroyQueue.Dequeue();
+            if (p != null)
+            {
+                Destroy(p.gameObject);
+            }
         }
     }
 
@@ -248,7 +308,7 @@ public class PuzzleManager : MonoBehaviour
         return puzzle;
     }
 
-    private void SwapPuzzle(MouseMoveDir dir)
+    private void SwapPuzzles(MouseMoveDir dir)
     {
         (int, int) currGn = clickedPuzzle.gridNum;
         (int, int) newGn = (0, 0);
@@ -297,16 +357,29 @@ public class PuzzleManager : MonoBehaviour
         Vector2 currPos = currPuzzle.transform.position;
         Vector2 movePos = movePuzzle.transform.position;
 
-        currPuzzle.SetGridNum(newGn);
-        movePuzzle.SetGridNum(currGn);
+        MovePuzzles(currPuzzle, movePuzzle, currPos, movePos, moveSpeed, currGn, newGn);
+    }
+
+    private void MovePuzzles(Puzzle currPuzzle, Puzzle movePuzzle, Vector2 currPos, Vector2 movePos, float moveSpeed, (int, int) currGn, (int, int) newGn)
+    {
+        moveCo1 = StartCoroutine(currPuzzle.CoMove(movePos, moveSpeed, newGn));
+        moveCo2 = StartCoroutine(movePuzzle.CoMove(currPos, moveSpeed, currGn));
+
+        // Wait
+        StartCoroutine(WaitForMoveCoroutines(currGn, newGn, moveCo1, moveCo2));
+    }
+
+    IEnumerator WaitForMoveCoroutines((int, int) currGn, (int, int) newGn, params Coroutine[] coroutines)
+    {
+        foreach (var coroutine in coroutines)
+        {
+            yield return coroutine;
+        }
 
         // Swap
         Puzzle tempPuzzle = puzzles[currGn.Item1, currGn.Item2];
         puzzles[currGn.Item1, currGn.Item2] = puzzles[newGn.Item1, newGn.Item2];
         puzzles[newGn.Item1, newGn.Item2] = tempPuzzle;
-
-        moveCo1 = StartCoroutine(currPuzzle.CoMove(movePos, moveSpeed));
-        moveCo2 = StartCoroutine(movePuzzle.CoMove(currPos, moveSpeed));
     }
 
     private MouseMoveDir CalcMouseMoveDirection(Vector2 moveDir)
