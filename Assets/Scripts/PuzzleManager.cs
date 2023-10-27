@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
-using static Unity.Burst.Intrinsics.Arm;
 
 public class PuzzleManager : MonoBehaviour
 {
@@ -183,6 +182,7 @@ public class PuzzleManager : MonoBehaviour
 
     private Coroutine moveCo1 = null;
     private Coroutine moveCo2 = null;
+    private Coroutine waitCo = null;
 
     private enum MouseMoveDir
     {
@@ -362,14 +362,14 @@ public class PuzzleManager : MonoBehaviour
 
     private void MovePuzzles(Puzzle currPuzzle, Puzzle movePuzzle, Vector2 currPos, Vector2 movePos, float moveSpeed, (int, int) currGn, (int, int) newGn)
     {
-        moveCo1 = StartCoroutine(currPuzzle.CoMove(movePos, moveSpeed, newGn));
-        moveCo2 = StartCoroutine(movePuzzle.CoMove(currPos, moveSpeed, currGn));
+        moveCo1 = StartCoroutine(currPuzzle.CoMove(movePos, moveSpeed));
+        moveCo2 = StartCoroutine(movePuzzle.CoMove(currPos, moveSpeed));
 
         // Wait
-        StartCoroutine(WaitForMoveCoroutines(currGn, newGn, moveCo1, moveCo2));
+        waitCo = StartCoroutine(WaitForMoveCoroutines(currPuzzle, movePuzzle, currGn, newGn, moveCo1, moveCo2));
     }
 
-    IEnumerator WaitForMoveCoroutines((int, int) currGn, (int, int) newGn, params Coroutine[] coroutines)
+    private IEnumerator WaitForMoveCoroutines(Puzzle currPuzzle, Puzzle movePuzzle, (int, int) currGn, (int, int) newGn, params Coroutine[] coroutines)
     {
         foreach (var coroutine in coroutines)
         {
@@ -380,6 +380,9 @@ public class PuzzleManager : MonoBehaviour
         Puzzle tempPuzzle = puzzles[currGn.Item1, currGn.Item2];
         puzzles[currGn.Item1, currGn.Item2] = puzzles[newGn.Item1, newGn.Item2];
         puzzles[newGn.Item1, newGn.Item2] = tempPuzzle;
+
+        currPuzzle.SetGridNum(newGn);
+        movePuzzle.SetGridNum(currGn);
     }
 
     private MouseMoveDir CalcMouseMoveDirection(Vector2 moveDir)

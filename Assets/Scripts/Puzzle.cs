@@ -52,7 +52,7 @@ public class Puzzle : MonoBehaviour
         gridNum = gn;
     }
 
-    public IEnumerator CoMove(Vector2 movePos, float speed, (int, int) gn)
+    public IEnumerator CoMove(Vector2 movePos, float speed)
     {
         float startTime = Time.time;
         float journeyLength = Vector3.Distance(gameObject.transform.position, movePos);
@@ -67,7 +67,5 @@ public class Puzzle : MonoBehaviour
             gameObject.transform.position = Vector2.Lerp(gameObject.transform.position, movePos, journeyFraction);
             yield return null;
         }
-
-        SetGridNum(gn);
     }
 }
