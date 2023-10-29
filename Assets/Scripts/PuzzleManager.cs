@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
-using static Unity.Burst.Intrinsics.Arm;
 
 public class PuzzleManager : MonoBehaviour
 {
@@ -114,10 +113,13 @@ public class PuzzleManager : MonoBehaviour
             SetNotDuplicationPuzzleType(pz, lp, bp);
             SetNotDuplicationPuzzleType(pz, bp, lp);
 
-            pz.gameObject.transform.position = board.GetBgPosition((rowIndex, j));
-            pz.gridNum = (rowIndex, j);
+            (int, int) gn = (rowIndex, j);
 
-            board.SetPuzzle(pz, (rowIndex, j));
+            pz.gameObject.transform.position = board.GetBgPosition(gn);
+            pz.gridNum = gn;
+
+            board.SetPuzzle(pz, gn);
+            board.SetGridNum(gn);
         }
     }
 
@@ -228,7 +230,7 @@ public class PuzzleManager : MonoBehaviour
 
     private void CheakThreeMatchPuzzle()
     {
-        List<Puzzle> destroyQueue = new List<Puzzle>();
+        List<Puzzle> destroyList = new List<Puzzle>();
 
         for (int y = 0; y < height; y++) 
         {
@@ -241,7 +243,7 @@ public class PuzzleManager : MonoBehaviour
                     Puzzle p2 = puzzles[y, x+1];
                     Puzzle p3 = puzzles[y, x+2];
 
-                    AddMatchingPuzzles(destroyQueue, p1, p2, p3);
+                    AddMatchingPuzzles(destroyList, p1, p2, p3);
                 }
 
                 if (y < height - 2)
@@ -249,27 +251,27 @@ public class PuzzleManager : MonoBehaviour
                     Puzzle p2 = puzzles[y+1, x];
                     Puzzle p3 = puzzles[y+2, x];
 
-                    AddMatchingPuzzles(destroyQueue, p1, p2, p3);
+                    AddMatchingPuzzles(destroyList, p1, p2, p3);
                 }
             }
         }
 
-        foreach (var p in destroyQueue)
+        foreach (var p in destroyList)
         {
             if (p != null && p.gameObject != null)
                 Destroy(p.gameObject);
         }
     }
 
-    private void AddMatchingPuzzles(List<Puzzle> queue, Puzzle p1, Puzzle p2, Puzzle p3)
+    private void AddMatchingPuzzles(List<Puzzle> list, Puzzle p1, Puzzle p2, Puzzle p3)
     {
         if (p2 != null && p3 != null)
         {
             if (p1.type == p2.type && p1.type == p3.type)
             {
-                queue.Add(p1);
-                queue.Add(p2);
-                queue.Add(p3);
+                list.Add(p1);
+                list.Add(p2);
+                list.Add(p3);
             }
         }
     }

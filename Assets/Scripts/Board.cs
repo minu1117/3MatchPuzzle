@@ -27,7 +27,6 @@ public class Board
     public void SetPuzzle(Puzzle p, (int, int) gridNum)
     {
         grids[gridNum.Item1, gridNum.Item2].Puzzle = p;
-        SetGridNum(gridNum);
     }
 
     public void SetGridNum((int, int) gridNum)
