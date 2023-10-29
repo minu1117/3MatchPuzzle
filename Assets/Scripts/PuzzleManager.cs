@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using static Unity.Burst.Intrinsics.Arm;
 
 public class PuzzleManager : MonoBehaviour
 {
@@ -8,7 +9,7 @@ public class PuzzleManager : MonoBehaviour
     [SerializeField] private GameObject backgroundTilePrefab;
     [SerializeField] private Puzzle puzzlePrefab;
     public SpriteRenderer[] puzzleSpritePrefabs;
-    private GameObject[,] board;
+    private Board board;
     private Puzzle[,] puzzles;
     private Vector2 puzzleSpriteSize;
     public int width;
@@ -26,7 +27,7 @@ public class PuzzleManager : MonoBehaviour
 
     private void CreateGrid(int width, int height)
     {
-        board = new GameObject[height, width];
+        board = new Board(width, height);
         puzzles = new Puzzle[height, width];
     }
 
@@ -63,7 +64,7 @@ public class PuzzleManager : MonoBehaviour
                 Vector2 tilePosition = new Vector2(posX, posY);
 
                 GameObject backgroundtile = Instantiate(backgroundTilePrefab, tilePosition, Quaternion.identity);
-                board[i, j] = backgroundtile;
+                board.SetBgPosition(backgroundtile, (i, j));
             }
         }
     }
@@ -109,11 +110,14 @@ public class PuzzleManager : MonoBehaviour
                 bp = puzzles[rowIndex - 1, j];
             }
 
+            // 왼쪽, 아래 타입 검사
             SetNotDuplicationPuzzleType(pz, lp, bp);
             SetNotDuplicationPuzzleType(pz, bp, lp);
 
-            pz.gameObject.transform.position = board[rowIndex, j].transform.position;
+            pz.gameObject.transform.position = board.GetBgPosition((rowIndex, j));
             pz.gridNum = (rowIndex, j);
+
+            board.SetPuzzle(pz, (rowIndex, j));
         }
     }
 
@@ -130,6 +134,7 @@ public class PuzzleManager : MonoBehaviour
         PuzzleType cheakPType = cheakP == null ? PuzzleType.None : cheakP.type;
         PuzzleType prevPType = prevP == null ? PuzzleType.None : prevP.type;
 
+        // 연결 상태 검사
         pt = CheckAndSetPuzzleType(p, pt, cheakP, cheakPType, prevPType);
         pt = CheckAndSetPuzzleType(p, pt, prevP, prevPType, cheakPType);
 
@@ -182,7 +187,6 @@ public class PuzzleManager : MonoBehaviour
 
     private Coroutine moveCo1 = null;
     private Coroutine moveCo2 = null;
-    private Coroutine waitCo = null;
 
     private enum MouseMoveDir
     {
@@ -219,32 +223,16 @@ public class PuzzleManager : MonoBehaviour
             }
         }
 
-        // Test
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            foreach (var puzzle in puzzles)
-            {
-                Destroy(puzzle.gameObject);
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            StartCoroutine(CoCreateAllPuzzles(width, height));
-        }
-
         CheakThreeMatchPuzzle();
     }
 
     private void CheakThreeMatchPuzzle()
     {
-        if (puzzles.Length < board.Length)
-            return;
+        List<Puzzle> destroyQueue = new List<Puzzle>();
 
-        Queue<Puzzle> destroyQueue = new Queue<Puzzle>();
-
-        for (int y = 0; y < board.GetLength(0); y++) 
+        for (int y = 0; y < height; y++) 
         {
-            for (int x = 0; x < board.GetLength(1); x++)
+            for (int x = 0; x < width; x++)
             {
                 Puzzle p1 = puzzles[y, x];
 
@@ -253,15 +241,7 @@ public class PuzzleManager : MonoBehaviour
                     Puzzle p2 = puzzles[y, x+1];
                     Puzzle p3 = puzzles[y, x+2];
 
-                    if (p2 != null && p3 != null)
-                    {
-                        if (p1.type == p2.type && p1.type == p3.type)
-                        {
-                            destroyQueue.Enqueue(p1);
-                            destroyQueue.Enqueue(p2);
-                            destroyQueue.Enqueue(p3);
-                        }
-                    }
+                    AddMatchingPuzzles(destroyQueue, p1, p2, p3);
                 }
 
                 if (y < height - 2)
@@ -269,25 +249,27 @@ public class PuzzleManager : MonoBehaviour
                     Puzzle p2 = puzzles[y+1, x];
                     Puzzle p3 = puzzles[y+2, x];
 
-                    if (p2 != null && p3 != null)
-                    {
-                        if (p1.type == p2.type && p1.type == p3.type)
-                        {
-                            destroyQueue.Enqueue(p1);
-                            destroyQueue.Enqueue(p2);
-                            destroyQueue.Enqueue(p3);
-                        }
-                    }
+                    AddMatchingPuzzles(destroyQueue, p1, p2, p3);
                 }
             }
         }
 
-        for (int i = destroyQueue.Count; i > 0; i--) 
+        foreach (var p in destroyQueue)
         {
-            Puzzle p = destroyQueue.Dequeue();
-            if (p != null)
-            {
+            if (p != null && p.gameObject != null)
                 Destroy(p.gameObject);
+        }
+    }
+
+    private void AddMatchingPuzzles(List<Puzzle> queue, Puzzle p1, Puzzle p2, Puzzle p3)
+    {
+        if (p2 != null && p3 != null)
+        {
+            if (p1.type == p2.type && p1.type == p3.type)
+            {
+                queue.Add(p1);
+                queue.Add(p2);
+                queue.Add(p3);
             }
         }
     }
@@ -313,43 +295,43 @@ public class PuzzleManager : MonoBehaviour
         (int, int) currGn = clickedPuzzle.gridNum;
         (int, int) newGn = (0, 0);
 
+        bool gridSet = false;
         switch (dir)
         {
             case MouseMoveDir.Left:
                 if (currGn.Item2 > 0)
                 {
                     newGn = puzzles[currGn.Item1, currGn.Item2 - 1].gridNum;
+                    gridSet = true;
                 }
-                else
-                    return;
                 break;
             case MouseMoveDir.Right:
                 if (currGn.Item2 < width-1)
                 {
                     newGn = puzzles[currGn.Item1, currGn.Item2 + 1].gridNum;
+                    gridSet = true;
                 }
-                else
-                    return;
                 break;
             case MouseMoveDir.Up:
                 if (currGn.Item1 < height-1)
                 {
                     newGn = puzzles[currGn.Item1 + 1, currGn.Item2].gridNum;
+                    gridSet = true;
                 }
-                else
-                    return;
                 break;
             case MouseMoveDir.Down:
                 if (currGn.Item1 > 0)
                 {
                     newGn = puzzles[currGn.Item1 - 1, currGn.Item2].gridNum;
+                    gridSet = true;
                 }
-                else
-                    return;
                 break;
             default:
                 break;
         }
+
+        if (!gridSet)
+            return;
 
         Puzzle currPuzzle = puzzles[currGn.Item1, currGn.Item2];
         Puzzle movePuzzle = puzzles[newGn.Item1, newGn.Item2];
@@ -366,7 +348,7 @@ public class PuzzleManager : MonoBehaviour
         moveCo2 = StartCoroutine(movePuzzle.CoMove(currPos, moveSpeed));
 
         // Wait
-        waitCo = StartCoroutine(WaitForMoveCoroutines(currPuzzle, movePuzzle, currGn, newGn, moveCo1, moveCo2));
+        StartCoroutine(WaitForMoveCoroutines(currPuzzle, movePuzzle, currGn, newGn, moveCo1, moveCo2));
     }
 
     private IEnumerator WaitForMoveCoroutines(Puzzle currPuzzle, Puzzle movePuzzle, (int, int) currGn, (int, int) newGn, params Coroutine[] coroutines)
@@ -376,13 +358,20 @@ public class PuzzleManager : MonoBehaviour
             yield return coroutine;
         }
 
-        // Swap
+        Swap(currPuzzle, movePuzzle, currGn, newGn);
+    }
+
+     private void Swap(Puzzle currPuzzle, Puzzle movePuzzle, (int, int) currGn, (int, int) newGn)
+    {
         Puzzle tempPuzzle = puzzles[currGn.Item1, currGn.Item2];
         puzzles[currGn.Item1, currGn.Item2] = puzzles[newGn.Item1, newGn.Item2];
         puzzles[newGn.Item1, newGn.Item2] = tempPuzzle;
 
         currPuzzle.SetGridNum(newGn);
         movePuzzle.SetGridNum(currGn);
+
+        board.SetPuzzle(currPuzzle, newGn);
+        board.SetPuzzle(movePuzzle, currGn);
     }
 
     private MouseMoveDir CalcMouseMoveDirection(Vector2 moveDir)
