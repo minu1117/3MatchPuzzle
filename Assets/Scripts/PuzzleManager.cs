@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Pool;
 
 public class PuzzleManager : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class PuzzleManager : MonoBehaviour
     [SerializeField] private GameObject backgroundTilePrefab;
     [SerializeField] private Puzzle puzzlePrefab;
     public SpriteRenderer[] puzzleSpritePrefabs;
+    private IObjectPool<Puzzle> puzzlePool;
     private Board board;
     private Puzzle[,] puzzles;
     private Vector2 puzzleSpriteSize;
@@ -18,6 +20,13 @@ public class PuzzleManager : MonoBehaviour
     {
         Texture2D puzzle = puzzlePrefab.GetComponent<SpriteRenderer>().sprite.texture;
         puzzleSpriteSize = new Vector2(puzzle.width, puzzle.height);
+        puzzlePool = new ObjectPool<Puzzle>(
+            CreatePuzzle,
+            GetPuzzle,
+            OnRelease,
+            DestroyPuzzle,
+            maxSize : width * (height * 2)
+            );
 
         CreateGrid(width, height);
         CreateBackgroundTiles(width, height);
@@ -54,7 +63,7 @@ public class PuzzleManager : MonoBehaviour
          4 5 6 
          1 2 3
         */
-        for (int i = 0; i < height; i++)
+        for (int i = 0; i < height * 2; i++)
         {
             for (int j = 0; j < width; j++)
             {
@@ -62,8 +71,11 @@ public class PuzzleManager : MonoBehaviour
                 float posY = i * tileSize.y;
                 Vector2 tilePosition = new Vector2(posX, posY);
 
-                GameObject backgroundtile = Instantiate(backgroundTilePrefab, tilePosition, Quaternion.identity);
-                board.SetBgPosition(backgroundtile, (i, j));
+                if (i < height)
+                {
+                    Instantiate(backgroundTilePrefab, tilePosition, Quaternion.identity);
+                }
+                board.SetGridPosition(tilePosition, (i, j));
             }
         }
     }
@@ -72,6 +84,12 @@ public class PuzzleManager : MonoBehaviour
     private IEnumerator CoCreateAllPuzzles(int width, int height)
     {
         for (int i = 0; i < height; i++)
+        {
+            CreateRowPuzzles(i, width);
+            yield return null;
+        }
+
+        for (int i = height; i < height * 2; i++)
         {
             CreateRowPuzzles(i, width);
             yield return null;
@@ -96,28 +114,37 @@ public class PuzzleManager : MonoBehaviour
 
         for (int j = 0; j < width; j++)
         {
-            Puzzle pz = puzzles[rowIndex, j] = CreatePuzzle();
-            Puzzle lp = null;
-            Puzzle bp = null;
-
-            if (j > 0)
-            {
-                lp = puzzles[rowIndex, j - 1];
-            }
-            if (rowIndex > 0)
-            {
-                bp = puzzles[rowIndex - 1, j];
-            }
-
-            // 왼쪽, 아래 타입 검사
-            SetNotDuplicationPuzzleType(pz, lp, bp);
-            SetNotDuplicationPuzzleType(pz, bp, lp);
-
+            //Puzzle pz = CreatePuzzle();
+            Puzzle pz = puzzlePool.Get();
             (int, int) gn = (rowIndex, j);
 
-            pz.gameObject.transform.position = board.GetBgPosition(gn);
-            pz.gridNum = gn;
+            if (rowIndex < height)
+            {
+                puzzles[rowIndex, j] = pz;
+                Puzzle lp = null;
+                Puzzle bp = null;
 
+                if (j > 0)
+                {
+                    lp = puzzles[rowIndex, j - 1];
+                }
+                if (rowIndex > 0)
+                {
+                    bp = puzzles[rowIndex - 1, j];
+                }
+
+                // 왼쪽, 아래 타입 검사 후 매치되지 않는 퍼즐로 변경
+                SetNotDuplicationPuzzleType(pz, lp, bp);
+                SetNotDuplicationPuzzleType(pz, bp, lp);
+            }
+            else
+            {
+                SetRandomPuzzleType(pz);
+                pz.gameObject.SetActive(false);
+            }
+
+            pz.gridNum = gn;
+            pz.gameObject.transform.position = board.GetGridPosition(gn);
             board.SetPuzzle(pz, gn);
             board.SetGridNum(gn);
         }
@@ -130,6 +157,23 @@ public class PuzzleManager : MonoBehaviour
         return p;
     }
 
+    private void GetPuzzle(Puzzle p)
+    {
+        p.gameObject.SetActive(true);
+    }
+
+    private void OnRelease(Puzzle p)
+    {
+        p.isConnected = false;
+        p.isMatched = false;
+        p.gameObject.SetActive(false);
+    }
+
+    private void DestroyPuzzle(Puzzle p)
+    {
+        Destroy(p.gameObject);
+    }
+
     private void SetNotDuplicationPuzzleType(Puzzle p, Puzzle cheakP, Puzzle prevP)
     {
         PuzzleType pt = p.type == PuzzleType.None ? (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count) : p.type;
@@ -140,8 +184,19 @@ public class PuzzleManager : MonoBehaviour
         pt = CheckAndSetPuzzleType(p, pt, cheakP, cheakPType, prevPType);
         pt = CheckAndSetPuzzleType(p, pt, prevP, prevPType, cheakPType);
 
+        SetPuzzleType(p, pt);
+    }
+
+    private void SetPuzzleType(Puzzle p, PuzzleType pt)
+    {
         p.SetType(pt);
         p.SetSprite(puzzleSpritePrefabs);
+    }
+
+    private void SetRandomPuzzleType(Puzzle p)
+    {
+        PuzzleType pt = (PuzzleType)Random.Range(0, (int)PuzzleType.Count);
+        SetPuzzleType(p, pt);
     }
 
     private PuzzleType CheckAndSetPuzzleType(Puzzle p, PuzzleType pt, Puzzle cheakP, PuzzleType cheakPType, PuzzleType prevPType)
@@ -230,8 +285,6 @@ public class PuzzleManager : MonoBehaviour
 
     private void CheakThreeMatchPuzzle()
     {
-        List<Puzzle> destroyList = new List<Puzzle>();
-
         for (int y = 0; y < height; y++) 
         {
             for (int x = 0; x < width; x++)
@@ -243,7 +296,7 @@ public class PuzzleManager : MonoBehaviour
                     Puzzle p2 = puzzles[y, x+1];
                     Puzzle p3 = puzzles[y, x+2];
 
-                    AddMatchingPuzzles(destroyList, p1, p2, p3);
+                    SetMatchingPuzzles(p1, p2, p3);
                 }
 
                 if (y < height - 2)
@@ -251,27 +304,53 @@ public class PuzzleManager : MonoBehaviour
                     Puzzle p2 = puzzles[y+1, x];
                     Puzzle p3 = puzzles[y+2, x];
 
-                    AddMatchingPuzzles(destroyList, p1, p2, p3);
+                    SetMatchingPuzzles(p1, p2, p3);
+                }
+            }
+        }
+
+        List<Puzzle> destroyList = new List<Puzzle>();
+        for (int i = puzzles.GetLength(0) - 1; i >= 0; i--)
+        {
+            for (int j = puzzles.GetLength(1) - 1; j >= 0; j--)
+            {
+                Puzzle p = puzzles[j, i];
+                if (p != null && p.gameObject != null && p.isMatched)
+                {
+                    destroyList.Add(p);
+                    puzzles[i, j] = null;
                 }
             }
         }
 
         foreach (var p in destroyList)
         {
-            if (p != null && p.gameObject != null)
-                Destroy(p.gameObject);
+            puzzlePool.Release(p);
         }
+
+        //foreach (var p in destroyList)
+        //{
+        //    if (p != null && p.gameObject != null)
+        //    {
+        //        //Destroy(p.gameObject);
+        //        puzzlePool.Release(p);
+        //        if (destroyList.Contains(p))
+        //        {
+        //            destroyList.Remove(p);
+        //        }
+        //    }
+        //}
     }
 
-    private void AddMatchingPuzzles(List<Puzzle> list, Puzzle p1, Puzzle p2, Puzzle p3)
+    private void SetMatchingPuzzles(Puzzle p1, Puzzle p2, Puzzle p3)
     {
-        if (p2 != null && p3 != null)
+        if (p1 != null && p2 != null && p3 != null)
         {
             if (p1.type == p2.type && p1.type == p3.type)
             {
-                list.Add(p1);
-                list.Add(p2);
-                list.Add(p3);
+                p1.isMatched = true;
+                p2.isMatched = true;
+                p3.isMatched = true;
             }
         }
     }

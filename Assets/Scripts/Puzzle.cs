@@ -4,11 +4,10 @@ using UnityEngine;
 public class Puzzle : MonoBehaviour
 {
     private SpriteRenderer sr;
-    public bool isMatched = false;
     public bool isConnected = false;
+    public bool isMatched = false;
     public PuzzleType type = PuzzleType.None;
     public (int, int) gridNum;
-    public bool isVisit = false;
 
     public void SetType(PuzzleType pt)
     {

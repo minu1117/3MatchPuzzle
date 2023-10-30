@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Grid
 {
-    public Vector2 BgPos
+    public Vector2 Position
     {
         get;
         set;

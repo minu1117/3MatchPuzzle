@@ -34,13 +34,13 @@ public class Board
         grids[gridNum.Item1, gridNum.Item2].GridNum = gridNum;
     }
 
-    public void SetBgPosition(GameObject bg, (int, int) gridNum)
+    public void SetGridPosition(Vector3 pos, (int, int) gridNum)
     {
-        grids[gridNum.Item1, gridNum.Item2].BgPos = bg.transform.position;
+        grids[gridNum.Item1, gridNum.Item2].Position = pos;
     }
 
-    public Vector2 GetBgPosition((int, int) gridNum)
+    public Vector2 GetGridPosition((int, int) gridNum)
     {
-        return grids[gridNum.Item1, gridNum.Item2].BgPos;
+        return grids[gridNum.Item1, gridNum.Item2].Position;
     }
 }
