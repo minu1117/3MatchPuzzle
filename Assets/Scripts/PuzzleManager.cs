@@ -290,56 +290,46 @@ public class PuzzleManager : MonoBehaviour
             for (int x = 0; x < width; x++)
             {
                 Puzzle p1 = puzzles[y, x];
+                Puzzle p2 = null;
+                Puzzle p3 = null;
 
                 if (x < width - 2)
                 {
-                    Puzzle p2 = puzzles[y, x+1];
-                    Puzzle p3 = puzzles[y, x+2];
+                    p2 = puzzles[y, x+1];
+                    p3 = puzzles[y, x+2];
 
                     SetMatchingPuzzles(p1, p2, p3);
                 }
 
                 if (y < height - 2)
                 {
-                    Puzzle p2 = puzzles[y+1, x];
-                    Puzzle p3 = puzzles[y+2, x];
+                    p2 = puzzles[y+1, x];
+                    p3 = puzzles[y+2, x];
 
                     SetMatchingPuzzles(p1, p2, p3);
                 }
             }
         }
 
-        List<Puzzle> destroyList = new List<Puzzle>();
-        for (int i = puzzles.GetLength(0) - 1; i >= 0; i--)
+        // HashSet으로 중복 객체 추가 X
+        HashSet<Puzzle> destroyHash = new HashSet<Puzzle>();
+        for (int i = 0; i < height; i++)
         {
-            for (int j = puzzles.GetLength(1) - 1; j >= 0; j--)
+            for (int j = 0; j < width; j++)
             {
                 Puzzle p = puzzles[j, i];
                 if (p != null && p.gameObject != null && p.isMatched)
                 {
-                    destroyList.Add(p);
-                    puzzles[i, j] = null;
+                    destroyHash.Add(p);
+                    puzzles[j, i] = null;
                 }
             }
         }
 
-        foreach (var p in destroyList)
+        foreach (var p in destroyHash)
         {
             puzzlePool.Release(p);
         }
-
-        //foreach (var p in destroyList)
-        //{
-        //    if (p != null && p.gameObject != null)
-        //    {
-        //        //Destroy(p.gameObject);
-        //        puzzlePool.Release(p);
-        //        if (destroyList.Contains(p))
-        //        {
-        //            destroyList.Remove(p);
-        //        }
-        //    }
-        //}
     }
 
     private void SetMatchingPuzzles(Puzzle p1, Puzzle p2, Puzzle p3)
