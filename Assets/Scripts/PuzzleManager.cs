@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Pool;
+using System.Linq;
 
 public class PuzzleManager : MonoBehaviour
 {
@@ -321,14 +322,53 @@ public class PuzzleManager : MonoBehaviour
                 if (p != null && p.gameObject != null && p.isMatched)
                 {
                     destroyHash.Add(p);
+                    board.grids[j, i].Puzzle = null;
                     puzzles[j, i] = null;
                 }
             }
         }
 
-        foreach (var p in destroyHash)
+        if (destroyHash.Count > 0)
         {
-            puzzlePool.Release(p);
+            int maxHeight = 0;
+            foreach (var p in destroyHash)
+            {
+                int h = p.gridNum.Item1;
+                if (maxHeight < h)
+                {
+                    maxHeight = h;
+                }
+                puzzlePool.Release(p);
+            }
+
+            for (int y = 1; y < board.grids.GetLength(0); y++)
+            {
+                for (int x = 0; x < board.grids.GetLength(1); x++)
+                {
+                    Puzzle p = board.grids[y, x].Puzzle;
+                    Puzzle moveP = board.grids[y-1, x].Puzzle;
+
+                    if (moveP != null)
+                    {
+                        continue;
+                    }
+
+                    if (p != null && p.gameObject != null)
+                    {
+                        if (y > height)
+                        {
+                            p.gameObject.SetActive(true);
+                        }
+
+                        Vector2 moveVec = board.grids[y-1, x].Position;
+                        StartCoroutine(p.CoMove(moveVec, moveSpeed));
+                        p.SetGridNum(board.grids[y - 1, x].GridNum);
+
+                        board.grids[y - 1, x].Puzzle = p;
+                        board.grids[y, x].Puzzle = null;
+                    }
+                }
+            }
         }
     }
 
