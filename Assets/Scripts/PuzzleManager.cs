@@ -167,6 +167,13 @@ public class PuzzleManager : MonoBehaviour
     {
         p.isConnected = false;
         p.isMatched = false;
+
+        SetRandomPuzzleType(p);
+
+        (int, int) gn = p.gridNum;
+        puzzles[gn.Item1, gn.Item2] = null;
+        board.grids[gn.Item1, gn.Item2].Puzzle = null;
+
         p.gameObject.SetActive(false);
     }
 
@@ -314,58 +321,60 @@ public class PuzzleManager : MonoBehaviour
 
         // HashSet으로 중복 객체 추가 X
         HashSet<Puzzle> destroyHash = new HashSet<Puzzle>();
-        for (int i = 0; i < height; i++)
+        for (int y = 0; y < height; y++)
         {
-            for (int j = 0; j < width; j++)
+            for (int x = 0; x < width; x++)
             {
-                Puzzle p = puzzles[j, i];
+                Puzzle p = puzzles[y, x];
                 if (p != null && p.gameObject != null && p.isMatched)
                 {
-                    destroyHash.Add(p);
-                    board.grids[j, i].Puzzle = null;
-                    puzzles[j, i] = null;
+                    if (destroyHash.Add(p))
+                    {
+                        board.grids[y, x].Puzzle = null;
+                        puzzles[y, x] = null;
+                    }
                 }
             }
         }
 
         if (destroyHash.Count > 0)
         {
-            int maxHeight = 0;
+            int maxY = 0;
+            int minY = height;
             foreach (var p in destroyHash)
             {
-                int h = p.gridNum.Item1;
-                if (maxHeight < h)
-                {
-                    maxHeight = h;
-                }
+                int y = p.gridNum.Item1;
+                minY = minY > y ? y : minY;
+                maxY = maxY < y ? y : maxY;
                 puzzlePool.Release(p);
             }
 
+            int moveY = maxY == minY ? 1 : maxY - minY;
             for (int y = 1; y < board.grids.GetLength(0); y++)
             {
                 for (int x = 0; x < board.grids.GetLength(1); x++)
                 {
-                    Puzzle p = board.grids[y, x].Puzzle;
-                    Puzzle moveP = board.grids[y-1, x].Puzzle;
-
-                    if (moveP != null)
+                    int yGrid = y - moveY < 0 ? 0 : y - moveY;
+                    Puzzle p = board.GetPuzzle((y, x));
+                    Puzzle moveP = board?.GetPuzzle((yGrid, x));
+                    if (p == null || moveP != null)
                     {
                         continue;
                     }
 
-                    if (p != null && p.gameObject != null)
+                    Vector2 movePos = board.GetGridPosition((yGrid, x));
+                    if (p.gameObject != null)
                     {
-                        if (y > height)
+                        if (y <= height + moveY)
                         {
                             p.gameObject.SetActive(true);
                         }
 
-                        Vector2 moveVec = board.grids[y-1, x].Position;
-                        StartCoroutine(p.CoMove(moveVec, moveSpeed));
-                        p.SetGridNum(board.grids[y - 1, x].GridNum);
+                        StartCoroutine(p.CoMove(movePos, moveSpeed));
+                        p.SetGridNum(board.grids[yGrid, x].GridNum);
 
-                        board.grids[y - 1, x].Puzzle = p;
                         board.grids[y, x].Puzzle = null;
+                        board.SetPuzzle(p, (yGrid, x));
                     }
                 }
             }
