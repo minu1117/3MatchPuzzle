@@ -51,6 +51,11 @@ public class Puzzle : MonoBehaviour
         gridNum = gn;
     }
 
+    public void SetPosition(Vector2 pos)
+    {
+        gameObject.transform.position = pos;
+    }
+
     public IEnumerator CoMove(Vector2 movePos, float speed)
     {
         float startTime = Time.time;

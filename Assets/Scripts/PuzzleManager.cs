@@ -12,7 +12,7 @@ public class PuzzleManager : MonoBehaviour
     public SpriteRenderer[] puzzleSpritePrefabs;
     private IObjectPool<Puzzle> puzzlePool;
     private Board board;
-    private Puzzle[,] puzzles;
+    //private Puzzle[,] puzzles;
     private Vector2 puzzleSpriteSize;
     public int width;
     public int height;
@@ -37,7 +37,7 @@ public class PuzzleManager : MonoBehaviour
     private void CreateGrid(int width, int height)
     {
         board = new Board(width, height);
-        puzzles = new Puzzle[height, width];
+        //puzzles = new Puzzle[height, width];
     }
 
     private Vector2 GetSpriteBounds(SpriteRenderer sprite)
@@ -121,17 +121,20 @@ public class PuzzleManager : MonoBehaviour
 
             if (rowIndex < height)
             {
-                puzzles[rowIndex, j] = pz;
+                //puzzles[rowIndex, j] = pz;
+                board.SetPuzzle(pz, gn);
                 Puzzle lp = null;
                 Puzzle bp = null;
 
                 if (j > 0)
                 {
-                    lp = puzzles[rowIndex, j - 1];
+                    //lp = puzzles[rowIndex, j - 1];
+                    lp = board.GetPuzzle((rowIndex, j - 1));
                 }
                 if (rowIndex > 0)
                 {
-                    bp = puzzles[rowIndex - 1, j];
+                    //bp = puzzles[rowIndex - 1, j];
+                    bp = board.GetPuzzle((rowIndex - 1, j));
                 }
 
                 // 왼쪽, 아래 타입 검사 후 매치되지 않는 퍼즐로 변경
@@ -171,9 +174,10 @@ public class PuzzleManager : MonoBehaviour
         SetRandomPuzzleType(p);
 
         (int, int) gn = p.gridNum;
-        puzzles[gn.Item1, gn.Item2] = null;
+        //puzzles[gn.Item1, gn.Item2] = null;
         board.grids[gn.Item1, gn.Item2].Puzzle = null;
 
+        p.gameObject.transform.position = new Vector2(10000, 10000);
         p.gameObject.SetActive(false);
     }
 
@@ -267,7 +271,7 @@ public class PuzzleManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             clickStartPos = Input.mousePosition;
-            Vector3 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(clickStartPos.x, clickStartPos.y, 0));
+            Vector2 worldPos = Camera.main.ScreenToWorldPoint(new Vector2(clickStartPos.x, clickStartPos.y));
             clickedPuzzle = GetClickedPuzzle(worldPos);
 
             isMoved = false;
@@ -297,22 +301,27 @@ public class PuzzleManager : MonoBehaviour
         {
             for (int x = 0; x < width; x++)
             {
-                Puzzle p1 = puzzles[y, x];
+                //Puzzle p1 = puzzles[y, x];
+                Puzzle p1 = board.GetPuzzle((y, x));
                 Puzzle p2 = null;
                 Puzzle p3 = null;
 
                 if (x < width - 2)
                 {
-                    p2 = puzzles[y, x+1];
-                    p3 = puzzles[y, x+2];
+                    //p2 = puzzles[y, x+1];
+                    //p3 = puzzles[y, x+2];
+                    p2 = board.GetPuzzle((y, x + 1));
+                    p3 = board.GetPuzzle((y, x + 2));
 
                     SetMatchingPuzzles(p1, p2, p3);
                 }
 
                 if (y < height - 2)
                 {
-                    p2 = puzzles[y+1, x];
-                    p3 = puzzles[y+2, x];
+                    //p2 = puzzles[y+1, x];
+                    //p3 = puzzles[y+2, x];
+                    p2 = board.GetPuzzle((y + 1, x));
+                    p3 = board.GetPuzzle((y + 2, x));
 
                     SetMatchingPuzzles(p1, p2, p3);
                 }
@@ -325,13 +334,15 @@ public class PuzzleManager : MonoBehaviour
         {
             for (int x = 0; x < width; x++)
             {
-                Puzzle p = puzzles[y, x];
+                //Puzzle p = puzzles[y, x];
+                Puzzle p = board.GetPuzzle((y, x));
                 if (p != null && p.gameObject != null && p.isMatched)
                 {
                     if (destroyHash.Add(p))
                     {
+                        //board.SetPuzzle(null, (y,x));
                         board.grids[y, x].Puzzle = null;
-                        puzzles[y, x] = null;
+                        //puzzles[y, x] = null;
                     }
                 }
             }
@@ -349,7 +360,9 @@ public class PuzzleManager : MonoBehaviour
                 puzzlePool.Release(p);
             }
 
-            int moveY = maxY == minY ? 1 : maxY - minY;
+            //int moveY = maxY == minY ? 1 : maxY - minY;
+            int moveY = (maxY - minY) + 1;
+
             for (int y = 1; y < board.grids.GetLength(0); y++)
             {
                 for (int x = 0; x < board.grids.GetLength(1); x++)
@@ -357,24 +370,38 @@ public class PuzzleManager : MonoBehaviour
                     int yGrid = y - moveY < 0 ? 0 : y - moveY;
                     Puzzle p = board.GetPuzzle((y, x));
                     Puzzle moveP = board?.GetPuzzle((yGrid, x));
-                    if (p == null || moveP != null)
-                    {
-                        continue;
-                    }
 
-                    Vector2 movePos = board.GetGridPosition((yGrid, x));
-                    if (p.gameObject != null)
+                    if (p != null && moveP == null)
                     {
-                        if (y <= height + moveY)
+                        Vector2 movePos = board.GetGridPosition((yGrid, x));
+                        if (p.gameObject != null)
                         {
-                            p.gameObject.SetActive(true);
+                            if (y < height + moveY)
+                            {
+                                p.gameObject.SetActive(true);
+                            }
+
+                            StartCoroutine(p.CoMove(movePos, moveSpeed));
+                            p.SetGridNum(board.grids[yGrid, x].GridNum);
+
+                            board.grids[y, x].Puzzle = null;
+                            board.SetPuzzle(p, (yGrid, x));
                         }
+                    }
+                }
+            }
 
-                        StartCoroutine(p.CoMove(movePos, moveSpeed));
-                        p.SetGridNum(board.grids[yGrid, x].GridNum);
-
-                        board.grids[y, x].Puzzle = null;
-                        board.SetPuzzle(p, (yGrid, x));
+            for (int y = board.grids.GetLength(0)-1; y >= height + moveY; y--)
+            {
+                for (int x = 0; x < board.grids.GetLength(1); x++)
+                {
+                    if (board.grids[y, x].Puzzle == null)
+                    {
+                        Puzzle p = puzzlePool.Get();
+                        p.gridNum = board.grids[y, x].GridNum;
+                        p.SetPosition(board.GetGridPosition((y, x)));
+                        p.gameObject.SetActive(false);
+                        board.SetPuzzle(p, (y,x));
                     }
                 }
             }
@@ -387,9 +414,12 @@ public class PuzzleManager : MonoBehaviour
         {
             if (p1.type == p2.type && p1.type == p3.type)
             {
-                p1.isMatched = true;
-                p2.isMatched = true;
-                p3.isMatched = true;
+                if (!p2.isMatched && !p3.isMatched)
+                {
+                    p1.isMatched = true;
+                    p2.isMatched = true;
+                    p3.isMatched = true;
+                }
             }
         }
     }
@@ -421,28 +451,32 @@ public class PuzzleManager : MonoBehaviour
             case MouseMoveDir.Left:
                 if (currGn.Item2 > 0)
                 {
-                    newGn = puzzles[currGn.Item1, currGn.Item2 - 1].gridNum;
+                    //newGn = puzzles[currGn.Item1, currGn.Item2 - 1].gridNum;
+                    newGn = (currGn.Item1, currGn.Item2 - 1);
                     gridSet = true;
                 }
                 break;
             case MouseMoveDir.Right:
                 if (currGn.Item2 < width-1)
                 {
-                    newGn = puzzles[currGn.Item1, currGn.Item2 + 1].gridNum;
+                    //newGn = puzzles[currGn.Item1, currGn.Item2 + 1].gridNum;
+                    newGn = (currGn.Item1, currGn.Item2 + 1);
                     gridSet = true;
                 }
                 break;
             case MouseMoveDir.Up:
                 if (currGn.Item1 < height-1)
                 {
-                    newGn = puzzles[currGn.Item1 + 1, currGn.Item2].gridNum;
+                    //newGn = puzzles[currGn.Item1 + 1, currGn.Item2].gridNum;
+                    newGn = (currGn.Item1 + 1, currGn.Item2);
                     gridSet = true;
                 }
                 break;
             case MouseMoveDir.Down:
                 if (currGn.Item1 > 0)
                 {
-                    newGn = puzzles[currGn.Item1 - 1, currGn.Item2].gridNum;
+                    //newGn = puzzles[currGn.Item1 - 1, currGn.Item2].gridNum;
+                    newGn = (currGn.Item1 - 1, currGn.Item2);
                     gridSet = true;
                 }
                 break;
@@ -453,11 +487,14 @@ public class PuzzleManager : MonoBehaviour
         if (!gridSet)
             return;
 
-        Puzzle currPuzzle = puzzles[currGn.Item1, currGn.Item2];
-        Puzzle movePuzzle = puzzles[newGn.Item1, newGn.Item2];
+        //Puzzle currPuzzle = puzzles[currGn.Item1, currGn.Item2];
+        //Puzzle movePuzzle = puzzles[newGn.Item1, newGn.Item2];
 
-        Vector2 currPos = currPuzzle.transform.position;
-        Vector2 movePos = movePuzzle.transform.position;
+        Puzzle currPuzzle = board.GetPuzzle((currGn.Item1, currGn.Item2));
+        Puzzle movePuzzle = board.GetPuzzle((newGn.Item1, newGn.Item2));
+
+        Vector2 currPos = board.GetGridPosition((currGn.Item1, currGn.Item2));
+        Vector2 movePos = board.GetGridPosition((newGn.Item1, newGn.Item2));
 
         MovePuzzles(currPuzzle, movePuzzle, currPos, movePos, moveSpeed, currGn, newGn);
     }
@@ -483,9 +520,9 @@ public class PuzzleManager : MonoBehaviour
 
      private void Swap(Puzzle currPuzzle, Puzzle movePuzzle, (int, int) currGn, (int, int) newGn)
     {
-        Puzzle tempPuzzle = puzzles[currGn.Item1, currGn.Item2];
-        puzzles[currGn.Item1, currGn.Item2] = puzzles[newGn.Item1, newGn.Item2];
-        puzzles[newGn.Item1, newGn.Item2] = tempPuzzle;
+        //Puzzle tempPuzzle = puzzles[currGn.Item1, currGn.Item2];
+        //puzzles[currGn.Item1, currGn.Item2] = puzzles[newGn.Item1, newGn.Item2];
+        //puzzles[newGn.Item1, newGn.Item2] = tempPuzzle;
 
         currPuzzle.SetGridNum(newGn);
         movePuzzle.SetGridNum(currGn);
