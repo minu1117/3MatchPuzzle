@@ -16,6 +16,7 @@ public class PuzzleManager : MonoBehaviour
     private Vector2 puzzleSpriteSize;
     public int width;
     public int height;
+    private bool isCheaked = true;
 
     private void Start()
     {
@@ -175,10 +176,12 @@ public class PuzzleManager : MonoBehaviour
 
         (int, int) gn = p.gridNum;
         //puzzles[gn.Item1, gn.Item2] = null;
-        board.grids[gn.Item1, gn.Item2].Puzzle = null;
 
         p.gameObject.transform.position = new Vector2(10000, 10000);
         p.gameObject.SetActive(false);
+
+        //board.grids[gn.Item1, gn.Item2].Puzzle = null;
+        board.SetPuzzle(null, (gn.Item1, gn.Item2));
     }
 
     private void DestroyPuzzle(Puzzle p)
@@ -297,19 +300,16 @@ public class PuzzleManager : MonoBehaviour
 
     private void CheakThreeMatchPuzzle()
     {
-        for (int y = 0; y < height; y++) 
+        for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                //Puzzle p1 = puzzles[y, x];
                 Puzzle p1 = board.GetPuzzle((y, x));
                 Puzzle p2 = null;
                 Puzzle p3 = null;
 
                 if (x < width - 2)
                 {
-                    //p2 = puzzles[y, x+1];
-                    //p3 = puzzles[y, x+2];
                     p2 = board.GetPuzzle((y, x + 1));
                     p3 = board.GetPuzzle((y, x + 2));
 
@@ -318,8 +318,6 @@ public class PuzzleManager : MonoBehaviour
 
                 if (y < height - 2)
                 {
-                    //p2 = puzzles[y+1, x];
-                    //p3 = puzzles[y+2, x];
                     p2 = board.GetPuzzle((y + 1, x));
                     p3 = board.GetPuzzle((y + 2, x));
 
@@ -334,15 +332,12 @@ public class PuzzleManager : MonoBehaviour
         {
             for (int x = 0; x < width; x++)
             {
-                //Puzzle p = puzzles[y, x];
                 Puzzle p = board.GetPuzzle((y, x));
                 if (p != null && p.gameObject != null && p.isMatched)
                 {
                     if (destroyHash.Add(p))
                     {
-                        //board.SetPuzzle(null, (y,x));
                         board.grids[y, x].Puzzle = null;
-                        //puzzles[y, x] = null;
                     }
                 }
             }
@@ -360,10 +355,8 @@ public class PuzzleManager : MonoBehaviour
                 puzzlePool.Release(p);
             }
 
-            //int moveY = maxY == minY ? 1 : maxY - minY;
             int moveY = (maxY - minY) + 1;
-
-            for (int y = 1; y < board.grids.GetLength(0); y++)
+            for (int y = minY; y < board.grids.GetLength(0); y++)
             {
                 for (int x = 0; x < board.grids.GetLength(1); x++)
                 {
@@ -384,14 +377,14 @@ public class PuzzleManager : MonoBehaviour
                             StartCoroutine(p.CoMove(movePos, moveSpeed));
                             p.SetGridNum(board.grids[yGrid, x].GridNum);
 
-                            board.grids[y, x].Puzzle = null;
                             board.SetPuzzle(p, (yGrid, x));
+                            board.SetPuzzle(null, (y, x));
                         }
                     }
                 }
             }
 
-            for (int y = board.grids.GetLength(0)-1; y >= height + moveY; y--)
+            for (int y = height + moveY - 1; y < board.grids.GetLength(0); y++)
             {
                 for (int x = 0; x < board.grids.GetLength(1); x++)
                 {
@@ -401,7 +394,7 @@ public class PuzzleManager : MonoBehaviour
                         p.gridNum = board.grids[y, x].GridNum;
                         p.SetPosition(board.GetGridPosition((y, x)));
                         p.gameObject.SetActive(false);
-                        board.SetPuzzle(p, (y,x));
+                        board.SetPuzzle(p, (y, x));
                     }
                 }
             }
@@ -414,12 +407,9 @@ public class PuzzleManager : MonoBehaviour
         {
             if (p1.type == p2.type && p1.type == p3.type)
             {
-                if (!p2.isMatched && !p3.isMatched)
-                {
-                    p1.isMatched = true;
-                    p2.isMatched = true;
-                    p3.isMatched = true;
-                }
+                p1.isMatched = true;
+                p2.isMatched = true;
+                p3.isMatched = true;
             }
         }
     }

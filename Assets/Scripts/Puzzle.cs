@@ -59,7 +59,7 @@ public class Puzzle : MonoBehaviour
     public IEnumerator CoMove(Vector2 movePos, float speed)
     {
         float startTime = Time.time;
-        float journeyLength = Vector3.Distance(gameObject.transform.position, movePos);
+        float journeyLength = Vector2.Distance(gameObject.transform.position, movePos);
         float journeyFraction = 0f;
 
         while (journeyFraction < 1.0f)
