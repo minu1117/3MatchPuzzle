@@ -167,8 +167,7 @@ public class PuzzleManager : MonoBehaviour
         (int, int) gn = p.gridNum;
 
         board.SetPuzzle(null, (gn.Item1, gn.Item2));
-        p.SetGridNum((-1, -1));
-        //p.gameObject.SetActive(false);
+        p.gameObject.SetActive(false);
     }
 
     private void DestroyPuzzle(Puzzle p)
@@ -247,6 +246,8 @@ public class PuzzleManager : MonoBehaviour
     private Coroutine moveCo1 = null;
     private Coroutine moveCo2 = null;
 
+    private HashSet<Puzzle> destroyHash = new();
+
     private enum MouseMoveDir
     {
         None = -1,
@@ -282,7 +283,14 @@ public class PuzzleManager : MonoBehaviour
             }
         }
 
-        CheakThreeMatchPuzzle();
+        if (destroyHash.Count == 0) 
+        {
+            CheakThreeMatchPuzzle();
+        }
+        else if (destroyHash.Count > 0)
+        {
+            MoveAndFill();
+        }
     }
 
     private void CheakThreeMatchPuzzle()
@@ -291,7 +299,6 @@ public class PuzzleManager : MonoBehaviour
         {
             for (int x = 0; x < width; x++)
             {
-                //Puzzle p1 = board.GetPuzzle((y, x));
                 Puzzle p1 = board.GetPuzzle((y, x));
                 Puzzle p2 = null;
                 Puzzle p3 = null;
@@ -314,8 +321,6 @@ public class PuzzleManager : MonoBehaviour
             }
         }
 
-        // HashSet으로 중복 객체 추가 X
-        HashSet<Puzzle> destroyHash = new HashSet<Puzzle>();
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
@@ -323,37 +328,46 @@ public class PuzzleManager : MonoBehaviour
                 Puzzle p = board.GetPuzzle((y, x));
                 if (p != null && p.gameObject != null && p.isMatched)
                 {
+                    if (destroyHash.Contains(p) || destroyHash.Equals(p))
+                    {
+                        continue;
+                    }
+
                     destroyHash.Add(p);
                 }
             }
         }
+    }
 
-        if (destroyHash.Count > 0)
+    private void MoveAndFill()
+    {
+        int maxX = 0;
+        int maxY = 0;
+        int minX = width;
+        int minY = height;
+        foreach (var p in destroyHash)
         {
-            int maxX = 0;
-            int maxY = 0;
-            int minX = width;
-            int minY = height;
-            foreach (var p in destroyHash)
-            {
-                int y = p.gridNum.Item1;
-                int x = p.gridNum.Item2;
-                minY = minY > y ? y : minY;
-                maxY = maxY < y ? y : maxY;
-                minX = minX > x ? x : minX;
-                maxX = maxX < x ? x : maxX;
-                puzzlePool.Release(p);
-            }
+            if (!p.gameObject.activeSelf)
+                continue;
 
-            int moveY = (maxY - minY) + 1;
-            StartCoroutine(MoveDown(minY, moveY, minX, maxX));
-            //FillBlankPuzzles(moveY);
+            int y = p.gridNum.Item1;
+            int x = p.gridNum.Item2;
+            minY = minY > y ? y : minY;
+            maxY = maxY < y ? y : maxY;
+            minX = minX > x ? x : minX;
+            maxX = maxX < x ? x : maxX;
+
+            puzzlePool.Release(p);
         }
+
+        int moveY = (maxY - minY) + 1;
+        StartCoroutine(MoveDown(minY, moveY, minX, maxX));
     }
 
     private IEnumerator MoveDown(int minY, int moveY, int minX, int maxX)
     {
-        List<Coroutine> runningCoroutines = new List<Coroutine>();
+        List<Coroutine> moveRoutine = new();
+
         for (int y = minY; y < board.grids.GetLength(0); y++)
         {
             for (int x = minX; x <= maxX; x++)
@@ -365,30 +379,31 @@ public class PuzzleManager : MonoBehaviour
                 if (p != null && moveP == null)
                 {
                     Vector2 movePos = board.GetGridPosition((yGrid, x));
+                    p.SetGridNum(board.GetGridNum((yGrid, x)));
+                    board.SetPuzzle(null, (y, x));
+                    board.SetPuzzle(p, (yGrid, x));
+
                     if (y < height + moveY)
                     {
                         p.gameObject.SetActive(true);
                     }
 
                     Coroutine co = StartCoroutine(p.CoMove(movePos, moveSpeed));
-                    runningCoroutines.Add(co);
-                    p.SetGridNum(board.grids[yGrid, x].GridNum);
-
-                    board.SetPuzzle(p, (yGrid, x));
-                    board.SetPuzzle(null, (y, x));
+                    moveRoutine.Add(co);
                 }
             }
         }
 
-        foreach (var co in runningCoroutines)
+        foreach (var coroutine in moveRoutine)
         {
-            yield return co;
+            yield return coroutine;
         }
 
-        FillBlankPuzzles(moveY);
+        destroyHash.Clear();
+        //FillBlankBoard(moveY);
     }
 
-    private void FillBlankPuzzles(int moveY)
+    private void FillBlankBoard(int moveY)
     {
         for (int y = 0; y < board.grids.GetLength(0); y++)
         {
@@ -399,7 +414,7 @@ public class PuzzleManager : MonoBehaviour
                     Puzzle p = puzzlePool.Get();
                     p.gridNum = (y, x);
                     p.SetPosition(board.GetGridPosition((y, x)));
-                    //p.gameObject.SetActive(false);
+                    p.gameObject.SetActive(false);
                     board.SetPuzzle(p, (y, x));
                 }
             }
@@ -502,6 +517,8 @@ public class PuzzleManager : MonoBehaviour
             yield return coroutine;
         }
 
+        moveCo1 = null;
+        moveCo2 = null;
         Swap(currPuzzle, movePuzzle, currGn, newGn);
     }
 

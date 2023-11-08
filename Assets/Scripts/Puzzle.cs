@@ -72,4 +72,21 @@ public class Puzzle : MonoBehaviour
             yield return null;
         }
     }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+
+        Puzzle other = (Puzzle)obj;
+        return gridNum.Equals(other.gridNum);
+    }
+
 }

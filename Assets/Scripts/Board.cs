@@ -43,4 +43,9 @@ public class Board
     {
         return grids[gridNum.Item1, gridNum.Item2].Position;
     }
+
+    public (int, int) GetGridNum((int, int) gn)
+    {
+        return grids[gn.Item1, gn.Item2].GridNum;
+    }
 }
