@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Pool;
+using System.Linq;
 
 public class PuzzleManager : MonoBehaviour
 {
@@ -287,7 +288,7 @@ public class PuzzleManager : MonoBehaviour
         {
             CheakThreeMatchPuzzle();
         }
-        else if (destroyHash.Count > 0)
+        if (destroyHash.Count > 0)
         {
             MoveAndFill();
         }
@@ -361,13 +362,11 @@ public class PuzzleManager : MonoBehaviour
         }
 
         int moveY = (maxY - minY) + 1;
-        StartCoroutine(MoveDown(minY, moveY, minX, maxX));
+        MoveDown(minY, moveY, minX, maxX);
     }
 
-    private IEnumerator MoveDown(int minY, int moveY, int minX, int maxX)
+    private void MoveDown(int minY, int moveY, int minX, int maxX)
     {
-        List<Coroutine> moveRoutine = new();
-
         for (int y = minY; y < board.grids.GetLength(0); y++)
         {
             for (int x = minX; x <= maxX; x++)
@@ -388,16 +387,15 @@ public class PuzzleManager : MonoBehaviour
                         p.gameObject.SetActive(true);
                     }
 
-                    Coroutine co = StartCoroutine(p.CoMove(movePos, moveSpeed));
-                    moveRoutine.Add(co);
+                    StartCoroutine(p.CoMove(movePos, moveSpeed));
                 }
             }
         }
 
-        foreach (var coroutine in moveRoutine)
-        {
-            yield return coroutine;
-        }
+        //foreach (var coroutine in moveRoutine)
+        //{
+        //    yield return coroutine;
+        //}
 
         destroyHash.Clear();
         //FillBlankBoard(moveY);

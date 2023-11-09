@@ -69,6 +69,7 @@ public class Puzzle : MonoBehaviour
             journeyFraction = Mathf.Clamp01(journeyFraction);
 
             gameObject.transform.position = Vector2.Lerp(gameObject.transform.position, movePos, journeyFraction);
+
             yield return null;
         }
     }
