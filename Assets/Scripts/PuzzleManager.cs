@@ -3,6 +3,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Pool;
 using System.Linq;
+using System.Threading.Tasks;
+using System;
 
 public class PuzzleManager : MonoBehaviour
 {
@@ -197,7 +199,7 @@ public class PuzzleManager : MonoBehaviour
 
     private void SetRandomPuzzleType(Puzzle p)
     {
-        PuzzleType pt = (PuzzleType)Random.Range(0, (int)PuzzleType.Count);
+        PuzzleType pt = (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count);
         SetPuzzleType(p, pt);
     }
 
@@ -249,6 +251,8 @@ public class PuzzleManager : MonoBehaviour
 
     private HashSet<Puzzle> destroyHash = new();
 
+    private bool moveAsyncRunning = false;
+
     private enum MouseMoveDir
     {
         None = -1,
@@ -288,7 +292,8 @@ public class PuzzleManager : MonoBehaviour
         {
             CheakThreeMatchPuzzle();
         }
-        if (destroyHash.Count > 0)
+
+        if (destroyHash.Count > 0 && !moveAsyncRunning)
         {
             MoveAndFill();
         }
@@ -340,8 +345,10 @@ public class PuzzleManager : MonoBehaviour
         }
     }
 
-    private void MoveAndFill()
+    private async void MoveAndFill()
     {
+        moveAsyncRunning = true;
+
         int maxX = 0;
         int maxY = 0;
         int minX = width;
@@ -362,11 +369,12 @@ public class PuzzleManager : MonoBehaviour
         }
 
         int moveY = (maxY - minY) + 1;
-        MoveDown(minY, moveY, minX, maxX);
+        await MoveDown(minY, moveY, minX, maxX);
     }
 
-    private void MoveDown(int minY, int moveY, int minX, int maxX)
+    private async Task MoveDown(int minY, int moveY, int minX, int maxX)
     {
+        List<Task> moveTasks = new List<Task>();
         for (int y = minY; y < board.grids.GetLength(0); y++)
         {
             for (int x = minX; x <= maxX; x++)
@@ -387,17 +395,16 @@ public class PuzzleManager : MonoBehaviour
                         p.gameObject.SetActive(true);
                     }
 
-                    StartCoroutine(p.CoMove(movePos, moveSpeed));
+                    //StartCoroutine(p.CoMove(movePos, moveSpeed));
+                    //moveTasks.Add(p.Move(movePos, moveSpeed));
+                    p.Move(movePos, moveSpeed);
                 }
             }
         }
 
-        //foreach (var coroutine in moveRoutine)
-        //{
-        //    yield return coroutine;
-        //}
-
+        await Task.WhenAll(moveTasks);
         destroyHash.Clear();
+        moveAsyncRunning = false;
         //FillBlankBoard(moveY);
     }
 
@@ -499,28 +506,44 @@ public class PuzzleManager : MonoBehaviour
         MovePuzzles(currPuzzle, movePuzzle, currPos, movePos, moveSpeed, currGn, newGn);
     }
 
+    //private void MovePuzzles(Puzzle currPuzzle, Puzzle movePuzzle, Vector2 currPos, Vector2 movePos, float moveSpeed, (int, int) currGn, (int, int) newGn)
+    //{
+    //    moveCo1 = StartCoroutine(currPuzzle.CoMove(movePos, moveSpeed));
+    //    moveCo2 = StartCoroutine(movePuzzle.CoMove(currPos, moveSpeed));
+
+    //    // Wait
+    //    StartCoroutine(WaitForMoveCoroutines(currPuzzle, movePuzzle, currGn, newGn, moveCo1, moveCo2));
+    //}
+
+    //private IEnumerator WaitForMoveCoroutines(Puzzle currPuzzle, Puzzle movePuzzle, (int, int) currGn, (int, int) newGn, params Coroutine[] coroutines)
+    //{
+    //    foreach (var coroutine in coroutines)
+    //    {
+    //        yield return coroutine;
+    //    }
+
+    //    moveCo1 = null;
+    //    moveCo2 = null;
+    //    Swap(currPuzzle, movePuzzle, currGn, newGn);
+    //}
+
+    //private void Swap(Puzzle currPuzzle, Puzzle movePuzzle, (int, int) currGn, (int, int) newGn)
+    //{
+    //    currPuzzle.SetGridNum(newGn);
+    //    movePuzzle.SetGridNum(currGn);
+
+    //    board.SetPuzzle(currPuzzle, newGn);
+    //    board.SetPuzzle(movePuzzle, currGn);
+    //}
+
     private void MovePuzzles(Puzzle currPuzzle, Puzzle movePuzzle, Vector2 currPos, Vector2 movePos, float moveSpeed, (int, int) currGn, (int, int) newGn)
     {
-        moveCo1 = StartCoroutine(currPuzzle.CoMove(movePos, moveSpeed));
-        moveCo2 = StartCoroutine(movePuzzle.CoMove(currPos, moveSpeed));
-
-        // Wait
-        StartCoroutine(WaitForMoveCoroutines(currPuzzle, movePuzzle, currGn, newGn, moveCo1, moveCo2));
-    }
-
-    private IEnumerator WaitForMoveCoroutines(Puzzle currPuzzle, Puzzle movePuzzle, (int, int) currGn, (int, int) newGn, params Coroutine[] coroutines)
-    {
-        foreach (var coroutine in coroutines)
-        {
-            yield return coroutine;
-        }
-
-        moveCo1 = null;
-        moveCo2 = null;
+        currPuzzle.Move(movePos, moveSpeed);
+        movePuzzle.Move(currPos, moveSpeed);
         Swap(currPuzzle, movePuzzle, currGn, newGn);
     }
 
-     private void Swap(Puzzle currPuzzle, Puzzle movePuzzle, (int, int) currGn, (int, int) newGn)
+    private void Swap(Puzzle currPuzzle, Puzzle movePuzzle, (int, int) currGn, (int, int) newGn)
     {
         currPuzzle.SetGridNum(newGn);
         movePuzzle.SetGridNum(currGn);

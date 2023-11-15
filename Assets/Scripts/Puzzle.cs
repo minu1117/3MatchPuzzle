@@ -1,5 +1,7 @@
 using System.Collections;
 using UnityEngine;
+using DG.Tweening;
+using System.Threading.Tasks;
 
 public class Puzzle : MonoBehaviour
 {
@@ -72,6 +74,15 @@ public class Puzzle : MonoBehaviour
 
             yield return null;
         }
+    }
+
+    public void Move(Vector2 movePos, float speed)
+    {
+        //var sequence = DOTween.Sequence();
+        //sequence.Join(gameObject.transform.DOMove(movePos, speed));
+        //await sequence.Play().AsyncWaitForCompletion();
+
+        DOTween.Sequence().Join(gameObject.transform.DOMove(movePos, speed));
     }
 
     public override int GetHashCode()
