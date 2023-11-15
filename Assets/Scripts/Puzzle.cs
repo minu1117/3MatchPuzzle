@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using DG.Tweening;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 public class Puzzle : MonoBehaviour
 {
@@ -58,31 +59,12 @@ public class Puzzle : MonoBehaviour
         gameObject.transform.position = pos;
     }
 
-    public IEnumerator CoMove(Vector2 movePos, float speed)
+    public async Task Move(Vector2 movePos, float speed)
     {
-        float startTime = Time.time;
-        float journeyLength = Vector2.Distance(gameObject.transform.position, movePos);
-        float journeyFraction = 0f;
-
-        while (journeyFraction < 1.0f)
-        {
-            float distanceCovered = (Time.time - startTime) * speed;
-            journeyFraction = distanceCovered / journeyLength;
-            journeyFraction = Mathf.Clamp01(journeyFraction);
-
-            gameObject.transform.position = Vector2.Lerp(gameObject.transform.position, movePos, journeyFraction);
-
-            yield return null;
-        }
-    }
-
-    public void Move(Vector2 movePos, float speed)
-    {
-        //var sequence = DOTween.Sequence();
-        //sequence.Join(gameObject.transform.DOMove(movePos, speed));
-        //await sequence.Play().AsyncWaitForCompletion();
-
-        DOTween.Sequence().Join(gameObject.transform.DOMove(movePos, speed));
+        await DOTween.Sequence()
+            .Join(gameObject.transform.DOMove(movePos, speed))
+            .Play()
+            .AsyncWaitForCompletion();
     }
 
     public override int GetHashCode()
