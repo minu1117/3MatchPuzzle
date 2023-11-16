@@ -1,8 +1,6 @@
-using System.Collections;
 using UnityEngine;
 using DG.Tweening;
 using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
 
 public class Puzzle : MonoBehaviour
 {
@@ -17,7 +15,7 @@ public class Puzzle : MonoBehaviour
         type = pt;
     }
 
-    public void SetSprite(SpriteRenderer[] sprites)
+    public void SetSprite()
     {
         if (sr == null)
         {
@@ -25,7 +23,7 @@ public class Puzzle : MonoBehaviour
         }
 
         string tag = type.ToString().ToLower();
-        Sprite sp = FindSprite(sprites, tag);
+        Sprite sp = FindSprite(tag);
         if (sp != null)
         {
             sr.sprite = sp;
@@ -36,8 +34,9 @@ public class Puzzle : MonoBehaviour
         }
     }
 
-    private Sprite FindSprite(SpriteRenderer[] sprites, string findTag)
+    private Sprite FindSprite(string findTag)
     {
+        var sprites = LoadManager.Sprites;
         for (int i = 0; i < sprites.Length; i++)
         {
             if (sprites[i].tag.ToLower() == findTag)
@@ -83,4 +82,17 @@ public class Puzzle : MonoBehaviour
         return gridNum.Equals(other.gridNum);
     }
 
+    public void SetPuzzleType(PuzzleType pt)
+    {
+        SetType(pt);
+        SetSprite();
+    }
+
+    public Puzzle SetRandomPuzzleType()
+    {
+        PuzzleType pt = (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count);
+        SetPuzzleType(pt);
+
+        return this;
+    }
 }
