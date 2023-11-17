@@ -283,12 +283,13 @@ public class Board : MonoBehaviour
             puzzlePool.Release(p);
         }
 
-        int moveY = (maxY - minY) + 1;
-        await MoveDownAsync(minY, moveY, minX, maxX);
+        //int moveY = (maxY - minY) + 1;
+        await MoveDownAsync(maxY, minY, minX, maxX);
     }
 
-    private async Task MoveDownAsync(int minY, int moveY, int minX, int maxX)
+    private async Task MoveDownAsync(int maxY, int minY, int minX, int maxX)
     {
+        int moveY = (maxY - minY) + 1;
         List<Task> moveTasks = new();
         for (int y = minY; y < grids.GetLength(0); y++)
         {
@@ -298,11 +299,21 @@ public class Board : MonoBehaviour
                 Puzzle p = GetPuzzle((y, x));
                 Puzzle moveP = GetPuzzle((yGrid, x));
 
+                if (yGrid + 3 <= y && GetPuzzle((yGrid + 1, x)) != null)
+                {
+                    yGrid += 1;
+                    p = GetPuzzle((yGrid, x));
+                }
+
                 if (p != null && moveP == null)
                 {
+                    Debug.Log($"{y}, {yGrid}");
+
                     Vector2 movePos = GetGridPosition((yGrid, x));
+
+                    SetPuzzle(null, (p.gridNum.Item1, x));
                     p.SetGridNum(GetGridNum((yGrid, x)));
-                    SetPuzzle(null, (y, x));
+                    //SetPuzzle(null, (y, x));
                     SetPuzzle(p, (yGrid, x));
 
                     if (y < height + moveY)
