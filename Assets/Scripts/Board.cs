@@ -310,7 +310,20 @@ public class Board : MonoBehaviour
                 Puzzle p = GetPuzzle((y, x));
                 if (p == null) continue;
 
-                int yGrid = y - moveY < 0 ? 0 : y - moveY;
+                //int yGrid = y - moveY < 0 ? 0 : y - moveY;
+                int yGrid = 0;
+                for (int k = y-1; k >= 0; k--)
+                {
+                    if (GetPuzzle((k, x)) == null)
+                    {
+                        yGrid = k;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
                 Puzzle moveP = GetPuzzle((yGrid, x));
                 if (moveP == null)
                 {
