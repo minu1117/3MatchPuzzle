@@ -44,9 +44,9 @@ public class Row
             else
             {
                 pz.SetRandomPuzzleType();
+                pz.gameObject.SetActive(false);
             }
 
-            pz.gameObject.name = $"{rowIndex},{j}";
             pz.gridNum = gn;
             pz.gameObject.transform.position = board.GetGridPosition(gn);
             board.SetPuzzle(pz, gn);

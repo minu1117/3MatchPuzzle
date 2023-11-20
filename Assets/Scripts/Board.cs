@@ -108,7 +108,7 @@ public class Board : MonoBehaviour
 
     private void GetPuzzle(Puzzle p)
     {
-        p.gameObject.SetActive(true);
+        p.SetRandomPuzzleType();
     }
 
     private void OnRelease(Puzzle p)
@@ -154,12 +154,6 @@ public class Board : MonoBehaviour
 
     public Vector2 GetGridPosition((int, int) gridNum)
     {
-        //if (gridNum.Item1 >= height * 2 ||
-        //    gridNum.Item2 >= width ||
-        //    gridNum.Item1 < 0 ||
-        //    gridNum.Item2 < 0)
-        //    return null;
-
         return grids[gridNum.Item1, gridNum.Item2].Position;
     }
 
@@ -333,7 +327,7 @@ public class Board : MonoBehaviour
                     SetPuzzle(null, (y, x));
                     SetPuzzle(p, (yGrid, x));
 
-                    if (y < height + moveY)
+                    if (y < height - 1 + yGrid)
                     {
                         p.gameObject.SetActive(true);
                     }
@@ -345,24 +339,28 @@ public class Board : MonoBehaviour
 
         await Task.WhenAll(moveTasks);
 
-        //FillBlankBoard(moveY);
+        FillBlankBoard(maxY, minX, maxX+1);
         destroyHash.Clear();
         moveAsyncRunning = false;
     }
 
-    private void FillBlankBoard(int moveY)
+    private void FillBlankBoard(int startY, int startX, int endX)
     {
-        for (int y = 0; y < grids.GetLength(0); y++)
+        for (int y = startY; y < grids.GetLength(0); y++)
         {
-            for (int x = 0; x < grids.GetLength(1); x++)
+            for (int x = startX; x < endX; x++)
             {
                 if (GetPuzzle((y, x)) == null)
                 {
                     Puzzle p = puzzlePool.Get();
                     p.gridNum = (y, x);
                     p.SetPosition(GetGridPosition((y, x)));
-                    p.gameObject.SetActive(false);
                     SetPuzzle(p, (y, x));
+
+                    if (y > height)
+                    {
+                        p.gameObject.SetActive(false);
+                    }
                 }
             }
         }
