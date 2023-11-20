@@ -128,6 +128,12 @@ public class Board : MonoBehaviour
 
     public Puzzle GetPuzzle((int, int) gridNum)
     {
+        if (gridNum.Item1 >= height * 2 ||
+            gridNum.Item2 >= width ||
+            gridNum.Item1 < 0 ||
+            gridNum.Item2 < 0)
+            return null;
+
         return grids[gridNum.Item1, gridNum.Item2].Puzzle;
     }
 
@@ -148,6 +154,12 @@ public class Board : MonoBehaviour
 
     public Vector2 GetGridPosition((int, int) gridNum)
     {
+        //if (gridNum.Item1 >= height * 2 ||
+        //    gridNum.Item2 >= width ||
+        //    gridNum.Item1 < 0 ||
+        //    gridNum.Item2 < 0)
+        //    return null;
+
         return grids[gridNum.Item1, gridNum.Item2].Position;
     }
 
@@ -283,7 +295,6 @@ public class Board : MonoBehaviour
             puzzlePool.Release(p);
         }
 
-        //int moveY = (maxY - minY) + 1;
         await MoveDownAsync(maxY, minY, minX, maxX);
     }
 
@@ -291,29 +302,22 @@ public class Board : MonoBehaviour
     {
         int moveY = (maxY - minY) + 1;
         List<Task> moveTasks = new();
+
         for (int y = minY; y < grids.GetLength(0); y++)
         {
             for (int x = minX; x <= maxX; x++)
             {
-                int yGrid = y - moveY < 0 ? 0 : y - moveY;
                 Puzzle p = GetPuzzle((y, x));
+                if (p == null) continue;
+
+                int yGrid = y - moveY < 0 ? 0 : y - moveY;
                 Puzzle moveP = GetPuzzle((yGrid, x));
-
-                if (yGrid + 3 <= y && GetPuzzle((yGrid + 1, x)) != null)
+                if (moveP == null)
                 {
-                    yGrid += 1;
-                    p = GetPuzzle((yGrid, x));
-                }
-
-                if (p != null && moveP == null)
-                {
-                    Debug.Log($"{y}, {yGrid}");
-
                     Vector2 movePos = GetGridPosition((yGrid, x));
 
-                    SetPuzzle(null, (p.gridNum.Item1, x));
                     p.SetGridNum(GetGridNum((yGrid, x)));
-                    //SetPuzzle(null, (y, x));
+                    SetPuzzle(null, (y, x));
                     SetPuzzle(p, (yGrid, x));
 
                     if (y < height + moveY)
