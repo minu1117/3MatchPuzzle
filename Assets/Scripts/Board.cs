@@ -304,22 +304,15 @@ public class Board : MonoBehaviour
                 Puzzle p = GetPuzzle((y, x));
                 if (p == null) continue;
 
-                //int yGrid = y - moveY < 0 ? 0 : y - moveY;
+                // 현재 y의 가장 아래에 비어있는 y 찾기
                 int yGrid = 0;
                 for (int k = y-1; k >= 0; k--)
                 {
-                    if (GetPuzzle((k, x)) == null)
-                    {
-                        yGrid = k;
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    if (GetPuzzle((k, x)) == null) yGrid = k;
+                    else break;
                 }
 
-                Puzzle moveP = GetPuzzle((yGrid, x));
-                if (moveP == null)
+                if (GetPuzzle((yGrid, x)) == null)
                 {
                     Vector2 movePos = GetGridPosition((yGrid, x));
 
@@ -327,7 +320,7 @@ public class Board : MonoBehaviour
                     SetPuzzle(null, (y, x));
                     SetPuzzle(p, (yGrid, x));
 
-                    if (y < height - 1 + yGrid)
+                    if (yGrid < height)
                     {
                         p.gameObject.SetActive(true);
                     }
@@ -339,7 +332,7 @@ public class Board : MonoBehaviour
 
         await Task.WhenAll(moveTasks);
 
-        FillBlankBoard(maxY, minX, maxX+1);
+        FillBlankBoard(maxY, minX, maxX);
         destroyHash.Clear();
         moveAsyncRunning = false;
     }
@@ -348,12 +341,12 @@ public class Board : MonoBehaviour
     {
         for (int y = startY; y < grids.GetLength(0); y++)
         {
-            for (int x = startX; x < endX; x++)
+            for (int x = startX; x <= endX; x++)
             {
                 if (GetPuzzle((y, x)) == null)
                 {
                     Puzzle p = puzzlePool.Get();
-                    p.gridNum = (y, x);
+                    p.SetGridNum((y, x));
                     p.SetPosition(GetGridPosition((y, x)));
                     SetPuzzle(p, (y, x));
 
