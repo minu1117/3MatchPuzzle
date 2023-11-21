@@ -8,15 +8,22 @@ using UnityEngine.Pool;
 public class Board : MonoBehaviour
 {
     [SerializeField] private GameObject backgroundTilePrefab;
+    [SerializeField] private GameObject backgroundParentsObject;
+    [SerializeField] private GameObject puzzleParentsObject;
     [SerializeField] private Puzzle puzzlePrefab;
     private IObjectPool<Puzzle> puzzlePool;
+
+    private Row[] rows;
+    private Grid[,] grids;
+
     private Vector2 puzzleSpriteSize;
     public int width;
     public int height;
 
-    public Grid[,] grids;
-    public Row[] rows;
-    public int boardSize;
+    public void Start()
+    {
+        Init();
+    }
 
     public void Init()
     {
@@ -30,8 +37,6 @@ public class Board : MonoBehaviour
                 grids[h, w] = new Grid();
             }
         }
-
-        boardSize = width * height;
 
         Texture2D puzzle = puzzlePrefab.GetComponent<SpriteRenderer>().sprite.texture;
         puzzleSpriteSize = new Vector2(puzzle.width, puzzle.height);
@@ -73,7 +78,7 @@ public class Board : MonoBehaviour
 
                 if (i < height)
                 {
-                    Instantiate(backgroundTilePrefab, tilePosition, Quaternion.identity);
+                    Instantiate(backgroundTilePrefab, tilePosition, Quaternion.identity, backgroundParentsObject.transform);
                 }
                 SetGridPosition(tilePosition, (i, j));
             }
@@ -101,7 +106,7 @@ public class Board : MonoBehaviour
     // Create one puzzle
     private Puzzle CreatePuzzle()
     {
-        Puzzle p = Instantiate(puzzlePrefab);
+        Puzzle p = Instantiate(puzzlePrefab, puzzleParentsObject.transform);
         p.SetRandomPuzzleType();
         return p;
     }
@@ -164,7 +169,7 @@ public class Board : MonoBehaviour
 
     /*--------------------------------------------------------- Move -------------------------------------------------------------------*/
 
-    public float moveSpeed = 3f;
+    public float moveTime = 3f;
     private Vector2 clickStartPos;
     private Vector2 currMousePos;
     private Puzzle clickedPuzzle;
@@ -173,6 +178,8 @@ public class Board : MonoBehaviour
     private HashSet<Puzzle> destroyHash = new();
 
     private bool moveAsyncRunning = false;
+    //private MouseMoveDir saveDir = MouseMoveDir.None;
+    //private bool isNotMatch = false;
 
     private enum MouseMoveDir
     {
@@ -203,6 +210,7 @@ public class Board : MonoBehaviour
             {
                 if (dir != MouseMoveDir.None && clickedPuzzle != null)
                 {
+                    //saveDir = dir;
                     SwapPuzzles(dir);
                     isMoved = true;
                 }
@@ -264,6 +272,11 @@ public class Board : MonoBehaviour
                 }
             }
         }
+
+        //if (destroyHash.Count == 0)
+        //{
+        //    isNotMatch = true;
+        //}
     }
 
     private async void MoveAndFillAsync()
@@ -325,7 +338,7 @@ public class Board : MonoBehaviour
                         p.gameObject.SetActive(true);
                     }
 
-                    moveTasks.Add(p.Move(movePos, moveSpeed));
+                    moveTasks.Add(p.Move(movePos, moveTime));
                 }
             }
         }
@@ -390,6 +403,8 @@ public class Board : MonoBehaviour
 
     private void SwapPuzzles(MouseMoveDir dir)
     {
+        if (dir == MouseMoveDir.None) return;
+
         (int, int) currGn = clickedPuzzle.gridNum;
         (int, int) newGn = (0, 0);
 
@@ -436,21 +451,54 @@ public class Board : MonoBehaviour
         Vector2 currPos = currPuzzle.transform.position;
         Vector2 movePos = movePuzzle.transform.position;
 
-        _ = MovePuzzlesAsync(currPuzzle, movePuzzle, currPos, movePos, moveSpeed, currGn, newGn);
+        _ = MovePuzzlesAsync(currPuzzle, movePuzzle, currPos, movePos, moveTime, currGn, newGn);
     }
 
-    private async Task MovePuzzlesAsync(Puzzle currPuzzle, Puzzle movePuzzle, Vector2 currPos, Vector2 movePos, float moveSpeed, (int, int) currGn, (int, int) newGn)
+    private async Task MovePuzzlesAsync(Puzzle currPuzzle, Puzzle movePuzzle, Vector2 currPos, Vector2 movePos, float moveTime, (int, int) currGn, (int, int) newGn)
     {
         try
         {
             List<Task> taskList = new()
             {
-                currPuzzle.Move(movePos, moveSpeed),
-                movePuzzle.Move(currPos, moveSpeed)
+                currPuzzle.Move(movePos, moveTime),
+                movePuzzle.Move(currPos, moveTime)
             };
 
             await Task.WhenAll(taskList);
             Swap(currPuzzle, movePuzzle, currGn, newGn);
+
+            //CheakThreeMatchPuzzle();
+            //if (isNotMatch)
+            //{
+            //    (int, int) gn = (0, 0);
+            //    var dir = MouseMoveDir.None;
+            //    switch (saveDir)
+            //    {
+            //        case MouseMoveDir.Left:
+            //            gn = (clickedPuzzle.gridNum.Item1, clickedPuzzle.gridNum.Item2 - 1);
+            //            dir = MouseMoveDir.Right;
+            //            break;
+            //        case MouseMoveDir.Right:
+            //            gn = (clickedPuzzle.gridNum.Item1, clickedPuzzle.gridNum.Item2 + 1);
+            //            dir = MouseMoveDir.Left;
+            //            break;
+            //        case MouseMoveDir.Up:
+            //            gn = (clickedPuzzle.gridNum.Item1 + 1, clickedPuzzle.gridNum.Item2);
+            //            dir = MouseMoveDir.Down;
+            //            break;
+            //        case MouseMoveDir.Down:
+            //            gn = (clickedPuzzle.gridNum.Item1 - 1, clickedPuzzle.gridNum.Item2);
+            //            dir = MouseMoveDir.Up;
+            //            break;
+            //    }
+
+            //    Debug.Log($"{clickedPuzzle.gridNum}, {gn}");
+            //    clickedPuzzle = GetPuzzle(gn);
+            //    SwapPuzzles(dir);
+            //    clickedPuzzle = null;
+            //    isMoved = false;
+            //    isNotMatch = false;
+            //}
         }
         catch (Exception ex)
         {

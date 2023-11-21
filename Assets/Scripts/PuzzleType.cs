@@ -5,5 +5,6 @@ public enum PuzzleType
     Blue,
     Green,
     Red,
+    Orange,
     Count
 }

@@ -22,8 +22,7 @@ public class Puzzle : MonoBehaviour
             sr = GetComponent<SpriteRenderer>();
         }
 
-        string tag = type.ToString().ToLower();
-        Sprite sp = FindSprite(tag);
+        Sprite sp = FindSprite();
         if (sp != null)
         {
             sr.sprite = sp;
@@ -34,12 +33,12 @@ public class Puzzle : MonoBehaviour
         }
     }
 
-    private Sprite FindSprite(string findTag)
+    private Sprite FindSprite()
     {
         var sprites = LoadManager.Sprites;
         for (int i = 0; i < sprites.Length; i++)
         {
-            if (sprites[i].tag.ToLower() == findTag)
+            if (sprites[i].type == type)
             {
                 return sprites[i].sprite;
             }

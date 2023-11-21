@@ -4,5 +4,5 @@ using UnityEngine;
 public class SpriteObject : ScriptableObject
 {
     public Sprite sprite;
-    public string tag;
+    public PuzzleType type;
 }
