@@ -1,14 +1,24 @@
 using UnityEngine;
 using DG.Tweening;
 using System.Threading.Tasks;
+using UnityEngine.UI;
 
 public class Puzzle : MonoBehaviour
 {
-    private SpriteRenderer sr;
+    //private SpriteRenderer sr;
+    private Image sr;
     public bool isConnected = false;
     public bool isMatched = false;
     public PuzzleType type = PuzzleType.None;
     public (int, int) gridNum;
+    public RectTransform RectTransform { get; private set; }
+    public Button btn;
+
+    public void Awake()
+    {
+        RectTransform = GetComponent<RectTransform>();
+        btn = GetComponent<Button>();
+    }
 
     public void SetType(PuzzleType pt)
     {
@@ -19,7 +29,8 @@ public class Puzzle : MonoBehaviour
     {
         if (sr == null)
         {
-            sr = GetComponent<SpriteRenderer>();
+            //sr = GetComponent<SpriteRenderer>();
+            sr = GetComponent<Image>();
         }
 
         Sprite sp = FindSprite();

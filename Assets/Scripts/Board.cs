@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.UI;
 
 public class Board : MonoBehaviour
 {
-    [SerializeField] private GameObject backgroundTilePrefab;
-    [SerializeField] private GameObject backgroundParentsObject;
+    [SerializeField] private BackgroundTile backgroundTilePrefab;
+    //[SerializeField] private GameObject backgroundParentsObject;
+    [SerializeField] private GridLayoutGroup backgroundParentsObject;
     [SerializeField] private GameObject puzzleParentsObject;
     [SerializeField] private Puzzle puzzlePrefab;
     private IObjectPool<Puzzle> puzzlePool;
@@ -38,8 +40,8 @@ public class Board : MonoBehaviour
             }
         }
 
-        Texture2D puzzle = puzzlePrefab.GetComponent<SpriteRenderer>().sprite.texture;
-        puzzleSpriteSize = new Vector2(puzzle.width, puzzle.height);
+        //Texture2D puzzle = puzzlePrefab.GetComponent<SpriteRenderer>().sprite.texture;
+        //puzzleSpriteSize = new Vector2(puzzle.width, puzzle.height);
         puzzlePool = new ObjectPool<Puzzle>(
             CreatePuzzle,
             GetPuzzle,
@@ -48,50 +50,82 @@ public class Board : MonoBehaviour
             maxSize: width * (height * 3)
             );
 
-        CreateBackgroundTiles(width, height);
-        StartCoroutine(CoCreateAllPuzzles(width, height));
+        //CreateBackgroundTiles(width, height);
+        StartCoroutine(CreateBackgroundTiles(width, height));
+        //StartCoroutine(CoCreateAllPuzzles(width, height));
     }
 
-    private void CreateBackgroundTiles(int width, int height)
+    //private void CreateBackgroundTiles(int width, int height)
+    //{
+    //    if (width == 0 || height == 0)
+    //        return;
+
+    //    SpriteRenderer sprite = backgroundTilePrefab.GetComponent<SpriteRenderer>();
+    //    Vector2 tileSize = GetSpriteBounds(sprite);
+
+    //    /*
+    //     Create order
+    //     width : i
+    //     height : j
+    //     7 8 9 
+    //     4 5 6 
+    //     1 2 3
+    //    */
+    //    for (int i = 0; i < height * 2; i++)
+    //    {
+    //        for (int j = 0; j < width; j++)
+    //        {
+    //            float posX = j * tileSize.x;
+    //            float posY = i * tileSize.y;
+    //            Vector2 tilePosition = new Vector2(posX, posY);
+
+    //            if (i < height)
+    //            {
+    //                Instantiate(backgroundTilePrefab, tilePosition, Quaternion.identity, backgroundParentsObject.transform);
+    //            }
+    //            SetGridPosition(tilePosition, (i, j));
+    //        }
+    //    }
+    //}
+
+    private IEnumerator CreateBackgroundTiles(int width, int height)
     {
         if (width == 0 || height == 0)
-            return;
+            yield break;
 
-        SpriteRenderer sprite = backgroundTilePrefab.GetComponent<SpriteRenderer>();
-        Vector2 tileSize = GetSpriteBounds(sprite);
-
-        /*
-         Create order
-         width : i
-         height : j
-         7 8 9 
-         4 5 6 
-         1 2 3
-        */
         for (int i = 0; i < height * 2; i++)
         {
             for (int j = 0; j < width; j++)
             {
-                float posX = j * tileSize.x;
-                float posY = i * tileSize.y;
-                Vector2 tilePosition = new Vector2(posX, posY);
-
                 if (i < height)
                 {
-                    Instantiate(backgroundTilePrefab, tilePosition, Quaternion.identity, backgroundParentsObject.transform);
+                    var obj = Instantiate(backgroundTilePrefab, backgroundParentsObject.transform);
+                    obj.X = j;
+                    obj.Y = i;
                 }
-                SetGridPosition(tilePosition, (i, j));
+
+                yield return null;
             }
         }
+
+        for (int i = 0; i < backgroundParentsObject.transform.childCount; i++)
+        {
+            var obj = backgroundParentsObject.transform.GetChild(i).GetComponent<BackgroundTile>();
+            SetGridPosition(obj.RectTransform.localPosition, (obj.Y, obj.X));
+
+            yield return null;
+        }
+
+        StartCoroutine(CoCreateAllPuzzles(width, height));
     }
 
-    private Vector2 GetSpriteBounds(SpriteRenderer sprite)
-    {
-        float width = sprite.bounds.size.x;
-        float height = sprite.bounds.size.y;
+    //private Vector2 GetSpriteBounds(SpriteRenderer sprite)
+    //{
+    //    float width = sprite.bounds.size.x;
+    //    float height = sprite.bounds.size.y;
 
-        return new Vector2(width, height);
-    }
+    //    return new Vector2(width, height);
+    //}
 
     // Create all puzzles
     private IEnumerator CoCreateAllPuzzles(int width, int height)
@@ -152,7 +186,7 @@ public class Board : MonoBehaviour
         grids[gridNum.Item1, gridNum.Item2].GridNum = gridNum;
     }
 
-    public void SetGridPosition(Vector3 pos, (int, int) gridNum)
+    public void SetGridPosition(Vector2 pos, (int, int) gridNum)
     {
         grids[gridNum.Item1, gridNum.Item2].Position = pos;
     }
@@ -385,7 +419,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    private Puzzle GetClickedPuzzle(Vector3 worldPos)
+    private Puzzle GetClickedPuzzle(Vector2 worldPos)
     {
         Puzzle puzzle = null;
 

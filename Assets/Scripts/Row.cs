@@ -48,7 +48,8 @@ public class Row
             }
 
             pz.gridNum = gn;
-            pz.gameObject.transform.position = board.GetGridPosition(gn);
+            //pz.gameObject.transform.position = board.GetGridPosition(gn);
+            pz.RectTransform.localPosition = board.GetGridPosition(gn);
             board.SetPuzzle(pz, gn);
             board.SetGridNum(gn);
         }
