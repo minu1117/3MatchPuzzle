@@ -9,7 +9,6 @@ using UnityEngine.UI;
 public class Board : MonoBehaviour
 {
     [SerializeField] private BackgroundTile backgroundTilePrefab;
-    //[SerializeField] private GameObject backgroundParentsObject;
     [SerializeField] private GridLayoutGroup backgroundParentsObject;
     [SerializeField] private GameObject puzzleParentsObject;
     [SerializeField] private Puzzle puzzlePrefab;
@@ -40,8 +39,6 @@ public class Board : MonoBehaviour
             }
         }
 
-        //Texture2D puzzle = puzzlePrefab.GetComponent<SpriteRenderer>().sprite.texture;
-        //puzzleSpriteSize = new Vector2(puzzle.width, puzzle.height);
         puzzlePool = new ObjectPool<Puzzle>(
             CreatePuzzle,
             GetPuzzle,
@@ -50,43 +47,8 @@ public class Board : MonoBehaviour
             maxSize: width * (height * 3)
             );
 
-        //CreateBackgroundTiles(width, height);
         StartCoroutine(CreateBackgroundTiles(width, height));
-        //StartCoroutine(CoCreateAllPuzzles(width, height));
     }
-
-    //private void CreateBackgroundTiles(int width, int height)
-    //{
-    //    if (width == 0 || height == 0)
-    //        return;
-
-    //    SpriteRenderer sprite = backgroundTilePrefab.GetComponent<SpriteRenderer>();
-    //    Vector2 tileSize = GetSpriteBounds(sprite);
-
-    //    /*
-    //     Create order
-    //     width : i
-    //     height : j
-    //     7 8 9 
-    //     4 5 6 
-    //     1 2 3
-    //    */
-    //    for (int i = 0; i < height * 2; i++)
-    //    {
-    //        for (int j = 0; j < width; j++)
-    //        {
-    //            float posX = j * tileSize.x;
-    //            float posY = i * tileSize.y;
-    //            Vector2 tilePosition = new Vector2(posX, posY);
-
-    //            if (i < height)
-    //            {
-    //                Instantiate(backgroundTilePrefab, tilePosition, Quaternion.identity, backgroundParentsObject.transform);
-    //            }
-    //            SetGridPosition(tilePosition, (i, j));
-    //        }
-    //    }
-    //}
 
     private IEnumerator CreateBackgroundTiles(int width, int height)
     {
@@ -99,6 +61,7 @@ public class Board : MonoBehaviour
             {
                 if (i < height)
                 {
+                    // GridLayout Group 내부에 Instantiate (위치 자동 지정)
                     var obj = Instantiate(backgroundTilePrefab, backgroundParentsObject.transform);
                     obj.X = j;
                     obj.Y = i;
@@ -108,24 +71,37 @@ public class Board : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < backgroundParentsObject.transform.childCount; i++)
-        {
-            var obj = backgroundParentsObject.transform.GetChild(i).GetComponent<BackgroundTile>();
-            SetGridPosition(obj.RectTransform.localPosition, (obj.Y, obj.X));
+        // 첫 위치, 셀 사이즈, 간격 값
+        Vector2 startPosition = backgroundParentsObject.transform.GetChild(0).GetComponent<BackgroundTile>().RectTransform.localPosition;
+        Vector2 cellSize = backgroundParentsObject.cellSize;
+        Vector2 spacing = backgroundParentsObject.spacing;
 
-            yield return null;
+        // X, Y 간격 계산
+        float objectIntervalX = cellSize.x + spacing.x;
+        float objectIntervalY = cellSize.y + spacing.y;
+
+        for (int y = 0; y < height * 2; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                // y와 x가 늘어날 때 마다 값 더해서 위치 선정
+                Vector2 pos = startPosition;
+                if (y > 0)
+                {
+                    pos.y += objectIntervalY * y;
+                }
+                if (x > 0)
+                {
+                    pos.x += objectIntervalX * x;
+                }
+
+                SetGridPosition(pos, (y,x));
+                yield return null;
+            }
         }
 
         StartCoroutine(CoCreateAllPuzzles(width, height));
     }
-
-    //private Vector2 GetSpriteBounds(SpriteRenderer sprite)
-    //{
-    //    float width = sprite.bounds.size.x;
-    //    float height = sprite.bounds.size.y;
-
-    //    return new Vector2(width, height);
-    //}
 
     // Create all puzzles
     private IEnumerator CoCreateAllPuzzles(int width, int height)
@@ -142,6 +118,8 @@ public class Board : MonoBehaviour
     {
         Puzzle p = Instantiate(puzzlePrefab, puzzleParentsObject.transform);
         p.SetRandomPuzzleType();
+        p.AddPointerDownEventTrigger(SetClickedPuzzle);
+        p.AddDragEventTrigger(Swap);
         return p;
     }
 
@@ -203,54 +181,28 @@ public class Board : MonoBehaviour
 
     /*--------------------------------------------------------- Move -------------------------------------------------------------------*/
 
-    public float moveTime = 3f;
+    public float moveTime;
     private Vector2 clickStartPos;
     private Vector2 currMousePos;
     private Puzzle clickedPuzzle;
     private bool isMoved = false;
-
     private HashSet<Puzzle> destroyHash = new();
-
     private bool moveAsyncRunning = false;
-    //private MouseMoveDir saveDir = MouseMoveDir.None;
-    //private bool isNotMatch = false;
 
     private enum MouseMoveDir
     {
-        None = -1,
-        Left = 0,
-        Right = 1,
-        Up = 2,
-        Down = 3,
+        None    = -1,
+
+        Left    = 0,
+        Right   = 1,
+        Up      = 2,
+        Down    = 3,
+
+        Count,
     }
 
     public void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            clickStartPos = Input.mousePosition;
-            Vector2 worldPos = Camera.main.ScreenToWorldPoint(new Vector2(clickStartPos.x, clickStartPos.y));
-            clickedPuzzle = GetClickedPuzzle(worldPos);
-
-            isMoved = false;
-        }
-        else if (Input.GetMouseButton(0))
-        {
-            currMousePos = Input.mousePosition;
-            Vector2 moveDir = currMousePos - clickStartPos;
-            MouseMoveDir dir = CalcMouseMoveDirection(moveDir);
-
-            if (!isMoved)
-            {
-                if (dir != MouseMoveDir.None && clickedPuzzle != null)
-                {
-                    //saveDir = dir;
-                    SwapPuzzles(dir);
-                    isMoved = true;
-                }
-            }
-        }
-
         if (destroyHash.Count == 0)
         {
             CheakThreeMatchPuzzle();
@@ -306,11 +258,6 @@ public class Board : MonoBehaviour
                 }
             }
         }
-
-        //if (destroyHash.Count == 0)
-        //{
-        //    isNotMatch = true;
-        //}
     }
 
     private async void MoveAndFillAsync()
@@ -419,7 +366,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    private Puzzle GetClickedPuzzle(Vector2 worldPos)
+    public Puzzle GetClickedPuzzle(Vector2 worldPos)
     {
         Puzzle puzzle = null;
 
@@ -433,6 +380,30 @@ public class Board : MonoBehaviour
         }
 
         return puzzle;
+    }
+
+    public void SetClickedPuzzle(Puzzle p)
+    {
+        clickedPuzzle = p;
+        clickStartPos = Input.mousePosition;
+        isMoved = false;
+    }
+
+    public void Swap()
+    {
+        currMousePos = Input.mousePosition;
+        Vector2 moveDir = currMousePos - clickStartPos;
+        MouseMoveDir dir = CalcMouseMoveDirection(moveDir);
+
+        if (!isMoved)
+        {
+            if (dir != MouseMoveDir.None && clickedPuzzle != null)
+            {
+                Debug.Log(dir.ToString());
+                SwapPuzzles(dir);
+                isMoved = true;
+            }
+        }
     }
 
     private void SwapPuzzles(MouseMoveDir dir)
@@ -482,8 +453,8 @@ public class Board : MonoBehaviour
 
         Puzzle currPuzzle = GetPuzzle(currGn);
         Puzzle movePuzzle = GetPuzzle(newGn);
-        Vector2 currPos = currPuzzle.transform.position;
-        Vector2 movePos = movePuzzle.transform.position;
+        Vector2 currPos = currPuzzle.transform.localPosition;
+        Vector2 movePos = movePuzzle.transform.localPosition;
 
         _ = MovePuzzlesAsync(currPuzzle, movePuzzle, currPos, movePos, moveTime, currGn, newGn);
     }

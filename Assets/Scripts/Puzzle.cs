@@ -2,6 +2,8 @@ using UnityEngine;
 using DG.Tweening;
 using System.Threading.Tasks;
 using UnityEngine.UI;
+using System;
+using UnityEngine.EventSystems;
 
 public class Puzzle : MonoBehaviour
 {
@@ -12,12 +14,34 @@ public class Puzzle : MonoBehaviour
     public PuzzleType type = PuzzleType.None;
     public (int, int) gridNum;
     public RectTransform RectTransform { get; private set; }
-    public Button btn;
+    private EventTrigger eventTrigger;
 
     public void Awake()
     {
         RectTransform = GetComponent<RectTransform>();
-        btn = GetComponent<Button>();
+        eventTrigger = GetComponent<EventTrigger>();
+    }
+
+    public void AddPointerDownEventTrigger(Action<Puzzle> action)
+    {
+        EventTrigger.Entry entry = new()
+        {
+            eventID = EventTriggerType.PointerDown
+        };
+
+        entry.callback.AddListener((eventData) => { action(this); });
+        eventTrigger.triggers.Add(entry);
+    }
+
+    public void AddDragEventTrigger(Action action)
+    {
+        EventTrigger.Entry entry = new()
+        {
+            eventID = EventTriggerType.Drag
+        };
+
+        entry.callback.AddListener((eventData) => { action(); });
+        eventTrigger.triggers.Add(entry);
     }
 
     public void SetType(PuzzleType pt)
@@ -29,7 +53,6 @@ public class Puzzle : MonoBehaviour
     {
         if (sr == null)
         {
-            //sr = GetComponent<SpriteRenderer>();
             sr = GetComponent<Image>();
         }
 
@@ -65,14 +88,13 @@ public class Puzzle : MonoBehaviour
 
     public void SetPosition(Vector2 pos)
     {
-        gameObject.transform.position = pos;
+        gameObject.transform.localPosition = pos;
     }
 
     public async Task Move(Vector2 movePos, float speed)
     {
         await DOTween.Sequence()
-            .Join(gameObject.transform.DOMove(movePos, speed))
-            .Play()
+            .Join(gameObject.transform.DOLocalMove(movePos, speed))
             .AsyncWaitForCompletion();
     }
 
