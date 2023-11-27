@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 using UnityEngine.Pool;
 using UnityEngine.UI;
 
@@ -210,6 +211,11 @@ public class Board : MonoBehaviour
         {
             MoveAndFillAsync();
         }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            Mix();
+        }
     }
 
     private void CheakThreeMatchPuzzle()
@@ -357,6 +363,9 @@ public class Board : MonoBehaviour
     {
         if (p1 != null && p2 != null && p3 != null)
         {
+            if (p1.type == PuzzleType.None || p2.type == PuzzleType.None || p3.type == PuzzleType.None)
+                return;
+
             if (p1.type == p2.type && p1.type == p3.type)
             {
                 p1.isMatched = true;
@@ -364,22 +373,6 @@ public class Board : MonoBehaviour
                 p3.isMatched = true;
             }
         }
-    }
-
-    public Puzzle GetClickedPuzzle(Vector2 worldPos)
-    {
-        Puzzle puzzle = null;
-
-        RaycastHit2D hit = Physics2D.Raycast(worldPos, Vector2.zero);
-        if (hit.collider != null)
-        {
-            if (hit.collider.gameObject.TryGetComponent(out puzzle))
-            {
-                return puzzle;
-            }
-        }
-
-        return puzzle;
     }
 
     public void SetClickedPuzzle(Puzzle p)
@@ -400,7 +393,6 @@ public class Board : MonoBehaviour
         {
             if (dir != MouseMoveDir.None && clickedPuzzle != null)
             {
-                Debug.Log(dir.ToString());
                 SwapPuzzles(dir);
                 isMoved = true;
             }
@@ -409,7 +401,8 @@ public class Board : MonoBehaviour
 
     private void SwapPuzzles(MouseMoveDir dir)
     {
-        if (dir == MouseMoveDir.None) return;
+        if (dir == MouseMoveDir.None) 
+            return;
 
         (int, int) currGn = clickedPuzzle.gridNum;
         (int, int) newGn = (0, 0);
@@ -557,5 +550,17 @@ public class Board : MonoBehaviour
         }
 
         return dir;
+    }
+
+    private void Mix()
+    {
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                var puzzle = GetPuzzle((y, x));
+                puzzle.SetRandomPuzzleType();
+            }
+        }
     }
 }

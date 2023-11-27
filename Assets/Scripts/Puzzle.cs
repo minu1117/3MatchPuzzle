@@ -98,6 +98,20 @@ public class Puzzle : MonoBehaviour
             .AsyncWaitForCompletion();
     }
 
+    public void SetPuzzleType(PuzzleType pt)
+    {
+        SetType(pt);
+        SetSprite();
+    }
+
+    public Puzzle SetRandomPuzzleType()
+    {
+        PuzzleType pt = (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count);
+        SetPuzzleType(pt);
+
+        return this;
+    }
+
     public override int GetHashCode()
     {
         return base.GetHashCode();
@@ -112,19 +126,5 @@ public class Puzzle : MonoBehaviour
 
         Puzzle other = (Puzzle)obj;
         return gridNum.Equals(other.gridNum);
-    }
-
-    public void SetPuzzleType(PuzzleType pt)
-    {
-        SetType(pt);
-        SetSprite();
-    }
-
-    public Puzzle SetRandomPuzzleType()
-    {
-        PuzzleType pt = (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count);
-        SetPuzzleType(pt);
-
-        return this;
     }
 }

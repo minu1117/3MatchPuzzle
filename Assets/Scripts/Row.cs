@@ -17,29 +17,15 @@ public class Row
         if (width == 0 || height == 0)
             return;
 
-        for (int j = 0; j < width; j++)
+        for (int x = 0; x < width; x++)
         {
             Puzzle pz = puzzlePool.Get();
-            (int, int) gn = (rowIndex, j);
+            (int, int) gn = (rowIndex, x);
 
             if (rowIndex < height)
             {
-                board.SetPuzzle(pz, (rowIndex, j));
-                Puzzle lp = null;
-                Puzzle bp = null;
-
-                if (j > 0)
-                {
-                    lp = board.GetPuzzle((rowIndex, j - 1));
-                }
-                if (rowIndex > 0)
-                {
-                    bp = board.GetPuzzle((rowIndex - 1, j));
-                }
-
-                // 왼쪽, 아래 타입 검사 후 매치되지 않는 퍼즐로 변경
-                SetNotDuplicationPuzzleType(pz, lp, bp);
-                SetNotDuplicationPuzzleType(pz, bp, lp);
+                board.SetPuzzle(pz, (rowIndex, x));
+                SetDuplicationPuzzle(board, pz, x, rowIndex);
             }
             else
             {
@@ -48,7 +34,6 @@ public class Row
             }
 
             pz.gridNum = gn;
-            //pz.gameObject.transform.position = board.GetGridPosition(gn);
             pz.RectTransform.localPosition = board.GetGridPosition(gn);
             board.SetPuzzle(pz, gn);
             board.SetGridNum(gn);
@@ -86,7 +71,6 @@ public class Row
     private PuzzleType CheckAndSetPuzzleType(Puzzle p, PuzzleType pt, Puzzle cheakP, PuzzleType cheakPType, PuzzleType prevPType)
     {
         PuzzleType newPt = pt;
-
         if (newPt == cheakPType)
         {
             if (cheakP.isConnected && !p.isConnected || newPt == prevPType)
@@ -101,5 +85,24 @@ public class Row
         }
 
         return newPt;
+    }
+
+    public void SetDuplicationPuzzle(Board board, Puzzle pz, int x, int y)
+    {
+        Puzzle lp = null;
+        Puzzle bp = null;
+
+        if (x > 0)
+        {
+            lp = board.GetPuzzle((y, x - 1));
+        }
+        if (y > 0)
+        {
+            bp = board.GetPuzzle((y - 1, x));
+        }
+
+        // 왼쪽, 아래 타입 검사 후 매치되지 않는 퍼즐로 변경
+        SetNotDuplicationPuzzleType(pz, lp, bp);
+        SetNotDuplicationPuzzleType(pz, bp, lp);
     }
 }
