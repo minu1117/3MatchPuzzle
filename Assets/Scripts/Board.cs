@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class Board : MonoBehaviour
 {
-    [SerializeField] private BackgroundTile backgroundTilePrefab;
+    [SerializeField] private GameObject backgroundTilePrefab;
     [SerializeField] private GridLayoutGroup backgroundParentsObject;
     [SerializeField] private GameObject puzzleParentsObject;
     [SerializeField] private Puzzle puzzlePrefab;
@@ -62,9 +62,7 @@ public class Board : MonoBehaviour
                 if (i < height)
                 {
                     // GridLayout Group 내부에 Instantiate (위치 자동 지정)
-                    var obj = Instantiate(backgroundTilePrefab, backgroundParentsObject.transform);
-                    obj.X = j;
-                    obj.Y = i;
+                    Instantiate(backgroundTilePrefab, backgroundParentsObject.transform);
                 }
 
                 yield return null;
@@ -72,7 +70,7 @@ public class Board : MonoBehaviour
         }
 
         // 첫 위치, 셀 사이즈, 간격 값
-        Vector2 startPosition = backgroundParentsObject.transform.GetChild(0).GetComponent<BackgroundTile>().RectTransform.localPosition;
+        Vector2 startPosition = backgroundParentsObject.transform.GetChild(0).GetComponent<RectTransform>().localPosition;
         Vector2 cellSize = backgroundParentsObject.cellSize;
         Vector2 spacing = backgroundParentsObject.spacing;
 
@@ -96,7 +94,6 @@ public class Board : MonoBehaviour
                 }
 
                 SetGridPosition(pos, (y,x));
-                yield return null;
             }
         }
 
@@ -188,6 +185,7 @@ public class Board : MonoBehaviour
     private bool isMoved = false;
     private HashSet<Puzzle> destroyHash = new();
     private bool moveAsyncRunning = false;
+    private MouseMoveDir saveDir;
 
     private enum MouseMoveDir
     {
@@ -302,8 +300,10 @@ public class Board : MonoBehaviour
                 int yGrid = 0;
                 for (int k = y-1; k >= 0; k--)
                 {
-                    if (GetPuzzle((k, x)) == null) yGrid = k;
-                    else break;
+                    if (GetPuzzle((k, x)) == null) 
+                        yGrid = k;
+                    else 
+                        break;
                 }
 
                 if (GetPuzzle((yGrid, x)) == null)
@@ -394,6 +394,7 @@ public class Board : MonoBehaviour
         currMousePos = Input.mousePosition;
         Vector2 moveDir = currMousePos - clickStartPos;
         MouseMoveDir dir = CalcMouseMoveDirection(moveDir);
+        saveDir = dir;
 
         if (!isMoved)
         {
@@ -472,38 +473,30 @@ public class Board : MonoBehaviour
             await Task.WhenAll(taskList);
             Swap(currPuzzle, movePuzzle, currGn, newGn);
 
-            //CheakThreeMatchPuzzle();
-            //if (isNotMatch)
-            //{
-            //    (int, int) gn = (0, 0);
-            //    var dir = MouseMoveDir.None;
-            //    switch (saveDir)
-            //    {
-            //        case MouseMoveDir.Left:
-            //            gn = (clickedPuzzle.gridNum.Item1, clickedPuzzle.gridNum.Item2 - 1);
-            //            dir = MouseMoveDir.Right;
-            //            break;
-            //        case MouseMoveDir.Right:
-            //            gn = (clickedPuzzle.gridNum.Item1, clickedPuzzle.gridNum.Item2 + 1);
-            //            dir = MouseMoveDir.Left;
-            //            break;
-            //        case MouseMoveDir.Up:
-            //            gn = (clickedPuzzle.gridNum.Item1 + 1, clickedPuzzle.gridNum.Item2);
-            //            dir = MouseMoveDir.Down;
-            //            break;
-            //        case MouseMoveDir.Down:
-            //            gn = (clickedPuzzle.gridNum.Item1 - 1, clickedPuzzle.gridNum.Item2);
-            //            dir = MouseMoveDir.Up;
-            //            break;
-            //    }
+            CheakThreeMatchPuzzle();
+            if (destroyHash.Count == 0 && isMoved)
+            {
+                var dir = MouseMoveDir.None;
+                switch (saveDir)
+                {
+                    case MouseMoveDir.Left:
+                        dir = MouseMoveDir.Right;
+                        break;
+                    case MouseMoveDir.Right:
+                        dir = MouseMoveDir.Left;
+                        break;
+                    case MouseMoveDir.Up:
+                        dir = MouseMoveDir.Down;
+                        break;
+                    case MouseMoveDir.Down:
+                        dir = MouseMoveDir.Up;
+                        break;
+                }
 
-            //    Debug.Log($"{clickedPuzzle.gridNum}, {gn}");
-            //    clickedPuzzle = GetPuzzle(gn);
-            //    SwapPuzzles(dir);
-            //    clickedPuzzle = null;
-            //    isMoved = false;
-            //    isNotMatch = false;
-            //}
+                isMoved = false;
+                SwapPuzzles(dir);
+                clickedPuzzle = null;
+            }
         }
         catch (Exception ex)
         {

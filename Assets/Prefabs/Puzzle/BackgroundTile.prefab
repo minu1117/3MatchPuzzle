@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6922836373860089057}
   - component: {fileID: 7549895488834297174}
   - component: {fileID: 6446561350729159903}
-  - component: {fileID: 5858277138535719235}
   m_Layer: 5
   m_Name: BackgroundTile
   m_TagString: Untagged
@@ -36,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7549895488834297174
 CanvasRenderer:
@@ -76,15 +75,3 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5858277138535719235
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4836776147292935738}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ddbc884b5d724ad48aae61e733e12b71, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
