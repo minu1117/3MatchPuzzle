@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.Pool;
@@ -130,7 +131,7 @@ public class Board : MonoBehaviour
     {
         p.isConnected = false;
         p.isMatched = false;
-        (int, int) gn = p.gridNum;
+        (int, int) gn = p.GridNum;
 
         SetPuzzle(null, (gn.Item1, gn.Item2));
         p.gameObject.SetActive(false);
@@ -277,8 +278,8 @@ public class Board : MonoBehaviour
             if (!p.gameObject.activeSelf)
                 continue;
 
-            int y = p.gridNum.Item1;
-            int x = p.gridNum.Item2;
+            int y = p.GridNum.Item1;
+            int x = p.GridNum.Item2;
             minY = minY > y ? y : minY;
             maxY = maxY < y ? y : maxY;
             minX = minX > x ? x : minX;
@@ -316,7 +317,7 @@ public class Board : MonoBehaviour
                 {
                     Vector2 movePos = GetGridPosition((yGrid, x));
 
-                    p.SetGridNum(GetGridNum((yGrid, x)));
+                    p.GridNum = GetGridNum((yGrid, x));
                     SetPuzzle(null, (y, x));
                     SetPuzzle(p, (yGrid, x));
 
@@ -346,7 +347,7 @@ public class Board : MonoBehaviour
                 if (GetPuzzle((y, x)) == null)
                 {
                     Puzzle p = puzzlePool.Get();
-                    p.SetGridNum((y, x));
+                    p.GridNum = GetGridNum((y, x));
                     p.SetPosition(GetGridPosition((y, x)));
                     SetPuzzle(p, (y, x));
 
@@ -404,7 +405,7 @@ public class Board : MonoBehaviour
         if (dir == MouseMoveDir.None) 
             return;
 
-        (int, int) currGn = clickedPuzzle.gridNum;
+        (int, int) currGn = clickedPuzzle.GridNum;
         (int, int) newGn = (0, 0);
 
         bool gridSet = false;
@@ -499,8 +500,8 @@ public class Board : MonoBehaviour
 
     private void Swap(Puzzle currPuzzle, Puzzle movePuzzle, (int, int) currGn, (int, int) newGn)
     {
-        currPuzzle.SetGridNum(newGn);
-        movePuzzle.SetGridNum(currGn);
+        currPuzzle.GridNum = newGn;
+        movePuzzle.GridNum = currGn;
 
         SetPuzzle(currPuzzle, newGn);
         SetPuzzle(movePuzzle, currGn);

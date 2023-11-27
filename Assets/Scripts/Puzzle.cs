@@ -7,13 +7,13 @@ using UnityEngine.EventSystems;
 
 public class Puzzle : MonoBehaviour
 {
-    //private SpriteRenderer sr;
-    private Image sr;
     public bool isConnected = false;
     public bool isMatched = false;
-    public PuzzleType type = PuzzleType.None;
-    public (int, int) gridNum;
     public RectTransform RectTransform { get; private set; }
+    public (int, int) GridNum { get; set; }
+    public PuzzleType type = PuzzleType.None;
+
+    private Image sr;
     private EventTrigger eventTrigger;
 
     public void Awake()
@@ -44,12 +44,7 @@ public class Puzzle : MonoBehaviour
         eventTrigger.triggers.Add(entry);
     }
 
-    public void SetType(PuzzleType pt)
-    {
-        type = pt;
-    }
-
-    public void SetSprite()
+    private void SetSprite()
     {
         if (sr == null)
         {
@@ -81,11 +76,6 @@ public class Puzzle : MonoBehaviour
         return null;
     }
 
-    public void SetGridNum((int, int) gn)
-    {
-        gridNum = gn;
-    }
-
     public void SetPosition(Vector2 pos)
     {
         gameObject.transform.localPosition = pos;
@@ -100,7 +90,7 @@ public class Puzzle : MonoBehaviour
 
     public void SetPuzzleType(PuzzleType pt)
     {
-        SetType(pt);
+        type = pt;
         SetSprite();
     }
 
@@ -125,6 +115,6 @@ public class Puzzle : MonoBehaviour
         }
 
         Puzzle other = (Puzzle)obj;
-        return gridNum.Equals(other.gridNum);
+        return GridNum.Equals(other.GridNum);
     }
 }
