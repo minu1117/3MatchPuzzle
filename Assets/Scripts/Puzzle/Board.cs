@@ -2,9 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
 using UnityEngine.Pool;
 using UnityEngine.UI;
 
@@ -185,9 +183,11 @@ public class Board : MonoBehaviour
     private Vector2 currMousePos;
     private Puzzle clickedPuzzle;
     private bool isMoved = false;
-    private HashSet<Puzzle> destroyHash = new();
+    private readonly HashSet<Puzzle> destroyHash = new();
     private bool moveAsyncRunning = false;
     private MouseMoveDir saveDir;
+
+    private bool allowClick = true;
 
     private enum MouseMoveDir
     {
@@ -263,6 +263,8 @@ public class Board : MonoBehaviour
                 }
             }
         }
+
+        // 여기서 하는게 맞는거 같은데
     }
 
     private async void MoveAndFillAsync()
@@ -378,24 +380,28 @@ public class Board : MonoBehaviour
 
     public void SetClickedPuzzle(Puzzle p)
     {
-        clickedPuzzle = p;
-        clickStartPos = Input.mousePosition;
-        isMoved = false;
+        if (allowClick && !moveAsyncRunning)
+        {
+            clickedPuzzle = p;
+            clickStartPos = Input.mousePosition;
+            isMoved = false;
+            allowClick = false;
+        }
     }
 
     public void Swap()
     {
-        currMousePos = Input.mousePosition;
-        Vector2 moveDir = currMousePos - clickStartPos;
-        MouseMoveDir dir = CalcMouseMoveDirection(moveDir);
-        saveDir = dir;
-
         if (!isMoved)
         {
+            currMousePos = Input.mousePosition;
+            Vector2 moveDir = currMousePos - clickStartPos;
+            MouseMoveDir dir = CalcMouseMoveDirection(moveDir);
+            saveDir = dir;
+
             if (dir != MouseMoveDir.None && clickedPuzzle != null)
             {
-                SwapPuzzles(dir);
                 isMoved = true;
+                SwapPuzzles(dir);
             }
         }
     }
@@ -451,10 +457,10 @@ public class Board : MonoBehaviour
         Vector2 currPos = currPuzzle.transform.localPosition;
         Vector2 movePos = movePuzzle.transform.localPosition;
 
-        _ = MovePuzzlesAsync(currPuzzle, movePuzzle, currPos, movePos, moveTime, currGn, newGn);
+        MovePuzzlesAsync(currPuzzle, movePuzzle, currPos, movePos, moveTime, currGn, newGn);
     }
 
-    private async Task MovePuzzlesAsync(Puzzle currPuzzle, Puzzle movePuzzle, Vector2 currPos, Vector2 movePos, float moveTime, (int, int) currGn, (int, int) newGn)
+    private async void MovePuzzlesAsync(Puzzle currPuzzle, Puzzle movePuzzle, Vector2 currPos, Vector2 movePos, float moveTime, (int, int) currGn, (int, int) newGn)
     {
         try
         {
