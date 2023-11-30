@@ -203,16 +203,10 @@ public class Board : MonoBehaviour
 
     public void Update()
     {
-        if (destroyHash.Count == 0)
-        {
-            CheakThreeMatchPuzzle();
-        }
+        //CheakThreeMatchPuzzle();
+        MoveAndFillAsync();
 
-        if (destroyHash.Count > 0 && !moveAsyncRunning)
-        {
-            MoveAndFillAsync();
-        }
-
+        // Test
         if (Input.GetKeyDown(KeyCode.A))
         {
             Mix();
@@ -221,6 +215,9 @@ public class Board : MonoBehaviour
 
     private void CheakThreeMatchPuzzle()
     {
+        if (destroyHash.Count > 0)
+            return;
+
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
@@ -263,12 +260,13 @@ public class Board : MonoBehaviour
                 }
             }
         }
-
-        // 여기서 하는게 맞는거 같은데
     }
 
     private async void MoveAndFillAsync()
     {
+        if (destroyHash.Count == 0 || moveAsyncRunning)
+            return;
+
         moveAsyncRunning = true;
 
         int maxX = 0;
@@ -295,7 +293,6 @@ public class Board : MonoBehaviour
 
     private async Task MoveDownAsync(int maxY, int minY, int minX, int maxX)
     {
-        int moveY = (maxY - minY) + 1;
         List<Task> moveTasks = new();
 
         for (int y = minY; y < grids.GetLength(0); y++)
@@ -338,6 +335,12 @@ public class Board : MonoBehaviour
         FillBlankBoard(maxY, minX, maxX);
         destroyHash.Clear();
         moveAsyncRunning = false;
+
+        CheakThreeMatchPuzzle();
+        if (destroyHash.Count == 0)
+        {
+            allowClick = true;
+        }
     }
 
     private void FillBlankBoard(int startY, int startX, int endX)
@@ -380,37 +383,33 @@ public class Board : MonoBehaviour
 
     public void SetClickedPuzzle(Puzzle p)
     {
-        if (allowClick && !moveAsyncRunning)
+        if (allowClick)
         {
             clickedPuzzle = p;
             clickStartPos = Input.mousePosition;
-            isMoved = false;
-            allowClick = false;
         }
     }
 
     public void Swap()
     {
-        if (!isMoved)
+        if (!isMoved && allowClick)
         {
             currMousePos = Input.mousePosition;
             Vector2 moveDir = currMousePos - clickStartPos;
             MouseMoveDir dir = CalcMouseMoveDirection(moveDir);
             saveDir = dir;
 
-            if (dir != MouseMoveDir.None && clickedPuzzle != null)
-            {
-                isMoved = true;
-                SwapPuzzles(dir);
-            }
+            SwapPuzzles(dir);
         }
     }
 
     private void SwapPuzzles(MouseMoveDir dir)
     {
-        if (dir == MouseMoveDir.None) 
+        if (dir == MouseMoveDir.None || clickedPuzzle == null)
             return;
 
+        allowClick = false;
+        isMoved = true;
         (int, int) currGn = clickedPuzzle.GridNum;
         (int, int) newGn = (0, 0);
 
@@ -454,10 +453,13 @@ public class Board : MonoBehaviour
 
         Puzzle currPuzzle = GetPuzzle(currGn);
         Puzzle movePuzzle = GetPuzzle(newGn);
-        Vector2 currPos = currPuzzle.transform.localPosition;
-        Vector2 movePos = movePuzzle.transform.localPosition;
 
-        MovePuzzlesAsync(currPuzzle, movePuzzle, currPos, movePos, moveTime, currGn, newGn);
+        if (currPuzzle != null && movePuzzle != null)
+        {
+            Vector2 currPos = currPuzzle.transform.localPosition;
+            Vector2 movePos = movePuzzle.transform.localPosition;
+            MovePuzzlesAsync(currPuzzle, movePuzzle, currPos, movePos, moveTime, currGn, newGn);
+        }
     }
 
     private async void MovePuzzlesAsync(Puzzle currPuzzle, Puzzle movePuzzle, Vector2 currPos, Vector2 movePos, float moveTime, (int, int) currGn, (int, int) newGn)
@@ -474,7 +476,7 @@ public class Board : MonoBehaviour
             Swap(currPuzzle, movePuzzle, currGn, newGn);
 
             CheakThreeMatchPuzzle();
-            if (destroyHash.Count == 0 && isMoved)
+            if (destroyHash.Count == 0 && saveDir != MouseMoveDir.None)
             {
                 var dir = MouseMoveDir.None;
                 switch (saveDir)
@@ -493,9 +495,16 @@ public class Board : MonoBehaviour
                         break;
                 }
 
-                isMoved = false;
                 SwapPuzzles(dir);
+                saveDir = MouseMoveDir.None;
+            }
+            else
+            {
+                if (destroyHash.Count == 0)
+                    allowClick = true;
+
                 clickedPuzzle = null;
+                isMoved = false;
             }
         }
         catch (Exception ex)
