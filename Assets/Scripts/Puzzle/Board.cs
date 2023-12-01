@@ -278,6 +278,9 @@ public class Board : MonoBehaviour
             if (!p.gameObject.activeSelf)
                 continue;
 
+            Vector2 position = p.GetPosition();
+            PuzzleType type = p.type;
+
             int y = p.GridNum.Item1;
             int x = p.GridNum.Item2;
             minY = minY > y ? y : minY;
@@ -286,6 +289,8 @@ public class Board : MonoBehaviour
             maxX = maxX < x ? x : maxX;
 
             puzzlePool.Release(p);
+
+            EffectManager.Instance.GetEffect(type, position);
         }
 
         await MoveDownAsync(maxY, minY, minX, maxX);

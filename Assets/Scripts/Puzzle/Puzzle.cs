@@ -81,6 +81,11 @@ public class Puzzle : MonoBehaviour
         gameObject.transform.localPosition = pos;
     }
 
+    public Vector2 GetPosition()
+    {
+        return gameObject.transform.localPosition;
+    }
+
     public async Task Move(Vector2 movePos, float speed)
     {
         await DOTween.Sequence()

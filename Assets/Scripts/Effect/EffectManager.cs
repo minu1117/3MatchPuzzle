@@ -4,32 +4,46 @@ using UnityEngine;
 public class EffectManager : MonoBehaviour
 {
     public List<Effect> effects;
-    public Dictionary<EffectNameEnum, Effect> effectDict = new();
+    public Dictionary<PuzzleType, Effect> effectDict = new();
+    public static EffectManager Instance;
+
+    public void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            Init();
+        }
+    }
 
     public void Init()
     {
         for (int i = 0; i < effects.Count; i++)
         {
-            var name = effects[i].GetEffectName();
+            var type = effects[i].GetEffectType();
 
             GameObject parentObject = new GameObject($"{name}");
             parentObject.gameObject.transform.parent = gameObject.transform;
+            parentObject.transform.localPosition = Vector3.zero;
+            parentObject.transform.localScale = Vector3.one;
 
             var effect = Instantiate(effects[i], parentObject.transform);
             effect.Init();
-            effect.CreateEffects();
 
-            effectDict.Add(name, effect);
+            effectDict.Add(type, effect);
         }
     }
 
-    public void DestroyEffect(EffectNameEnum name)
+    public void DestroyEffect(PuzzleType type)
     {
-        effectDict[name].pool.Clear();
+        effectDict[type].pool.Clear();
     }
 
-    public void GetEffect(EffectNameEnum name)
+    public void GetEffect(PuzzleType type, Vector2 position)
     {
-        effectDict[name].pool.Get();
+        var effect = effectDict[type];
+        var particles = effect.pool.Get();
+
+        effect.SetUseEffectPosition(particles, position);
     }
 }

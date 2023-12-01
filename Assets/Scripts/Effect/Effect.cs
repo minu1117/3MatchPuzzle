@@ -4,7 +4,7 @@ using UnityEngine.Pool;
 
 public class Effect : MonoBehaviour
 {
-    [SerializeField] private EffectNameEnum effectName;
+    [SerializeField] private PuzzleType puzzleEffectType;
     [SerializeField] private List<ParticleSystem> particles;
     public IObjectPool<List<ParticleSystem>> pool;
     public List<List<ParticleSystem>> createdParticles = new();
@@ -24,17 +24,9 @@ public class Effect : MonoBehaviour
             );
     }
 
-    public EffectNameEnum GetEffectName()
+    public PuzzleType GetEffectType()
     {
-        return effectName;
-    }
-
-    public void CreateEffects()
-    {
-        for (int i = 0; i < poolSize; i++)
-        {
-            createdParticles.Add(pool.Get());
-        }
+        return puzzleEffectType;
     }
 
     private List<ParticleSystem> CreateEffect()
@@ -43,7 +35,8 @@ public class Effect : MonoBehaviour
 
         for (int i = 0; i < particles.Count; i++)
         {
-            var particle = Instantiate(particles[i]);
+            var particle = Instantiate(particles[i], gameObject.transform);
+            particle.gameObject.SetActive(false);
             particleSystems.Add(particle);
         }
 
@@ -73,6 +66,14 @@ public class Effect : MonoBehaviour
         for (int i = particles.Count - 1; i >= 0; i--)
         {
             Destroy(particles[i].gameObject);
+        }
+    }
+
+    public void SetUseEffectPosition(List<ParticleSystem> particles, Vector3 position)
+    {
+        foreach (var particle in particles)
+        {
+            particle.gameObject.transform.localPosition = position;
         }
     }
 }
