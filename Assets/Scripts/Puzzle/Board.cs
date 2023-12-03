@@ -28,6 +28,8 @@ public class Board : MonoBehaviour
 
     public void Init()
     {
+        SoundManager.Instanse.PlayBgm();
+
         rows = new Row[height * 2];
         grids = new Grid[height * 2, width];
         for (int h = 0; h < height * 2; h++)
@@ -293,6 +295,7 @@ public class Board : MonoBehaviour
             EffectManager.Instance.GetEffect(type, position);
         }
 
+        SoundManager.Instanse.PlayExplodingSound();
         await MoveDownAsync(maxY, minY, minX, maxX);
     }
 

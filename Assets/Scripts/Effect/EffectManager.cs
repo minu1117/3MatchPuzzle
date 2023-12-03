@@ -6,6 +6,7 @@ public class EffectManager : MonoBehaviour
     public List<Effect> effects;
     public Dictionary<PuzzleType, Effect> effectDict = new();
     public static EffectManager Instance;
+    [SerializeField] private GameObject effectPoolObject;
 
     public void Awake()
     {
@@ -22,8 +23,8 @@ public class EffectManager : MonoBehaviour
         {
             var type = effects[i].GetEffectType();
 
-            GameObject parentObject = new GameObject($"{name}");
-            parentObject.gameObject.transform.parent = gameObject.transform;
+            GameObject parentObject = new GameObject($"{type} Effect Pool");
+            parentObject.gameObject.transform.parent = effectPoolObject.gameObject.transform;
             parentObject.transform.localPosition = Vector3.zero;
             parentObject.transform.localScale = Vector3.one;
 
