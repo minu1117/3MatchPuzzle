@@ -52,10 +52,66 @@ public class Board : MonoBehaviour
         StartCoroutine(CreateBackgroundTiles(width, height));
     }
 
+    // 가로, 세로 크기에 맞춰 Grid Layout Group의 Cell Size, Spacing 조정 (넘치지 않게)
+    private void SetCellSize()
+    {
+        RectTransform parentRect = backgroundParentsObject.GetComponent<RectTransform>();
+        float parentWidth = parentRect.rect.width;
+        float parentHeight = parentRect.rect.height;
+
+        Vector2 cellSize = backgroundParentsObject.cellSize;
+        Vector2 spacing = backgroundParentsObject.spacing;
+
+        float xOverflow = parentWidth - ((cellSize.x * width) + (spacing.x * width));
+        float yOverflow = parentHeight - ((cellSize.y * height) + (spacing.y * height));
+
+        if (xOverflow < 0 || yOverflow < 0)
+        {
+            int xSpacing = (int)(cellSize.x / spacing.x);
+            int ySpacing = (int)(cellSize.y / spacing.y);
+
+            int xAddCount = 0;
+            int yAddCount = 0;
+            while (true)
+            {
+                cellSize.x--;
+                cellSize.y--;
+
+                xAddCount++;
+                yAddCount++;
+
+                if (xAddCount > 0 && xAddCount % xSpacing == 0)
+                {
+                    spacing.x--;
+                }
+                if (yAddCount > 0 && yAddCount % ySpacing == 0)
+                {
+                    spacing.y--;
+                }
+
+                xOverflow = parentWidth - ((cellSize.x * width) + (spacing.x * width));
+                yOverflow = parentHeight - ((cellSize.y * height) + (spacing.y * height));
+                if (xOverflow > 0 && yOverflow > 0)
+                {
+                    backgroundParentsObject.cellSize = cellSize;
+                    backgroundParentsObject.spacing = spacing;
+                    break;
+                }
+            }
+        }
+    }
+
     private IEnumerator CreateBackgroundTiles(int width, int height)
     {
         if (width == 0 || height == 0)
             yield break;
+
+        backgroundParentsObject.constraintCount = width;
+
+        // 셀 사이즈, 간격 값
+        SetCellSize();
+        Vector2 cellSize = backgroundParentsObject.cellSize;
+        Vector2 spacing = backgroundParentsObject.spacing;
 
         for (int i = 0; i < height * 2; i++)
         {
@@ -71,10 +127,8 @@ public class Board : MonoBehaviour
             }
         }
 
-        // 첫 위치, 셀 사이즈, 간격 값
+        // 첫 위치
         Vector2 startPosition = backgroundParentsObject.transform.GetChild(0).GetComponent<RectTransform>().localPosition;
-        Vector2 cellSize = backgroundParentsObject.cellSize;
-        Vector2 spacing = backgroundParentsObject.spacing;
 
         // X, Y 간격 계산
         float objectIntervalX = cellSize.x + spacing.x;
@@ -99,15 +153,15 @@ public class Board : MonoBehaviour
             }
         }
 
-        StartCoroutine(CoCreateAllPuzzles(width, height));
+        StartCoroutine(CoCreateAllPuzzles(cellSize, width, height));
     }
 
     // Create all puzzles
-    private IEnumerator CoCreateAllPuzzles(int width, int height)
+    private IEnumerator CoCreateAllPuzzles(Vector2 size, int width, int height)
     {
         for (int i = 0; i < height * 2; i++)
         {
-            rows[i].CreateRowPuzzle(puzzlePool, this, i, width, height);
+            rows[i].CreateRowPuzzle(puzzlePool, this, size, i, width, height);
             yield return null;
         }
     }

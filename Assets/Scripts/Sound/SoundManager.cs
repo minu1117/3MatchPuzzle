@@ -31,7 +31,6 @@ public class SoundManager : MonoBehaviour
         if (explodingSoundObject == null)
         {
             explodingSoundObject = Instantiate(explodingSound, gameObject.transform);
-            DontDestroyOnLoad(explodingSoundObject);
         }
 
         explodingSoundObject.PlayOneShot(explodingSoundObject.clip);
@@ -44,7 +43,6 @@ public class SoundManager : MonoBehaviour
             bgmObject = Instantiate(bgm, gameObject.transform);
             bgmObject.Play();
             bgmObject.loop = true;
-            DontDestroyOnLoad(bgmObject);
         }
     }
 }

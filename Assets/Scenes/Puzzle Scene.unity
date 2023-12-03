@@ -235,6 +235,7 @@ GameObject:
   m_Component:
   - component: {fileID: 189957606}
   - component: {fileID: 189957607}
+  - component: {fileID: 189957608}
   m_Layer: 5
   m_Name: BackgroundParents
   m_TagString: Untagged
@@ -257,7 +258,7 @@ RectTransform:
   m_Father: {fileID: 2088258913}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -283,8 +284,22 @@ MonoBehaviour:
   m_StartAxis: 0
   m_CellSize: {x: 150, y: 150}
   m_Spacing: {x: 20, y: 20}
-  m_Constraint: 0
-  m_ConstraintCount: 2
+  m_Constraint: 2
+  m_ConstraintCount: 1
+--- !u!114 &189957608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 189957605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AspectMode: 3
+  m_AspectRatio: 1
 --- !u!1 &507916797
 GameObject:
   m_ObjectHideFlags: 0
@@ -318,8 +333,8 @@ MonoBehaviour:
   backgroundParentsObject: {fileID: 189957607}
   puzzleParentsObject: {fileID: 961434435}
   puzzlePrefab: {fileID: 5762712563435571662, guid: d947225270f7cfb4abafae003ba5d4ac, type: 3}
-  width: 6
-  height: 6
+  width: 7
+  height: 7
   moveTime: 0.5
 --- !u!4 &507916799
 Transform:
@@ -345,6 +360,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 639156049}
+  - component: {fileID: 639156050}
   m_Layer: 5
   m_Name: EffectPool
   m_TagString: Untagged
@@ -367,10 +383,24 @@ RectTransform:
   m_Father: {fileID: 2088258913}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &639156050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 639156048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AspectMode: 3
+  m_AspectRatio: 1
 --- !u!1 &961434435
 GameObject:
   m_ObjectHideFlags: 0
@@ -380,6 +410,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 961434436}
+  - component: {fileID: 961434437}
   m_Layer: 5
   m_Name: PuzzleParents
   m_TagString: Untagged
@@ -402,10 +433,24 @@ RectTransform:
   m_Father: {fileID: 2088258913}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &961434437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961434435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AspectMode: 3
+  m_AspectRatio: 1
 --- !u!1 &1008702262
 GameObject:
   m_ObjectHideFlags: 0

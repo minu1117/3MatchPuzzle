@@ -107,6 +107,11 @@ public class Puzzle : MonoBehaviour
         return this;
     }
 
+    public void SetSize(Vector2 size)
+    {
+        RectTransform.sizeDelta = size;
+    }
+
     public override int GetHashCode()
     {
         return base.GetHashCode();

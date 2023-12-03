@@ -1,8 +1,9 @@
 using UnityEngine.Pool;
+using UnityEngine;
 
 public class Row
 {
-    public void CreateRowPuzzle(IObjectPool<Puzzle> puzzlePool, Board board, int rowIndex, int width, int height)
+    public void CreateRowPuzzle(IObjectPool<Puzzle> puzzlePool, Board board, Vector2 size, int rowIndex, int width, int height)
     {
         /*
 
@@ -20,6 +21,7 @@ public class Row
         for (int x = 0; x < width; x++)
         {
             Puzzle pz = puzzlePool.Get();
+            pz.SetSize(size);
             (int, int) gn = (rowIndex, x);
 
             if (rowIndex < height)
