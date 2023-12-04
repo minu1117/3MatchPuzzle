@@ -5,20 +5,16 @@ public class EffectManager : MonoBehaviour
 {
     public List<Effect> effects;
     public Dictionary<PuzzleType, Effect> effectDict = new();
-    public static EffectManager Instance;
-    [SerializeField] private GameObject effectPoolObject;
 
-    public void Awake()
+    public static EffectManager Instance;
+
+    public void Init(GameObject effectPoolObject)
     {
         if (Instance == null)
         {
             Instance = this;
-            Init();
         }
-    }
 
-    public void Init()
-    {
         for (int i = 0; i < effects.Count; i++)
         {
             var type = effects[i].GetEffectType();

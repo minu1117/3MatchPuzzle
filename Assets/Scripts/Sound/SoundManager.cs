@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    [SerializeField] private AudioListener listener;
+    //[SerializeField] private AudioListener listener;
     [SerializeField] private AudioSource bgm;
     [SerializeField] private AudioSource explodingSound;
 
@@ -11,12 +11,7 @@ public class SoundManager : MonoBehaviour
     private AudioSource bgmObject;
     private AudioSource explodingSoundObject;
 
-    private void Awake()
-    {
-        Init();
-    }
-
-    private void Init()
+    public void Init()
     {
         if (Instanse == null)
         {

@@ -16,6 +16,8 @@ public class Puzzle : MonoBehaviour
     private Image sr;
     private EventTrigger eventTrigger;
 
+    public int scoreNum { get; set; } = 0;
+
     public void Awake()
     {
         RectTransform = GetComponent<RectTransform>();
@@ -96,6 +98,7 @@ public class Puzzle : MonoBehaviour
     public void SetPuzzleType(PuzzleType pt)
     {
         type = pt;
+        SetAddScore();
         SetSprite();
     }
 
@@ -110,6 +113,27 @@ public class Puzzle : MonoBehaviour
     public void SetSize(Vector2 size)
     {
         RectTransform.sizeDelta = size;
+    }
+
+    private void SetAddScore()
+    {
+        switch (type)
+        {
+            case PuzzleType.Blue:
+                scoreNum = 10;
+                break;
+            case PuzzleType.Green:
+                scoreNum = 7;
+                break;
+            case PuzzleType.Red:
+                scoreNum = 8;
+                break;
+            case PuzzleType.Orange:
+                scoreNum = 12;
+                break;
+            default:
+                break;
+        }
     }
 
     public override int GetHashCode()

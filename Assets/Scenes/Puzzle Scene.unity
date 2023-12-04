@@ -199,7 +199,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
+  m_VertexColorAlwaysGammaSpace: 1
   m_AdditionalShaderChannelsFlag: -1
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -300,7 +300,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AspectMode: 3
   m_AspectRatio: 1
---- !u!1 &507916797
+--- !u!1 &549414176
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -308,44 +308,48 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 507916799}
-  - component: {fileID: 507916798}
+  - component: {fileID: 549414178}
+  - component: {fileID: 549414177}
   m_Layer: 0
-  m_Name: Board
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &507916798
+--- !u!114 &549414177
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 507916797}
+  m_GameObject: {fileID: 549414176}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87642401451b9244089c2d84e5ed20f9, type: 3}
+  m_Script: {fileID: 11500000, guid: 70610c3db6a6d4147a57ac2f4eeafa43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  backgroundTilePrefab: {fileID: 4836776147292935738, guid: 8f7758878c0cd1c4ab95a9bd211a26ad, type: 3}
+  boardPrefab: {fileID: 8806378584752369521, guid: 088a45ae6a16e6046b4cbdeaaa9af7be, type: 3}
+  soundManagerPrefab: {fileID: 1590151637157684063, guid: 729697b445857fe40a008d0c2c6dcba4, type: 3}
+  effectManagerPrefab: {fileID: 8350458076520430216, guid: 4667bb0cf2f8d2346b391f63b2fa66ef, type: 3}
+  UIManagerPrefab: {fileID: -7275522248906652504, guid: 32c926709bb84c5498fda9bd3b5287cc, type: 3}
+  effectPoolParentsObject: {fileID: 639156048}
   backgroundParentsObject: {fileID: 189957607}
   puzzleParentsObject: {fileID: 961434435}
-  puzzlePrefab: {fileID: 5762712563435571662, guid: d947225270f7cfb4abafae003ba5d4ac, type: 3}
-  width: 7
-  height: 7
-  moveTime: 0.5
---- !u!4 &507916799
+  scoreParentsObject: {fileID: 1008702262}
+  canvas: {fileID: 82429252}
+  width: 6
+  height: 6
+--- !u!4 &549414178
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 507916797}
+  m_GameObject: {fileID: 549414176}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.173596, y: 11.92637, z: -0.18155187}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -687,103 +691,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1988882548
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1988882549}
-  - component: {fileID: 1988882550}
-  m_Layer: 0
-  m_Name: EffectManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1988882549
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1988882548}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1988882550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1988882548}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f99e01d0d8a34fc43a52286160536e96, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  effects:
-  - {fileID: -6891745166433958918, guid: 60642c7574c75dc418f3779c4d3f90e6, type: 3}
-  - {fileID: -6891745166433958918, guid: 5449222c54eb04341ab793cf716b7e23, type: 3}
-  - {fileID: -6891745166433958918, guid: e8de4ca53bdd1404aad8ecaaf0d2a894, type: 3}
-  - {fileID: -6891745166433958918, guid: 1d95b91387f2656458826d8a66313e42, type: 3}
-  effectPoolObject: {fileID: 639156048}
---- !u!1 &2015577782
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2015577783}
-  - component: {fileID: 2015577784}
-  m_Layer: 0
-  m_Name: SoundManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2015577783
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2015577782}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2015577784
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2015577782}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f943e1a96044cac45a9c95f3c44a2f70, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  listener: {fileID: 1582779928}
-  bgm: {fileID: 3199592785071928729, guid: 7cd1f8d1e572dd54fbf906f43ef1493f, type: 3}
-  explodingSound: {fileID: 8244018208165821131, guid: 5d9e6d1c7f9c94d409c51046ebf58176, type: 3}
 --- !u!1 &2088258912
 GameObject:
   m_ObjectHideFlags: 0
@@ -882,8 +789,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1582779930}
-  - {fileID: 507916799}
   - {fileID: 82429253}
   - {fileID: 1847066242}
-  - {fileID: 2015577783}
-  - {fileID: 1988882549}
+  - {fileID: 549414178}

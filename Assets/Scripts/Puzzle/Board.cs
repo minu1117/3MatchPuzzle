@@ -8,8 +8,11 @@ using UnityEngine.UI;
 
 public class Board : MonoBehaviour
 {
+    [Header("Background Tile")]
     [SerializeField] private GameObject backgroundTilePrefab;
     [SerializeField] private GridLayoutGroup backgroundParentsObject;
+
+    [Header("Puzzle")]
     [SerializeField] private GameObject puzzleParentsObject;
     [SerializeField] private Puzzle puzzlePrefab;
     private IObjectPool<Puzzle> puzzlePool;
@@ -18,17 +21,15 @@ public class Board : MonoBehaviour
     private Grid[,] grids;
 
     private Vector2 puzzleSpriteSize;
-    public int width;
-    public int height;
+    private int width;
+    private int height;
 
-    public void Start()
+    public void Init(GridLayoutGroup backgroundParent, GameObject puzzleParent, int width, int height)
     {
-        Init();
-    }
-
-    public void Init()
-    {
-        SoundManager.Instanse.PlayBgm();
+        backgroundParentsObject = backgroundParent;
+        puzzleParentsObject = puzzleParent;
+        this.width = width;
+        this.height = height;
 
         rows = new Row[height * 2];
         grids = new Grid[height * 2, width];
@@ -325,6 +326,8 @@ public class Board : MonoBehaviour
 
         moveAsyncRunning = true;
 
+        int addScore = 0;
+
         int maxX = 0;
         int maxY = 0;
         int minX = width;
@@ -344,11 +347,14 @@ public class Board : MonoBehaviour
             minX = minX > x ? x : minX;
             maxX = maxX < x ? x : maxX;
 
+            addScore += p.scoreNum;
+
             puzzlePool.Release(p);
 
             EffectManager.Instance.GetEffect(type, position);
         }
 
+        UIManager.Instanse.score.AddScore(addScore);
         SoundManager.Instanse.PlayExplodingSound();
         await MoveDownAsync(maxY, minY, minX, maxX);
     }
@@ -559,6 +565,11 @@ public class Board : MonoBehaviour
 
                 SwapPuzzles(dir);
                 saveDir = MouseMoveDir.None;
+
+                int subScore = 0;
+                subScore += currPuzzle.scoreNum;
+                subScore += movePuzzle.scoreNum;
+                UIManager.Instanse.score.SubScore(subScore);
             }
             else
             {
