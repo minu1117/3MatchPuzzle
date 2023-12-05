@@ -2,12 +2,16 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] private Score scorePrefab;
-    public Score score { get; set; }
+    public Score score;
 
     public static UIManager Instanse;
 
-    public void Init(GameObject scoreParentsObject)
+    private void Start()
+    {
+        Init();
+    }
+
+    public void Init()
     {
         if (Instanse == null)
         {
@@ -15,8 +19,5 @@ public class UIManager : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
-
-        // 게임씬일때만
-        score = Instantiate(scorePrefab, scoreParentsObject.transform);
     }
 }

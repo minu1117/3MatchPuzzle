@@ -260,7 +260,7 @@ public class Board : MonoBehaviour
 
     public void Update()
     {
-        //CheakThreeMatchPuzzle();
+        //CheckThreeMatchPuzzle();
         MoveAndFillAsync();
 
         // Test
@@ -270,7 +270,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    private void CheakThreeMatchPuzzle()
+    private void CheckThreeMatchPuzzle()
     {
         if (destroyHash.Count > 0)
             return;
@@ -404,7 +404,7 @@ public class Board : MonoBehaviour
         destroyHash.Clear();
         moveAsyncRunning = false;
 
-        CheakThreeMatchPuzzle();
+        CheckThreeMatchPuzzle();
         if (destroyHash.Count == 0)
         {
             allowClick = true;
@@ -543,7 +543,7 @@ public class Board : MonoBehaviour
             await Task.WhenAll(taskList);
             Swap(currPuzzle, movePuzzle, currGn, newGn);
 
-            CheakThreeMatchPuzzle();
+            CheckThreeMatchPuzzle();
             if (destroyHash.Count == 0 && saveDir != MouseMoveDir.None)
             {
                 var dir = MouseMoveDir.None;
@@ -641,7 +641,7 @@ public class Board : MonoBehaviour
         return dir;
     }
 
-    private void Mix()
+    public void Mix()
     {
         for (int y = 0; y < height; y++)
         {
@@ -651,5 +651,7 @@ public class Board : MonoBehaviour
                 puzzle.SetRandomPuzzleType();
             }
         }
+
+        CheckThreeMatchPuzzle();
     }
 }
