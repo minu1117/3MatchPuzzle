@@ -1,3 +1,4 @@
+using DG.Tweening.Core.Easing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,8 +25,12 @@ public class Board : MonoBehaviour
     private int width;
     private int height;
 
+    private GameManager gameManager;
+
     public void Init(GridLayoutGroup backgroundParent, GameObject puzzleParent, int width, int height)
     {
+        gameManager = FindAnyObjectByType<GameManager>();
+
         backgroundParentsObject = backgroundParent;
         puzzleParentsObject = puzzleParent;
         this.width = width;
@@ -184,6 +189,11 @@ public class Board : MonoBehaviour
 
     private void OnRelease(Puzzle p)
     {
+        Vector2 position = p.GetPosition();
+        PuzzleType type = p.type;
+
+        EffectManager.Instance.GetEffect(type, position);
+
         p.isConnected = false;
         p.isMatched = false;
         (int, int) gn = p.GridNum;
@@ -337,8 +347,8 @@ public class Board : MonoBehaviour
             if (!p.gameObject.activeSelf)
                 continue;
 
-            Vector2 position = p.GetPosition();
-            PuzzleType type = p.type;
+            //Vector2 position = p.GetPosition();
+            //PuzzleType type = p.type;
 
             int y = p.GridNum.Item1;
             int x = p.GridNum.Item2;
@@ -348,14 +358,13 @@ public class Board : MonoBehaviour
             maxX = maxX < x ? x : maxX;
 
             addScore += p.scoreNum;
-
             puzzlePool.Release(p);
 
-            EffectManager.Instance.GetEffect(type, position);
+            //EffectManager.Instance.GetEffect(type, position);
         }
 
-        UIManager.Instanse.score.AddScore(addScore);
-        SoundManager.Instanse.PlayExplodingSound();
+        gameManager.score.AddScore(addScore);
+        SoundManager.Instance.PlayExplodingSound();
         await MoveDownAsync(maxY, minY, minX, maxX);
     }
 
@@ -569,7 +578,7 @@ public class Board : MonoBehaviour
                 int subScore = 0;
                 subScore += currPuzzle.scoreNum;
                 subScore += movePuzzle.scoreNum;
-                UIManager.Instanse.score.SubScore(subScore);
+                gameManager.score.SubScore(subScore);
             }
             else
             {

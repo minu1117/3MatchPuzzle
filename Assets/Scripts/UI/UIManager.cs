@@ -2,22 +2,22 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    public Score score;
+    public static UIManager Instance;
 
-    public static UIManager Instanse;
-
-    private void Start()
+    private void Awake()
     {
         Init();
     }
 
     public void Init()
     {
-        if (Instanse == null)
+        if (Instance != null)
         {
-            Instanse = this;
+            Destroy(gameObject);
+            return;
         }
 
+        Instance = this;
         DontDestroyOnLoad(gameObject);
     }
 }

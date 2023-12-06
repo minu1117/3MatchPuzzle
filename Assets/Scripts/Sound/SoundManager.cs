@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SoundManager : MonoBehaviour
 {
@@ -6,19 +7,30 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioSource bgm;
     [SerializeField] private AudioSource explodingSound;
 
-    public static SoundManager Instanse;
+    public static SoundManager Instance;
 
     private AudioSource bgmObject;
     private AudioSource explodingSoundObject;
 
-    public void Init()
+    public void Awake()
     {
-        if (Instanse == null)
+        if (Instance != null)
         {
-            Instanse = this;
+            Destroy(gameObject);
+            return;
         }
 
+        Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+
+    public void Start()
+    {
+        string sceneName = MySceneManager.Instance.menuSceneName;
+        if (sceneName == SceneManager.GetSceneByBuildIndex(0).name)
+        {
+            PlayBgm();
+        }
     }
 
     public void PlayExplodingSound()

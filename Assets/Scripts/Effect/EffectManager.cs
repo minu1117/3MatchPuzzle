@@ -8,13 +8,19 @@ public class EffectManager : MonoBehaviour
 
     public static EffectManager Instance;
 
-    public void Init(GameObject effectPoolObject)
+    public void Awake()
     {
-        if (Instance == null)
+        if (Instance != null)
         {
-            Instance = this;
+            Destroy(gameObject);
+            return;
         }
 
+        Instance = this;
+    }
+
+    public void Init(GameObject effectPoolObject)
+    {
         for (int i = 0; i < effects.Count; i++)
         {
             var type = effects[i].GetEffectType();
