@@ -1,25 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EffectManager : MonoBehaviour
+public class EffectManager : Manager<EffectManager>
 {
-    public List<Effect> effects;
-    public Dictionary<PuzzleType, Effect> effectDict = new();
+    [SerializeField] private List<Effect> effects;
+    private Dictionary<PuzzleType, Effect> effectDict = new();
 
-    public static EffectManager Instance;
-
-    public void Awake()
+    protected override void Awake()
     {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
+        base.Awake();
     }
 
-    public void Init(GameObject effectPoolObject)
+    public void CreateEffects(GameObject effectPoolObject)
     {
         for (int i = 0; i < effects.Count; i++)
         {
@@ -48,5 +40,10 @@ public class EffectManager : MonoBehaviour
         var particles = effect.pool.Get();
 
         effect.SetUseEffectPosition(particles, position);
+    }
+
+    public void ClearEffectDict()
+    {
+        effectDict.Clear();
     }
 }

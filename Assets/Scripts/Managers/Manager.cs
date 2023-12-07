@@ -1,15 +1,10 @@
 using UnityEngine;
 
-public class UIManager : MonoBehaviour
+public class Manager<T> : MonoBehaviour
 {
-    public static UIManager Instance;
+    public static T Instance;
 
-    private void Awake()
-    {
-        Init();
-    }
-
-    public void Init()
+    protected virtual void Awake()
     {
         if (Instance != null)
         {
@@ -17,7 +12,7 @@ public class UIManager : MonoBehaviour
             return;
         }
 
-        Instance = this;
+        Instance = GetComponent<T>();
         DontDestroyOnLoad(gameObject);
     }
 }

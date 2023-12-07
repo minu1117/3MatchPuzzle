@@ -2,22 +2,14 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MySceneManager : MonoBehaviour
+public class MySceneManager : Manager<MySceneManager>
 {
-    public static MySceneManager Instance;
     public string gameSceneName;
     public string menuSceneName;
 
-    public void Awake()
+    protected override void Awake()
     {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
+        base.Awake();
     }
 
     public void StartCoLoadScene(string name)
@@ -33,7 +25,7 @@ public class MySceneManager : MonoBehaviour
         while (!asyncLoad.isDone)
         {
             float progress = Mathf.Clamp01(asyncLoad.progress);
-            Debug.Log($"Loading... {progress * 100f}%");
+            //Debug.Log($"Loading... {progress * 100f}%");
             yield return null;
         }
     }

@@ -1,27 +1,18 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SoundManager : MonoBehaviour
+public class SoundManager : Manager<SoundManager>
 {
     //[SerializeField] private AudioListener listener;
     [SerializeField] private AudioSource bgm;
     [SerializeField] private AudioSource explodingSound;
 
-    public static SoundManager Instance;
-
     private AudioSource bgmObject;
     private AudioSource explodingSoundObject;
 
-    public void Awake()
+    protected override void Awake()
     {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
+        base.Awake();
     }
 
     public void Start()

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -24,9 +23,10 @@ public class GameManager : MonoBehaviour
     public void Start()
     {
         board = Instantiate(boardPrefab);
-        EffectManager.Instance.Init(effectPoolParentsObject);
         board.Init(backgroundParentsObject, puzzleParentsObject, width, height);
+        EffectManager.Instance.CreateEffects(effectPoolParentsObject);
         boardMixButton.onClick.AddListener(() => board.Mix());
+        exitButton.onClick.AddListener(() => EffectManager.Instance.ClearEffectDict());
         exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.menuSceneName));
     }
 }
