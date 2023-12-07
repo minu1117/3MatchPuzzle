@@ -44,6 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f943e1a96044cac45a9c95f3c44a2f70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  listener: {fileID: 0}
   bgm: {fileID: 3199592785071928729, guid: 7cd1f8d1e572dd54fbf906f43ef1493f, type: 3}
   explodingSound: {fileID: 8244018208165821131, guid: 5d9e6d1c7f9c94d409c51046ebf58176, type: 3}
+  mixer: {fileID: 24100000, guid: 6398111593c671d4a8306f2d048667b5, type: 2}
+  bgmGroup: {fileID: -6437025990875113961, guid: 6398111593c671d4a8306f2d048667b5, type: 2}
+  sfxGroup: {fileID: 79651376797038412, guid: 6398111593c671d4a8306f2d048667b5, type: 2}

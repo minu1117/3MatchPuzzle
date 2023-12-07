@@ -28,5 +28,7 @@ public class MySceneManager : Manager<MySceneManager>
             //Debug.Log($"Loading... {progress * 100f}%");
             yield return null;
         }
+
+        UIManager.Instance.option = FindAnyObjectByType<Option>();
     }
 }

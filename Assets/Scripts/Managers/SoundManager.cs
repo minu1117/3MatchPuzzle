@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
 public class SoundManager : Manager<SoundManager>
@@ -6,6 +7,8 @@ public class SoundManager : Manager<SoundManager>
     //[SerializeField] private AudioListener listener;
     [SerializeField] private AudioSource bgm;
     [SerializeField] private AudioSource explodingSound;
+    [SerializeField] private AudioMixerGroup bgmGroup;
+    [SerializeField] private AudioMixerGroup sfxGroup;
 
     private AudioSource bgmObject;
     private AudioSource explodingSoundObject;
@@ -17,6 +20,8 @@ public class SoundManager : Manager<SoundManager>
 
     public void Start()
     {
+        CreateSoundObjects();
+
         string sceneName = MySceneManager.Instance.menuSceneName;
         if (sceneName == SceneManager.GetSceneByBuildIndex(0).name)
         {
@@ -24,23 +29,32 @@ public class SoundManager : Manager<SoundManager>
         }
     }
 
+    public void ChangeSFXVolume(float value)
+    {
+        sfxGroup.audioMixer.SetFloat(sfxGroup.name, Mathf.Log10(value) * 20);
+        PlayerPrefs.SetFloat(bgmGroup.name, value);
+    }
+
+    public void ChangeBGMVolume(float value)
+    {
+        bgmGroup.audioMixer.SetFloat(bgmGroup.name, Mathf.Log10(value) * 20);
+        PlayerPrefs.SetFloat(bgmGroup.name, value);
+    }
+
     public void PlayExplodingSound()
     {
-        if (explodingSoundObject == null)
-        {
-            explodingSoundObject = Instantiate(explodingSound, gameObject.transform);
-        }
-
         explodingSoundObject.PlayOneShot(explodingSoundObject.clip);
     }
 
     public void PlayBgm()
     {
-        if (bgmObject == null)
-        {
-            bgmObject = Instantiate(bgm, gameObject.transform);
-            bgmObject.Play();
-            bgmObject.loop = true;
-        }
+        bgmObject.Play();
+        bgmObject.loop = true;
+    }
+
+    private void CreateSoundObjects()
+    {
+        bgmObject = Instantiate(bgm, gameObject.transform);
+        explodingSoundObject = Instantiate(explodingSound, gameObject.transform);
     }
 }
