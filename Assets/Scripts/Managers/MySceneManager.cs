@@ -29,6 +29,6 @@ public class MySceneManager : Manager<MySceneManager>
             yield return null;
         }
 
-        UIManager.Instance.option = FindAnyObjectByType<Option>();
+        UIManager.Instance.FindOptionObject();
     }
 }

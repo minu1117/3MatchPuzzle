@@ -4,7 +4,6 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     [Header("Parents Objects")]
-    //[SerializeField] private AudioListener listener;
     [SerializeField] private GameObject effectPoolParentsObject;
     [SerializeField] private GridLayoutGroup backgroundParentsObject;
     [SerializeField] private GameObject puzzleParentsObject;

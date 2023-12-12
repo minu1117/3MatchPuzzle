@@ -9,12 +9,16 @@ public class UIManager : Manager<UIManager>
 
     private void Start()
     {
-        option = FindFirstObjectByType<Option>();
-        ConnectOptionButtonOnClick();
+        FindOptionObject();
     }
 
-    public void ConnectOptionButtonOnClick()
+    public void FindOptionObject()
     {
-        option.ConnectButtonOnClick();
+        option = FindFirstObjectByType<Option>();
+        if (option != null)
+        {
+            option.ConnectButtonOnClick();
+            option.SynchronizeVolumeSliderValue();
+        }
     }
 }
