@@ -8,7 +8,7 @@ public class MainMenuUIControl : MonoBehaviour
     private void Start()
     {
         var mySceneMgr = MySceneManager.Instance;
-        string gameSceneName = mySceneMgr.gameSceneName;
-        gameStartButton.onClick.AddListener(() => mySceneMgr.StartCoLoadScene(gameSceneName));
+        string stageSceneName = mySceneMgr.stageSceneName;
+        gameStartButton.onClick.AddListener(() => mySceneMgr.StartCoLoadScene(stageSceneName));
     }
 }

@@ -18,8 +18,18 @@ public class Row
         if (width == 0 || height == 0)
             return;
 
+        var stageInfo = GameManager.Instance.GetStage().StageInfo;
         for (int x = 0; x < width; x++)
         {
+            //if (stageInfo.blockGridX.Count > 0 && stageInfo.blockGridY.Count > 0)
+            //{
+            //    if (stageInfo.blockGridX.Contains(x) &&
+            //    stageInfo.blockGridY.Contains(rowIndex))
+            //    {
+            //        continue;
+            //    }
+            //}
+
             Puzzle pz = puzzlePool.Get();
             pz.SetSize(size);
             (int, int) gn = (rowIndex, x);

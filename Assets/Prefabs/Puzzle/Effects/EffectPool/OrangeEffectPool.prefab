@@ -46,4 +46,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   puzzleEffectType: 3
   effect: {fileID: 7021052759430859328, guid: fc5d63d69b6e4af4ead0e952cacd8e3a, type: 3}
-  poolSize: 10
+  poolSize: 15

@@ -6,6 +6,7 @@ public class MySceneManager : Manager<MySceneManager>
 {
     public string gameSceneName;
     public string menuSceneName;
+    public string stageSceneName;
 
     protected override void Awake()
     {
@@ -30,5 +31,10 @@ public class MySceneManager : Manager<MySceneManager>
         }
 
         UIManager.Instance.FindOptionObject();
+
+        if (name == gameSceneName)
+        {
+            GameManager.Instance.StartGame();
+        }
     }
 }

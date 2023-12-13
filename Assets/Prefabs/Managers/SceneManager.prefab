@@ -45,4 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameSceneName: PuzzleScene
-  menuSceneName: StartScene
+  menuSceneName: MenuScene
+  stageSceneName: StageScene

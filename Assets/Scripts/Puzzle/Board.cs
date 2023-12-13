@@ -1,4 +1,3 @@
-using DG.Tweening.Core.Easing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,12 +26,13 @@ public class Board : MonoBehaviour
 
     private GameManager gameManager;
 
-    public void Init(GridLayoutGroup backgroundParent, GameObject puzzleParent, int width, int height)
+    //public void Init(GridLayoutGroup backgroundParent, GameObject puzzleParent, int width, int height)
+    public void Init(int width, int height)
     {
         gameManager = FindAnyObjectByType<GameManager>();
 
-        backgroundParentsObject = backgroundParent;
-        puzzleParentsObject = puzzleParent;
+        //backgroundParentsObject = backgroundParent;
+        //puzzleParentsObject = puzzleParent;
         this.width = width;
         this.height = height;
 
@@ -128,10 +128,10 @@ public class Board : MonoBehaviour
                     // GridLayout Group 내부에 Instantiate (위치 자동 지정)
                     Instantiate(backgroundTilePrefab, backgroundParentsObject.transform);
                 }
-
-                yield return null;
             }
         }
+
+        yield return null;
 
         // 첫 위치
         Vector2 startPosition = backgroundParentsObject.transform.GetChild(0).GetComponent<RectTransform>().localPosition;
@@ -159,6 +159,7 @@ public class Board : MonoBehaviour
             }
         }
 
+        puzzleParentsObject.transform.localPosition = backgroundParentsObject.transform.localPosition;
         StartCoroutine(CoCreateAllPuzzles(cellSize, width, height));
     }
 
@@ -363,7 +364,8 @@ public class Board : MonoBehaviour
             //EffectManager.Instance.GetEffect(type, position);
         }
 
-        gameManager.score.AddScore(addScore);
+        //gameManager.score.AddScore(addScore);
+        gameManager.holder.score.AddScore(addScore);
         SoundManager.Instance.PlayExplodingSound();
         await MoveDownAsync(maxY, minY, minX, maxX);
     }
@@ -372,6 +374,7 @@ public class Board : MonoBehaviour
     {
         List<Task> moveTasks = new();
 
+        StageInfo info = GameManager.Instance.GetStage().StageInfo;
         for (int y = minY; y < grids.GetLength(0); y++)
         {
             for (int x = minX; x <= maxX; x++)
@@ -383,8 +386,11 @@ public class Board : MonoBehaviour
                 int yGrid = 0;
                 for (int k = y-1; k >= 0; k--)
                 {
-                    if (GetPuzzle((k, x)) == null) 
+                    if (GetPuzzle((k, x)) == null)
+                    {
                         yGrid = k;
+                    }
+
                     else 
                         break;
                 }
@@ -578,7 +584,8 @@ public class Board : MonoBehaviour
                 int subScore = 0;
                 subScore += currPuzzle.scoreNum;
                 subScore += movePuzzle.scoreNum;
-                gameManager.score.SubScore(subScore);
+                //gameManager.score.SubScore(subScore);
+                gameManager.holder.score.SubScore(subScore);
             }
             else
             {

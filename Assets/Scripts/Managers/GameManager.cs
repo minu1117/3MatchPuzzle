@@ -1,31 +1,32 @@
-using UnityEngine;
-using UnityEngine.UI;
-
-public class GameManager : MonoBehaviour
+public class GameManager : Manager<GameManager>
 {
-    [Header("Parents Objects")]
-    [SerializeField] private GameObject effectPoolParentsObject;
-    [SerializeField] private GridLayoutGroup backgroundParentsObject;
-    [SerializeField] private GameObject puzzleParentsObject;
+    public PuzzleSceneObjectHolder holder;
+    private Stage stage;
 
-    [Header("Board")]
-    [SerializeField] private Board boardPrefab;
-    public Button boardMixButton;
-    private Board board;
-    public int width;
-    public int height;
-
-    [Header("UI")]
-    public Score score;
-    public Button exitButton;
-
-    public void Start()
+    protected override void Awake()
     {
-        board = Instantiate(boardPrefab);
-        board.Init(backgroundParentsObject, puzzleParentsObject, width, height);
-        EffectManager.Instance.CreateEffects(effectPoolParentsObject);
-        boardMixButton.onClick.AddListener(() => board.Mix());
-        exitButton.onClick.AddListener(() => EffectManager.Instance.ClearEffectDict());
-        exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.menuSceneName));
+        base.Awake();
+    }
+
+    public void StartGame()
+    {
+        holder = FindAnyObjectByType<PuzzleSceneObjectHolder>();
+
+        var board = Instantiate(stage.StageInfo.board, holder.boardParentObject.transform);
+        board.Init(stage.StageInfo.boardWidth, stage.StageInfo.boardHeight);
+        EffectManager.Instance.CreateEffects(holder.GetEffectPoolParent());
+        holder.boardMixButton.onClick.AddListener(() => board.Mix());
+        holder.exitButton.onClick.AddListener(() => EffectManager.Instance.ClearEffectDict());
+        holder.exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.menuSceneName));
+    }
+
+    public void SetStage(Stage st)
+    {
+        stage = st;
+    }
+
+    public Stage GetStage()
+    {
+        return stage;
     }
 }
