@@ -1,79 +1,65 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Pool;
+using System.Collections.Generic;
 
 public class Effect : MonoBehaviour
 {
-    [SerializeField] private PuzzleType puzzleEffectType;
     [SerializeField] private List<ParticleSystem> particles;
-    public IObjectPool<List<ParticleSystem>> pool;
-    public List<List<ParticleSystem>> createdParticles = new();
-    public int poolSize;
+    public List<ParticleSystem> createdParticles;
 
-    private int poolMaxSize;
-
-    public void Init()
+    public void CreateEffect()
     {
-        poolMaxSize = poolSize * 2;
-        pool = new ObjectPool<List<ParticleSystem>>(
-            CreateEffect,
-            GetEffect,
-            Release,
-            Destroy,
-            maxSize : poolMaxSize
-            );
-    }
-
-    public PuzzleType GetEffectType()
-    {
-        return puzzleEffectType;
-    }
-
-    private List<ParticleSystem> CreateEffect()
-    {
-        List<ParticleSystem> particleSystems = new();
-
         for (int i = 0; i < particles.Count; i++)
         {
             var particle = Instantiate(particles[i], gameObject.transform);
             particle.gameObject.SetActive(false);
-            particleSystems.Add(particle);
+            createdParticles.Add(particle);
         }
-
-        return particleSystems;
     }
 
-    private void GetEffect(List<ParticleSystem> particles)
+    public void GetEffect()
     {
-        foreach (var particle in particles)
+        gameObject.SetActive(true);
+        foreach (var particle in createdParticles)
         {
             particle.gameObject.SetActive(true);
             particle.Play();
         }
     }
 
-    private void Release(List<ParticleSystem> particles)
+    public void Release()
     {
-        foreach (var particle in particles)
+        foreach (var particle in createdParticles)
         {
             particle.Stop();
             particle.gameObject.SetActive(false);
         }
+
+        gameObject.SetActive(false);
     }
 
-    private void Destroy(List<ParticleSystem> particles)
+    public void SetEffectPosition(Vector3 position)
     {
-        for (int i = particles.Count - 1; i >= 0; i--)
-        {
-            Destroy(particles[i].gameObject);
-        }
-    }
-
-    public void SetUseEffectPosition(List<ParticleSystem> particles, Vector3 position)
-    {
-        foreach (var particle in particles)
+        foreach (var particle in createdParticles)
         {
             particle.gameObject.transform.localPosition = position;
         }
+    }
+
+    public IEnumerator<bool> CoReleaseTimer()
+    {
+        int complateCount = 0;
+
+        while (complateCount < createdParticles.Count)
+        {
+            foreach (var particle in createdParticles)
+            {
+                if (particle.isPlaying) break;
+                complateCount++;
+            }
+
+            yield return false;
+        }
+
+        yield return true;
     }
 }

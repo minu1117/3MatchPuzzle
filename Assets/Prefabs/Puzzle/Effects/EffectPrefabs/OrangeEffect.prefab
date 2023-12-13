@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1826617543600519755
+--- !u!1 &2817956867962318554
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3155794533884656736}
-  - component: {fileID: -6891745166433958918}
+  - component: {fileID: 4609284664047053031}
+  - component: {fileID: 7021052759430859328}
   m_Layer: 0
   m_Name: OrangeEffect
   m_TagString: Untagged
@@ -17,13 +17,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3155794533884656736
+--- !u!4 &4609284664047053031
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1826617543600519755}
+  m_GameObject: {fileID: 2817956867962318554}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -32,19 +32,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-6891745166433958918
+--- !u!114 &7021052759430859328
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1826617543600519755}
+  m_GameObject: {fileID: 2817956867962318554}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79fb735e5ebf1814bbe771c72a9ff5fd, type: 3}
+  m_Script: {fileID: 11500000, guid: 5a54d754610dc9c418ab9430f7e07191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  puzzleEffectType: 3
   particles:
   - {fileID: 2287772096329775553, guid: a1120205584171a4a9188d29e210304b, type: 3}
-  poolSize: 10
+  createdParticles: []

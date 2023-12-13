@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class EffectManager : Manager<EffectManager>
 {
-    [SerializeField] private List<Effect> effects;
-    private Dictionary<PuzzleType, Effect> effectDict = new();
+    [SerializeField] private List<EffectPool> effectPools;
+    private Dictionary<PuzzleType, EffectPool> effectPoolDict = new();
 
     protected override void Awake()
     {
@@ -13,37 +13,30 @@ public class EffectManager : Manager<EffectManager>
 
     public void CreateEffects(GameObject effectPoolObject)
     {
-        for (int i = 0; i < effects.Count; i++)
+        for (int i = 0; i < effectPools.Count; i++)
         {
-            var type = effects[i].GetEffectType();
+            var type = effectPools[i].GetEffectType();
+            var effectPool = Instantiate(effectPools[i], effectPoolObject.transform);
+            effectPool.Init();
 
-            GameObject parentObject = new GameObject($"{type} Effect Pool");
-            parentObject.gameObject.transform.parent = effectPoolObject.gameObject.transform;
-            parentObject.transform.localPosition = Vector3.zero;
-            parentObject.transform.localScale = Vector3.one;
-
-            var effect = Instantiate(effects[i], parentObject.transform);
-            effect.Init();
-
-            effectDict.Add(type, effect);
+            effectPoolDict.Add(type, effectPool);
         }
     }
 
     public void DestroyEffect(PuzzleType type)
     {
-        effectDict[type].pool.Clear();
+        effectPoolDict[type].pool.Clear();
     }
 
     public void GetEffect(PuzzleType type, Vector2 position)
     {
-        var effect = effectDict[type];
-        var particles = effect.pool.Get();
-
-        effect.SetUseEffectPosition(particles, position);
+        var effectPool = effectPoolDict[type];
+        var particles = effectPool.pool.Get();
+        effectPool.SetUseEffectPosition(particles, position);
     }
 
     public void ClearEffectDict()
     {
-        effectDict.Clear();
+        effectPoolDict.Clear();
     }
 }
