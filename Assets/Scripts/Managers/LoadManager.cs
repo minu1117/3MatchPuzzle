@@ -7,6 +7,6 @@ public static class LoadManager
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Initalize()
     {
-        Sprites = Resources.LoadAll<SpriteObject>("Sprites/");
+        Sprites = Resources.LoadAll<SpriteObject>("SpriteObjects/");
     }
 }
