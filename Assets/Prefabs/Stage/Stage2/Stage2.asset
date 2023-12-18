@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8cd8f6913c12d44e8ac7c8cf2100100, type: 3}
   m_Name: Stage2
   m_EditorClassIdentifier: 
-  board: {fileID: 1029113398472966310, guid: c5c6cf342d003c74a9c6e6173f995fd2, type: 3}
+  board: {fileID: 1029113398472966310, guid: f00e2c2c7e1e2b64f876eebe4d221661, type: 3}
   boardWidth: 6
   boardHeight: 6
   clearScore: 100

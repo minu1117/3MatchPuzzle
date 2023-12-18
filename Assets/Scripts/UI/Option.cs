@@ -10,13 +10,30 @@ public class Option : MonoBehaviour
     [SerializeField] private Button exitButton;
     [SerializeField] private Slider bgmSlider;
     [SerializeField] private Slider sfxSlider;
-    
+
+    [Header("¹Ù²ð º¼·ý ÀÌ¹ÌÁöµé")]
+    [SerializeField] private Sprite maxVolumeSprite;
+    [SerializeField] private Sprite mediumVolumeSprite;
+    [SerializeField] private Sprite minVolumeSprite;
+    [SerializeField] private Sprite muteSprite;
+
+    [Header("º¼·ý ¹öÆ°, º¼·ýÀÇ ÀÌ¹ÌÁö")]
+    [SerializeField] private Button bgmVolumeButton;
+    [SerializeField] private Button sfxVolumeButton;
+    [SerializeField] private Image bgmVolumeImage;
+    [SerializeField] private Image sfxVolumeImage;
+
     public void ConnectButtonOnClick()
     {
         optionButton.onClick.AddListener(() => optionObject.gameObject.SetActive(true));
         exitButton.onClick.AddListener(() => optionObject.gameObject.SetActive(false));
+
         bgmSlider.onValueChanged.AddListener(SoundManager.Instance.ChangeBGMVolume);
+        bgmSlider.onValueChanged.AddListener(SwitchBgmVolumeImage);
+
         sfxSlider.onValueChanged.AddListener(SoundManager.Instance.ChangeSFXVolume);
+        sfxSlider.onValueChanged.AddListener(SwitchSfxVolumeImage);
+
     }
 
     public void SynchronizeVolumeSliderValue()
@@ -25,5 +42,27 @@ public class Option : MonoBehaviour
         string sfxName = SoundManager.Instance.GetSFXGroupName();
         bgmSlider.value = PlayerPrefs.GetFloat(bgmName);
         sfxSlider.value = PlayerPrefs.GetFloat(sfxName);
+    }
+
+    private void SwitchBgmVolumeImage(float value)
+    {
+        SwitchVolumeImage(value, bgmVolumeImage);
+    }
+
+    private void SwitchSfxVolumeImage(float value)
+    {
+        SwitchVolumeImage(value, sfxVolumeImage);
+    }
+
+    private void SwitchVolumeImage(float value, Image volumeImage)
+    {
+        if (value >= 0.75f)
+            volumeImage.sprite = maxVolumeSprite;
+        else if (value >= 0.5f)
+            volumeImage.sprite = mediumVolumeSprite;
+        else if (value >= 0.25f)
+            volumeImage.sprite = minVolumeSprite;
+        else if (value >= 0)
+            volumeImage.sprite = muteSprite;
     }
 }
