@@ -56,13 +56,25 @@ public class Option : MonoBehaviour
 
     private void SwitchVolumeImage(float value, Image volumeImage)
     {
-        if (value >= 0.75f)
-            volumeImage.sprite = maxVolumeSprite;
+        if (value == 0f)
+        {
+            if (volumeImage.sprite != muteSprite)
+                volumeImage.sprite = muteSprite;
+        }
+        else if (value >= 0.75f)
+        {
+            if (volumeImage.sprite != maxVolumeSprite)
+                volumeImage.sprite = maxVolumeSprite;
+        }
         else if (value >= 0.5f)
-            volumeImage.sprite = mediumVolumeSprite;
-        else if (value >= 0.25f)
-            volumeImage.sprite = minVolumeSprite;
-        else if (value >= 0)
-            volumeImage.sprite = muteSprite;
+        {
+            if (volumeImage.sprite != mediumVolumeSprite)
+                volumeImage.sprite = mediumVolumeSprite;
+        }
+        else if (value > 0f)
+        {
+            if (volumeImage.sprite != minVolumeSprite)
+                volumeImage.sprite = minVolumeSprite;
+        }
     }
 }
