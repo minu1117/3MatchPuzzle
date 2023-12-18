@@ -42,6 +42,8 @@ public class Option : MonoBehaviour
         string sfxName = SoundManager.Instance.GetSFXGroupName();
         bgmSlider.value = PlayerPrefs.GetFloat(bgmName);
         sfxSlider.value = PlayerPrefs.GetFloat(sfxName);
+        SwitchBgmVolumeImage(bgmSlider.value);
+        SwitchSfxVolumeImage(sfxSlider.value);
     }
 
     private void SwitchBgmVolumeImage(float value)
@@ -71,7 +73,7 @@ public class Option : MonoBehaviour
             if (volumeImage.sprite != mediumVolumeSprite)
                 volumeImage.sprite = mediumVolumeSprite;
         }
-        else if (value > 0f)
+        else if (value <= 0.25f && value > 0f)
         {
             if (volumeImage.sprite != minVolumeSprite)
                 volumeImage.sprite = minVolumeSprite;
