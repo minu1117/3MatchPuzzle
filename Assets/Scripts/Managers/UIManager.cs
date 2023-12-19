@@ -17,7 +17,7 @@ public class UIManager : Manager<UIManager>
         option = FindFirstObjectByType<Option>();
         if (option != null)
         {
-            option.ConnectButtonOnClick();
+            option.Init();
             option.SynchronizeVolumeSliderValue();
         }
     }

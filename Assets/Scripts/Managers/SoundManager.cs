@@ -34,10 +34,30 @@ public class SoundManager : Manager<SoundManager>
         PlayerPrefs.SetFloat(sfxGroup.name, value);
     }
 
+    public void ChangeSFXVolume(string value)
+    {
+        if (int.TryParse(value, out int parseInt)) 
+        {
+            float parseFloatValue = parseInt / 100f;
+            sfxGroup.audioMixer.SetFloat(sfxGroup.name, Mathf.Log10(parseFloatValue) * 20);
+            PlayerPrefs.SetFloat(sfxGroup.name, parseFloatValue);
+        }
+    }
+
     public void ChangeBGMVolume(float value)
     {
         bgmGroup.audioMixer.SetFloat(bgmGroup.name, Mathf.Log10(value) * 20);
         PlayerPrefs.SetFloat(bgmGroup.name, value);
+    }
+
+    public void ChangeBGMVolume(string value)
+    {
+        if (int.TryParse(value, out int parseInt))
+        {
+            float parseFloatValue = parseInt / 100f;
+            bgmGroup.audioMixer.SetFloat(bgmGroup.name, Mathf.Log10(parseFloatValue) * 20);
+            PlayerPrefs.SetFloat(bgmGroup.name, parseFloatValue);
+        }
     }
 
     public void PlayExplodingSound()
