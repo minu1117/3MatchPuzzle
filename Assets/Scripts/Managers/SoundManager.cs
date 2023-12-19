@@ -5,12 +5,15 @@ using UnityEngine.SceneManagement;
 public class SoundManager : Manager<SoundManager>
 {
     [SerializeField] private AudioSource bgm;
-    [SerializeField] private AudioSource explodingSound;
+    [SerializeField] private AudioSource sfx;
     [SerializeField] private AudioMixerGroup bgmGroup;
     [SerializeField] private AudioMixerGroup sfxGroup;
 
     private AudioSource bgmObject;
-    private AudioSource explodingSoundObject;
+    private AudioSource sfxObject;
+
+    private bool muteBGM;
+    private bool muteSFX;
 
     protected override void Awake()
     {
@@ -26,6 +29,38 @@ public class SoundManager : Manager<SoundManager>
         {
             PlayBgm();
         }
+    }
+
+    public void LoadMuteData()
+    {
+        muteBGM = System.Convert.ToBoolean(PlayerPrefs.GetInt("MuteBGM"));
+        muteSFX = System.Convert.ToBoolean(PlayerPrefs.GetInt("MuteSFX"));
+    }
+
+    public bool GetIsMuteBGM()
+    {
+        return muteBGM;
+    }
+
+    public bool GetIsMuteSFX()
+    {
+        return muteSFX;
+    }
+
+    public void ControlMuteBGM()
+    {
+        muteBGM = !muteBGM;
+        PlayerPrefs.SetInt("MuteBGM", System.Convert.ToInt16(muteBGM));
+
+        bgmObject.mute = muteBGM;
+    }
+
+    public void ControlMuteSFX()
+    {
+        muteSFX = !muteSFX;
+        PlayerPrefs.SetInt("MuteSFX", System.Convert.ToInt16(muteSFX));
+
+        sfxObject.mute = muteSFX;
     }
 
     public void ChangeSFXVolume(float value)
@@ -62,7 +97,7 @@ public class SoundManager : Manager<SoundManager>
 
     public void PlayExplodingSound()
     {
-        explodingSoundObject.PlayOneShot(explodingSoundObject.clip);
+        sfxObject.PlayOneShot(sfxObject.clip);
     }
 
     public void PlayBgm()
@@ -74,7 +109,7 @@ public class SoundManager : Manager<SoundManager>
     private void CreateSoundObjects()
     {
         bgmObject = Instantiate(bgm, gameObject.transform);
-        explodingSoundObject = Instantiate(explodingSound, gameObject.transform);
+        sfxObject = Instantiate(sfx, gameObject.transform);
     }
 
     public string GetBGMGroupName()
