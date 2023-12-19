@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2023361388314518640}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -44,8 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f99e01d0d8a34fc43a52286160536e96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  effectPoolObject: {fileID: 0}
-  effects:
+  effectPools:
   - {fileID: -6891745166433958918, guid: 60642c7574c75dc418f3779c4d3f90e6, type: 3}
   - {fileID: -6891745166433958918, guid: 5449222c54eb04341ab793cf716b7e23, type: 3}
   - {fileID: -6891745166433958918, guid: e8de4ca53bdd1404aad8ecaaf0d2a894, type: 3}

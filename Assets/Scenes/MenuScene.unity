@@ -135,6 +135,10 @@ PrefabInstance:
       propertyPath: sfx
       value: 
       objectReference: {fileID: 8244018208165821131, guid: 5d9e6d1c7f9c94d409c51046ebf58176, type: 3}
+    - target: {fileID: 1590151637157684063, guid: 729697b445857fe40a008d0c2c6dcba4, type: 3}
+      propertyPath: puzzlePopSoundSFX
+      value: 
+      objectReference: {fileID: 8244018208165821131, guid: 5d9e6d1c7f9c94d409c51046ebf58176, type: 3}
     - target: {fileID: 1945889232365638009, guid: 729697b445857fe40a008d0c2c6dcba4, type: 3}
       propertyPath: m_Name
       value: SoundManager
@@ -1310,26 +1314,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8350458076520430216, guid: 4667bb0cf2f8d2346b391f63b2fa66ef, type: 3}
-      propertyPath: effectPools.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 8350458076520430216, guid: 4667bb0cf2f8d2346b391f63b2fa66ef, type: 3}
-      propertyPath: effectPools.Array.data[0]
-      value: 
-      objectReference: {fileID: -6891745166433958918, guid: 60642c7574c75dc418f3779c4d3f90e6, type: 3}
-    - target: {fileID: 8350458076520430216, guid: 4667bb0cf2f8d2346b391f63b2fa66ef, type: 3}
-      propertyPath: effectPools.Array.data[1]
-      value: 
-      objectReference: {fileID: -6891745166433958918, guid: 5449222c54eb04341ab793cf716b7e23, type: 3}
-    - target: {fileID: 8350458076520430216, guid: 4667bb0cf2f8d2346b391f63b2fa66ef, type: 3}
-      propertyPath: effectPools.Array.data[2]
-      value: 
-      objectReference: {fileID: -6891745166433958918, guid: e8de4ca53bdd1404aad8ecaaf0d2a894, type: 3}
-    - target: {fileID: 8350458076520430216, guid: 4667bb0cf2f8d2346b391f63b2fa66ef, type: 3}
-      propertyPath: effectPools.Array.data[3]
-      value: 
-      objectReference: {fileID: -6891745166433958918, guid: 1d95b91387f2656458826d8a66313e42, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

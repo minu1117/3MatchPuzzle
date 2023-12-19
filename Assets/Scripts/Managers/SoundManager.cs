@@ -5,12 +5,12 @@ using UnityEngine.SceneManagement;
 public class SoundManager : Manager<SoundManager>
 {
     [SerializeField] private AudioSource bgm;
-    [SerializeField] private AudioSource sfx;
+    [SerializeField] private AudioSource puzzlePopSoundSFX;
     [SerializeField] private AudioMixerGroup bgmGroup;
     [SerializeField] private AudioMixerGroup sfxGroup;
 
     private AudioSource bgmObject;
-    private AudioSource sfxObject;
+    private AudioSource puzzlePopSoundSfxObject;
 
     private bool muteBGM;
     private bool muteSFX;
@@ -60,7 +60,7 @@ public class SoundManager : Manager<SoundManager>
         muteSFX = !muteSFX;
         PlayerPrefs.SetInt("MuteSFX", System.Convert.ToInt16(muteSFX));
 
-        sfxObject.mute = muteSFX;
+        puzzlePopSoundSfxObject.mute = muteSFX;
     }
 
     public void ChangeSFXVolume(float value)
@@ -97,7 +97,7 @@ public class SoundManager : Manager<SoundManager>
 
     public void PlayExplodingSound()
     {
-        sfxObject.PlayOneShot(sfxObject.clip);
+        puzzlePopSoundSfxObject.PlayOneShot(puzzlePopSoundSfxObject.clip);
     }
 
     public void PlayBgm()
@@ -109,7 +109,7 @@ public class SoundManager : Manager<SoundManager>
     private void CreateSoundObjects()
     {
         bgmObject = Instantiate(bgm, gameObject.transform);
-        sfxObject = Instantiate(sfx, gameObject.transform);
+        puzzlePopSoundSfxObject = Instantiate(puzzlePopSoundSFX, gameObject.transform);
     }
 
     public string GetBGMGroupName()
