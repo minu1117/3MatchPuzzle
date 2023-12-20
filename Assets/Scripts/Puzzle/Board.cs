@@ -26,13 +26,10 @@ public class Board : MonoBehaviour
 
     private GameManager gameManager;
 
-    //public void Init(GridLayoutGroup backgroundParent, GameObject puzzleParent, int width, int height)
     public void Init(int width, int height)
     {
         gameManager = FindAnyObjectByType<GameManager>();
 
-        //backgroundParentsObject = backgroundParent;
-        //puzzleParentsObject = puzzleParent;
         this.width = width;
         this.height = height;
 
@@ -58,55 +55,6 @@ public class Board : MonoBehaviour
         StartCoroutine(CreateBackgroundTiles(width, height));
     }
 
-    // 가로, 세로 크기에 맞춰 Grid Layout Group의 Cell Size, Spacing 조정 (넘치지 않게)
-    private void SetCellSize()
-    {
-        RectTransform parentRect = backgroundParentsObject.GetComponent<RectTransform>();
-        float parentWidth = parentRect.rect.width;
-        float parentHeight = parentRect.rect.height;
-
-        Vector2 cellSize = backgroundParentsObject.cellSize;
-        Vector2 spacing = backgroundParentsObject.spacing;
-
-        float xOverflow = parentWidth - ((cellSize.x * width) + (spacing.x * width));
-        float yOverflow = parentHeight - ((cellSize.y * height) + (spacing.y * height));
-
-        if (xOverflow < 0 || yOverflow < 0)
-        {
-            int xSpacing = (int)(cellSize.x / spacing.x);
-            int ySpacing = (int)(cellSize.y / spacing.y);
-
-            int xAddCount = 0;
-            int yAddCount = 0;
-            while (true)
-            {
-                cellSize.x--;
-                cellSize.y--;
-
-                xAddCount++;
-                yAddCount++;
-
-                if (xAddCount > 0 && xAddCount % xSpacing == 0)
-                {
-                    spacing.x--;
-                }
-                if (yAddCount > 0 && yAddCount % ySpacing == 0)
-                {
-                    spacing.y--;
-                }
-
-                xOverflow = parentWidth - ((cellSize.x * width) + (spacing.x * width));
-                yOverflow = parentHeight - ((cellSize.y * height) + (spacing.y * height));
-                if (xOverflow > 0 && yOverflow > 0)
-                {
-                    backgroundParentsObject.cellSize = cellSize;
-                    backgroundParentsObject.spacing = spacing;
-                    break;
-                }
-            }
-        }
-    }
-
     private IEnumerator CreateBackgroundTiles(int width, int height)
     {
         if (width == 0 || height == 0)
@@ -114,8 +62,8 @@ public class Board : MonoBehaviour
 
         backgroundParentsObject.constraintCount = width;
 
-        // 셀 사이즈, 간격 값
-        SetCellSize();
+        // 셀 사이즈, 간격 값 조정
+        UIManager.Instance.FitToCell(backgroundParentsObject, width, height);
         Vector2 cellSize = backgroundParentsObject.cellSize;
         Vector2 spacing = backgroundParentsObject.spacing;
 
@@ -271,7 +219,6 @@ public class Board : MonoBehaviour
 
     public void Update()
     {
-        //CheckThreeMatchPuzzle();
         MoveAndFillAsync();
 
         // Test
@@ -348,9 +295,6 @@ public class Board : MonoBehaviour
             if (!p.gameObject.activeSelf)
                 continue;
 
-            //Vector2 position = p.GetPosition();
-            //PuzzleType type = p.type;
-
             int y = p.GridNum.Item1;
             int x = p.GridNum.Item2;
             minY = minY > y ? y : minY;
@@ -360,11 +304,8 @@ public class Board : MonoBehaviour
 
             addScore += p.scoreNum;
             puzzlePool.Release(p);
-
-            //EffectManager.Instance.GetEffect(type, position);
         }
 
-        //gameManager.score.AddScore(addScore);
         gameManager.holder.score.AddScore(addScore);
         SoundManager.Instance.PlayExplodingSound();
         await MoveDownAsync(maxY, minY, minX, maxX);
