@@ -72,55 +72,33 @@ public class BoardGenerator : MonoBehaviour
         }
     }
 
-    private void SetWidth(string widthStr)
+    private void SetSize(ref int size, int maxSize, TMP_InputField inputField, string sizeStr)
     {
-        if (int.TryParse(widthStr, out int parseInt))
+        if (int.TryParse(sizeStr, out int parseInt))
         {
-            if (parseInt == width)
+            if (parseInt == size)
                 return;
 
-            width = parseInt;
-            if (width > maxWidth)
+            size = parseInt;
+            if (size > maxSize)
             {
-                width = maxWidth;
-                widthInputField.text = maxWidth.ToString();
+                size = maxSize;
+                inputField.text = maxSize.ToString();
             }
 
-            //if (width < height)
-            //{
-            //    tileGroup.constraint = GridLayoutGroup.Constraint.FixedRowCount;
-            //    tileGroup.constraintCount = height;
-            //}
             SetConstaintType();
-
-            widthInputField.text = widthStr;
+            inputField.text = sizeStr;
             CreateOrDestroyTiles();
         }
     }
 
+    private void SetWidth(string widthStr)
+    {
+        SetSize(ref width, maxWidth, widthInputField, widthStr);
+    }
+
     private void SetHeight(string heightStr)
     {
-        if (int.TryParse(heightStr, out int parseInt))
-        {
-            if (parseInt == height)
-                return;
-
-            height = parseInt;
-            if (height > maxHeight)
-            {
-                height = maxHeight;
-                heightInputField.text = maxHeight.ToString();
-            }
-
-            //if (height < width)
-            //{
-            //    tileGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            //    tileGroup.constraintCount = width;
-            //}
-            SetConstaintType();
-
-            heightInputField.text = heightStr;
-            CreateOrDestroyTiles();
-        }
+        SetSize(ref height, maxHeight, heightInputField, heightStr);
     }
 }
