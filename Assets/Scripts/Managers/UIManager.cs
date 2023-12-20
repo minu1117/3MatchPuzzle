@@ -38,13 +38,14 @@ public class UIManager : Manager<UIManager>
         float xSize = parentWidth - ((cellSize.x * width) + (spacing.x * width));
         float ySize = parentHeight - ((cellSize.y * height) + (spacing.y * height));
 
+        int xSpacing = (int)(cellSize.x / spacing.x);
+        int ySpacing = (int)(cellSize.y / spacing.y);
+
+        int xAddCount = 0;
+        int yAddCount = 0;
+
         if (xSize < 0 || ySize < 0)
         {
-            int xSpacing = (int)(cellSize.x / spacing.x);
-            int ySpacing = (int)(cellSize.y / spacing.y);
-
-            int xAddCount = 0;
-            int yAddCount = 0;
             while (true)
             {
                 cellSize.x--;
@@ -53,17 +54,12 @@ public class UIManager : Manager<UIManager>
                 xAddCount++;
                 yAddCount++;
 
-                if (xAddCount > 0 && xAddCount % xSpacing == 0)
-                {
-                    spacing.x--;
-                }
-                if (yAddCount > 0 && yAddCount % ySpacing == 0)
-                {
-                    spacing.y--;
-                }
+                if (xAddCount > 0 && xAddCount % xSpacing == 0) spacing.x--;
+                if (yAddCount > 0 && yAddCount % ySpacing == 0) spacing.y--;
 
                 xSize = parentWidth - ((cellSize.x * width) + (spacing.x * width));
                 ySize = parentHeight - ((cellSize.y * height) + (spacing.y * height));
+
                 if (xSize >= 0 && ySize >= 0)
                 {
                     group.cellSize = cellSize;
@@ -74,25 +70,8 @@ public class UIManager : Manager<UIManager>
         }
         else
         {
-            int xSpacing = (int)(cellSize.x / spacing.x);
-            int ySpacing = (int)(cellSize.y / spacing.y);
-
-            int xAddCount = 0;
-            int yAddCount = 0;
             while (true)
             {
-                if (xAddCount > 0 && xAddCount % xSpacing == 0)
-                {
-                    spacing.x++;
-                }
-                if (yAddCount > 0 && yAddCount % ySpacing == 0)
-                {
-                    spacing.y++;
-                }
-
-                xSize = ((cellSize.x * width) + (spacing.x * width)) - parentWidth;
-                ySize = ((cellSize.y * height) + (spacing.y * height)) - parentHeight;
-
                 if (xSize < 0 && ySize < 0)
                 {
                     cellSize.x++;
@@ -101,7 +80,14 @@ public class UIManager : Manager<UIManager>
                     xAddCount++;
                     yAddCount++;
                 }
-                else
+
+                if (xAddCount > 0 && xAddCount % xSpacing == 0) spacing.x++;
+                if (yAddCount > 0 && yAddCount % ySpacing == 0) spacing.y++;
+
+                xSize = ((cellSize.x * width) + (spacing.x * width)) - parentWidth;
+                ySize = ((cellSize.y * height) + (spacing.y * height)) - parentHeight;
+
+                if (xSize >= 0 || ySize >= 0)
                 {
                     group.cellSize = cellSize;
                     group.spacing = spacing;

@@ -54,6 +54,24 @@ public class BoardGenerator : MonoBehaviour
         UIManager.Instance.FitToCell(tileGroup, width, height);
     }
 
+    private void SetConstaintType()
+    {
+        if (width < height)
+        {
+            tileGroup.constraint = GridLayoutGroup.Constraint.FixedRowCount;
+            tileGroup.constraintCount = height;
+        }
+        else if (width > height) 
+        {
+            tileGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            tileGroup.constraintCount = width;
+        }
+        else if (width == height)
+        {
+            tileGroup.constraint = GridLayoutGroup.Constraint.Flexible;
+        }
+    }
+
     private void SetWidth(string widthStr)
     {
         if (int.TryParse(widthStr, out int parseInt))
@@ -61,19 +79,20 @@ public class BoardGenerator : MonoBehaviour
             if (parseInt == width)
                 return;
 
-            if (parseInt > maxWidth)
+            width = parseInt;
+            if (width > maxWidth)
             {
-                parseInt = maxWidth;
+                width = maxWidth;
                 widthInputField.text = maxWidth.ToString();
             }
 
-            if (parseInt < height)
-            {
-                tileGroup.constraint = GridLayoutGroup.Constraint.FixedRowCount;
-            }
+            //if (width < height)
+            //{
+            //    tileGroup.constraint = GridLayoutGroup.Constraint.FixedRowCount;
+            //    tileGroup.constraintCount = height;
+            //}
+            SetConstaintType();
 
-            tileGroup.constraintCount = height;
-            width = parseInt;
             widthInputField.text = widthStr;
             CreateOrDestroyTiles();
         }
@@ -86,19 +105,20 @@ public class BoardGenerator : MonoBehaviour
             if (parseInt == height)
                 return;
 
-            if (parseInt > maxHeight)
+            height = parseInt;
+            if (height > maxHeight)
             {
-                parseInt = maxHeight;
+                height = maxHeight;
                 heightInputField.text = maxHeight.ToString();
             }
 
-            if (parseInt < width)
-            {
-                tileGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            }
+            //if (height < width)
+            //{
+            //    tileGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            //    tileGroup.constraintCount = width;
+            //}
+            SetConstaintType();
 
-            tileGroup.constraintCount = width;
-            height = parseInt;
             heightInputField.text = heightStr;
             CreateOrDestroyTiles();
         }
