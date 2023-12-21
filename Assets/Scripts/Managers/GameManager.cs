@@ -12,10 +12,10 @@ public class GameManager : Manager<GameManager>
     {
         holder = FindAnyObjectByType<PuzzleSceneObjectHolder>();
 
-        var board = Instantiate(stage.StageInfo.board, holder.boardParentObject.transform);
-        board.Init(stage.StageInfo.boardWidth, stage.StageInfo.boardHeight);
+        //var boardInfo = Instantiate(stage.StageInfo.boardInfo, holder.boardParentObject.transform);
+        holder.board.Init(stage.StageInfo.boardInfo.width, stage.StageInfo.boardInfo.height);
         EffectManager.Instance.CreateEffects(holder.GetEffectPoolParent());
-        holder.boardMixButton.onClick.AddListener(() => board.Mix());
+        holder.boardMixButton.onClick.AddListener(() => holder.board.Mix());
         holder.exitButton.onClick.AddListener(() => EffectManager.Instance.ClearEffectDict());
         holder.exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.menuSceneName));
     }

@@ -10,6 +10,7 @@ public class PuzzleSceneObjectHolder : MonoBehaviour
     public GameObject effectPoolParentsObject;
 
     [Header("Board")]
+    public Board board;
     public Button boardMixButton;
 
     [Header("UI")]

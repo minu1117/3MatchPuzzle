@@ -1,15 +1,8 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "stage", menuName = "Stage Object/Stage")]
-public class StageInfo : ScriptableObject
+public class StageInfo : MonoBehaviour
 {
-    public Board board;
-
-    public int boardWidth;
-    public int boardHeight;
-
+    public BoardInfo boardInfo;
     public int clearScore;
-    public List<int> blockGridX;
-    public List<int> blockGridY;
+    public bool infinityMode;
 }

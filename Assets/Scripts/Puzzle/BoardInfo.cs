@@ -2,14 +2,17 @@ using UnityEngine;
 
 public class BoardInfo : MonoBehaviour
 {
-    [Header("Background Tile")]
-    [SerializeField] private GameObject backgroundTilePrefab;
-
     private Row[] rows;
-    private Grid[,] grids;
+    private Grid[,] grids; // grids[y,x]
 
-    public int width { get; private set; }
-    public int height { get; private set; }
+    public int width;
+    public int height;
+
+    public void SetBoardSize(int width, int height)
+    {
+        this.width = width;
+        this.height = height;
+    }
 
     public void CreateGrids()
     {
@@ -59,5 +62,10 @@ public class BoardInfo : MonoBehaviour
     public (int, int) GetGridNum((int, int) gn)
     {
         return grids[gn.Item1, gn.Item2].GridNum;
+    }
+
+    public void SetGridBlocked((int, int) gn, bool isBlocked)
+    {
+        grids[gn.Item1, gn.Item2].IsBlocked = isBlocked;
     }
 }

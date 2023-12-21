@@ -1,20 +1,30 @@
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
+using System.Collections.Generic;
 
 public class BoardGenerator : MonoBehaviour
 {
-    [SerializeField] private GridLayoutGroup tileGroup;
-    [SerializeField] private GameObject backgroundTilePrefab;
+    [SerializeField] private GridLayoutGroup elementsGroup;
+    [SerializeField] private BoardElements elementPrefab;
 
     [SerializeField] private TMP_InputField widthInputField;
     [SerializeField] private TMP_InputField heightInputField;
+
+    private List<BoardElements> elements = new();
 
     private int width = 0;
     private int height = 0;
 
     private int maxWidth = 10;
     private int maxHeight = 10;
+
+    private int clearScore = 0;
+    private bool isInfinityMode = false;
+
+    public string prefabSaveFolderName;
 
     private void Start()
     {
@@ -32,14 +42,14 @@ public class BoardGenerator : MonoBehaviour
     {
         int count;
         int boardSize = width * height;
-        int groupChildCount = tileGroup.transform.childCount;
+        int groupChildCount = elementsGroup.transform.childCount;
 
         if (groupChildCount > boardSize) // 타일 수가 설정한 보드 크기보다 많을 때 삭제
         {
             count = groupChildCount - (groupChildCount - boardSize);
             for (int i = groupChildCount - 1; i >= count; i--)
             {
-                Destroy(tileGroup.transform.GetChild(i).gameObject);
+                Destroy(elementsGroup.transform.GetChild(i).gameObject);
             }
         }
         else if (groupChildCount < boardSize) // 타일 수가 설정한 보드 크기보다 적을 때 생성
@@ -47,28 +57,28 @@ public class BoardGenerator : MonoBehaviour
             count = boardSize - groupChildCount;
             for (int i = 0; i < count; i++)
             {
-                Instantiate(backgroundTilePrefab, tileGroup.transform);
+                Instantiate(elementPrefab, elementsGroup.transform);
             }
         }
 
-        UIManager.Instance.FitToCell(tileGroup, width, height);
+        UIManager.Instance.FitToCell(elementsGroup, width, height);
     }
 
     private void SetConstaintType()
     {
         if (width < height)
         {
-            tileGroup.constraint = GridLayoutGroup.Constraint.FixedRowCount;
-            tileGroup.constraintCount = height;
+            elementsGroup.constraint = GridLayoutGroup.Constraint.FixedRowCount;
+            elementsGroup.constraintCount = height;
         }
         else if (width > height) 
         {
-            tileGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            tileGroup.constraintCount = width;
+            elementsGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            elementsGroup.constraintCount = width;
         }
         else if (width == height)
         {
-            tileGroup.constraint = GridLayoutGroup.Constraint.Flexible;
+            elementsGroup.constraint = GridLayoutGroup.Constraint.Flexible;
         }
     }
 
@@ -100,5 +110,76 @@ public class BoardGenerator : MonoBehaviour
     private void SetHeight(string heightStr)
     {
         SetSize(ref height, maxHeight, heightInputField, heightStr);
+    }
+
+    private void SetGridNum()
+    {
+        for (int i = 0; i < elementsGroup.transform.childCount; i++) 
+        {
+            var elem = elementsGroup.transform.GetChild(i).GetComponent<BoardElements>();
+            elements.Add(elem);
+        }
+
+        int index = 0;
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                elements[index].gridNum = (y, x);
+                index++;
+            }
+        }
+    }
+
+    private void CreateFolder(string folderPath)
+    {
+        // 경로에 폴더가 없으면 생성
+        if (!Directory.Exists(folderPath))
+        {
+            Directory.CreateDirectory(folderPath);
+        }
+        else
+        {
+            // ui 연결해서 이름 중복되었다고 출력
+            // bool형으로 return해서 중복됐을 때 저장 실행 안 하게 추가
+        }
+    }
+
+    private void CreatePrefab(string name)
+    {
+        // 프리팹을 저장할 폴더 경로
+        string folderPath = Path.Combine(Application.dataPath, $"{prefabSaveFolderName}/{name}");
+        CreateFolder(folderPath);
+
+        // 새 프리팹 생성, 폴더에 추가
+        var newBoardInfo = new GameObject().AddComponent<BoardInfo>();
+        var newStageInfo = new GameObject().AddComponent<StageInfo>();
+
+        SetGridNum();
+        newBoardInfo.SetBoardSize(width, height);
+        newBoardInfo.CreateGrids();
+
+        for (int i = 0; i < elements.Count; i++)
+        {
+            newBoardInfo.SetGridBlocked(elements[i].gridNum, true);
+        }
+
+        string stagePrefabPath = $"{folderPath}/{name}_StageInfo.prefab";
+        string boardPrefabPath = $"{folderPath}/{name}_BoardInfo.prefab";
+
+        GameObject boardInfoPrefab = PrefabUtility.SaveAsPrefabAsset(newBoardInfo.gameObject, boardPrefabPath);
+
+        newStageInfo.boardInfo = boardInfoPrefab.GetComponent<BoardInfo>();
+        newStageInfo.clearScore = clearScore;
+        newStageInfo.infinityMode = isInfinityMode;
+        PrefabUtility.SaveAsPrefabAsset(newStageInfo.gameObject, stagePrefabPath);
+    }
+
+    public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            CreatePrefab("Test");
+        }
     }
 }

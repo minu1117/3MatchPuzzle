@@ -1550,7 +1550,7 @@ GameObject:
   - component: {fileID: 6812620421583046709}
   - component: {fileID: 6812620421583046710}
   m_Layer: 0
-  m_Name: Board
+  m_Name: BoardGenerator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1618,10 +1618,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36c49da9b5fc20b45a796abcc39c5c31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileGroup: {fileID: 2082816541936325066}
-  backgroundTilePrefab: {fileID: 4836776147292935738, guid: d947225270f7cfb4abafae003ba5d4ac, type: 3}
+  elementsGroup: {fileID: 2082816541936325066}
+  elementPrefab: {fileID: 7782015598873712135, guid: 9a0abd777a894cc4d99f4831128209dd, type: 3}
   widthInputField: {fileID: 1662856011}
   heightInputField: {fileID: 1292396972}
+  prefabSaveFolderName: Prefabs/Stage
 --- !u!1 &7984260864255879174
 GameObject:
   m_ObjectHideFlags: 0
