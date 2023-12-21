@@ -12,6 +12,9 @@ public class BoardGenerator : MonoBehaviour
 
     [SerializeField] private TMP_InputField widthInputField;
     [SerializeField] private TMP_InputField heightInputField;
+    [SerializeField] private TMP_InputField nameInputField;
+    [SerializeField] private Toggle isInfinityModeToggle;
+    [SerializeField] private Button saveButton;
 
     private List<BoardElements> elements = new();
 
@@ -22,7 +25,6 @@ public class BoardGenerator : MonoBehaviour
     private int maxHeight = 10;
 
     private int clearScore = 0;
-    private bool isInfinityMode = false;
 
     public string prefabSaveFolderName;
 
@@ -36,6 +38,8 @@ public class BoardGenerator : MonoBehaviour
 
         widthInputField.onValueChanged.AddListener(SetWidth);
         heightInputField.onValueChanged.AddListener(SetHeight);
+
+        saveButton.onClick.AddListener(Save);
     }
 
     private void CreateOrDestroyTiles()
@@ -171,15 +175,15 @@ public class BoardGenerator : MonoBehaviour
 
         newStageInfo.boardInfo = boardInfoPrefab.GetComponent<BoardInfo>();
         newStageInfo.clearScore = clearScore;
-        newStageInfo.infinityMode = isInfinityMode;
+        newStageInfo.infinityMode = isInfinityModeToggle.isOn;
         PrefabUtility.SaveAsPrefabAsset(newStageInfo.gameObject, stagePrefabPath);
+
+        Destroy(newBoardInfo.gameObject);
+        Destroy(newStageInfo.gameObject);
     }
 
-    public void Update()
+    private void Save()
     {
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            CreatePrefab("Test");
-        }
+        CreatePrefab(nameInputField.text);
     }
 }
