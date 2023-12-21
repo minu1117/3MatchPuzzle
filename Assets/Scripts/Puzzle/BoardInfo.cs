@@ -1,12 +1,15 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BoardInfo : MonoBehaviour
 {
-    private Row[] rows;
-    private Grid[,] grids; // grids[y,x]
+    public Row[] rows { get; private set; }
+    public Grid[,] grids { get; private set; } // grids[y,x]
 
     public int width;
     public int height;
+
+    private Dictionary<(int, int), bool> saveGridDict = new();
 
     public void SetBoardSize(int width, int height)
     {
@@ -64,8 +67,22 @@ public class BoardInfo : MonoBehaviour
         return grids[gn.Item1, gn.Item2].GridNum;
     }
 
-    public void SetGridBlocked((int, int) gn, bool isBlocked)
+    public void SaveGridBlocked((int, int) gn, bool isBlocked)
     {
-        grids[gn.Item1, gn.Item2].IsBlocked = isBlocked;
+        saveGridDict.Add(gn, isBlocked);
+    }
+
+    public void LoadGridsBlockData()
+    {
+        var gridKeys = saveGridDict.Keys;
+        foreach ((int,int) grid in gridKeys)
+        {
+            grids[grid.Item1, grid.Item2].IsBlocked = saveGridDict[grid];
+        }
+    }
+
+    public bool GetIsBlocked((int, int) gn)
+    {
+        return grids[gn.Item1, gn.Item2].IsBlocked;
     }
 }

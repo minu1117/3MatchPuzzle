@@ -18,25 +18,15 @@ public class Row
         if (width == 0 || height == 0)
             return;
 
-        var stageInfo = GameManager.Instance.GetStage().StageInfo;
         for (int x = 0; x < width; x++)
         {
-            //if (stageInfo.blockGridX.Count > 0 && stageInfo.blockGridY.Count > 0)
-            //{
-            //    if (stageInfo.blockGridX.Contains(x) &&
-            //    stageInfo.blockGridY.Contains(rowIndex))
-            //    {
-            //        continue;
-            //    }
-            //}
-
             Puzzle pz = puzzlePool.Get();
             pz.SetSize(size);
             (int, int) gn = (rowIndex, x);
 
             if (rowIndex < height)
             {
-                board.SetPuzzle(pz, (rowIndex, x));
+                board.GetInfo().SetPuzzle(pz, (rowIndex, x));
                 SetDuplicationPuzzle(board, pz, x, rowIndex);
             }
             else
@@ -46,9 +36,9 @@ public class Row
             }
 
             pz.GridNum = gn;
-            pz.RectTransform.localPosition = board.GetGridPosition(gn);
-            board.SetPuzzle(pz, gn);
-            board.SetGridNum(gn);
+            pz.RectTransform.localPosition = board.GetInfo().GetGridPosition(gn);
+            board.GetInfo().SetPuzzle(pz, gn);
+            board.GetInfo().SetGridNum(gn);
         }
     }
 
@@ -106,11 +96,11 @@ public class Row
 
         if (x > 0)
         {
-            lp = board.GetPuzzle((y, x - 1));
+            lp = board.GetInfo().GetPuzzle((y, x - 1));
         }
         if (y > 0)
         {
-            bp = board.GetPuzzle((y - 1, x));
+            bp = board.GetInfo().GetPuzzle((y - 1, x));
         }
 
         // 왼쪽, 아래 타입 검사 후 매치되지 않는 퍼즐로 변경

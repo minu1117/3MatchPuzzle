@@ -17,12 +17,13 @@ public class Board : MonoBehaviour
     [SerializeField] private Puzzle puzzlePrefab;
     private IObjectPool<Puzzle> puzzlePool;
 
-    private Row[] rows;
-    private Grid[,] grids;
+    private BoardInfo info;
+    //private Row[] rows;
+    //private Grid[,] grids;
+    //private int width;
+    //private int height;
 
     private Vector2 puzzleSpriteSize;
-    private int width;
-    private int height;
 
     private GameManager gameManager;
 
@@ -30,19 +31,21 @@ public class Board : MonoBehaviour
     {
         gameManager = FindAnyObjectByType<GameManager>();
 
-        this.width = width;
-        this.height = height;
+        info.CreateGrids();
+        info.LoadGridsBlockData();
+        //this.width = width;
+        //this.height = height;
 
-        rows = new Row[height * 2];
-        grids = new Grid[height * 2, width];
-        for (int h = 0; h < height * 2; h++)
-        {
-            rows[h] = new Row();
-            for (int w = 0; w < width; w++)
-            {
-                grids[h, w] = new Grid();
-            }
-        }
+        //rows = new Row[height * 2];
+        //grids = new Grid[height * 2, width];
+        //for (int h = 0; h < height * 2; h++)
+        //{
+        //    rows[h] = new Row();
+        //    for (int w = 0; w < width; w++)
+        //    {
+        //        grids[h, w] = new Grid();
+        //    }
+        //}
 
         puzzlePool = new ObjectPool<Puzzle>(
             CreatePuzzle,
@@ -53,6 +56,16 @@ public class Board : MonoBehaviour
             );
 
         StartCoroutine(CreateBackgroundTiles(width, height));
+    }
+
+    public void SetBoardInfo(BoardInfo info)
+    {
+        this.info = info;
+    }
+
+    public BoardInfo GetInfo()
+    {
+        return info;
     }
 
     private IEnumerator CreateBackgroundTiles(int width, int height)
@@ -103,7 +116,7 @@ public class Board : MonoBehaviour
                     pos.x += objectIntervalX * x;
                 }
 
-                SetGridPosition(pos, (y,x));
+                info.SetGridPosition(pos, (y,x));
             }
         }
 
@@ -116,7 +129,7 @@ public class Board : MonoBehaviour
     {
         for (int i = 0; i < height * 2; i++)
         {
-            rows[i].CreateRowPuzzle(puzzlePool, this, size, i, width, height);
+            info.rows[i].CreateRowPuzzle(puzzlePool, this, size, i, width, height);
             yield return null;
         }
     }
@@ -147,49 +160,13 @@ public class Board : MonoBehaviour
         p.isMatched = false;
         (int, int) gn = p.GridNum;
 
-        SetPuzzle(null, (gn.Item1, gn.Item2));
+        info.SetPuzzle(null, (gn.Item1, gn.Item2));
         p.gameObject.SetActive(false);
     }
 
     private void DestroyPuzzle(Puzzle p)
     {
         Destroy(p.gameObject);
-    }
-
-    public Puzzle GetPuzzle((int, int) gridNum)
-    {
-        if (gridNum.Item1 >= height * 2 ||
-            gridNum.Item2 >= width ||
-            gridNum.Item1 < 0 ||
-            gridNum.Item2 < 0)
-            return null;
-
-        return grids[gridNum.Item1, gridNum.Item2].Puzzle;
-    }
-
-    public void SetPuzzle(Puzzle p, (int, int) gridNum)
-    {
-        grids[gridNum.Item1, gridNum.Item2].Puzzle = p;
-    }
-
-    public void SetGridNum((int, int) gridNum)
-    {
-        grids[gridNum.Item1, gridNum.Item2].GridNum = gridNum;
-    }
-
-    public void SetGridPosition(Vector2 pos, (int, int) gridNum)
-    {
-        grids[gridNum.Item1, gridNum.Item2].Position = pos;
-    }
-
-    public Vector2 GetGridPosition((int, int) gridNum)
-    {
-        return grids[gridNum.Item1, gridNum.Item2].Position;
-    }
-
-    public (int, int) GetGridNum((int, int) gn)
-    {
-        return grids[gn.Item1, gn.Item2].GridNum;
     }
 
     /*--------------------------------------------------------- Move -------------------------------------------------------------------*/
@@ -233,37 +210,37 @@ public class Board : MonoBehaviour
         if (destroyHash.Count > 0)
             return;
 
-        for (int y = 0; y < height; y++)
+        for (int y = 0; y < info.height; y++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < info.width; x++)
             {
-                Puzzle p1 = GetPuzzle((y, x));
+                Puzzle p1 = info.GetPuzzle((y, x));
                 Puzzle p2 = null;
                 Puzzle p3 = null;
 
-                if (x < width - 2)
+                if (x < info.width - 2)
                 {
-                    p2 = GetPuzzle((y, x + 1));
-                    p3 = GetPuzzle((y, x + 2));
+                    p2 = info.GetPuzzle((y, x + 1));
+                    p3 = info.GetPuzzle((y, x + 2));
 
                     SetMatchingPuzzles(p1, p2, p3);
                 }
 
-                if (y < height - 2)
+                if (y < info.height - 2)
                 {
-                    p2 = GetPuzzle((y + 1, x));
-                    p3 = GetPuzzle((y + 2, x));
+                    p2 = info.GetPuzzle((y + 1, x));
+                    p3 = info.GetPuzzle((y + 2, x));
 
                     SetMatchingPuzzles(p1, p2, p3);
                 }
             }
         }
 
-        for (int y = 0; y < height; y++)
+        for (int y = 0; y < info.height; y++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < info.width; x++)
             {
-                Puzzle p = GetPuzzle((y, x));
+                Puzzle p = info.GetPuzzle((y, x));
                 if (p != null && p.gameObject != null && p.isMatched)
                 {
                     if (destroyHash.Contains(p) || destroyHash.Equals(p))
@@ -288,8 +265,8 @@ public class Board : MonoBehaviour
 
         int maxX = 0;
         int maxY = 0;
-        int minX = width;
-        int minY = height;
+        int minX = info.width;
+        int minY = info.height;
         foreach (var p in destroyHash)
         {
             if (!p.gameObject.activeSelf)
@@ -315,36 +292,36 @@ public class Board : MonoBehaviour
     {
         List<Task> moveTasks = new();
 
-        StageInfo info = GameManager.Instance.GetStage().StageInfo;
-        for (int y = minY; y < grids.GetLength(0); y++)
+        for (int y = minY; y < info.grids.GetLength(0); y++)
         {
             for (int x = minX; x <= maxX; x++)
             {
-                Puzzle p = GetPuzzle((y, x));
+                Puzzle p = info.GetPuzzle((y, x));
                 if (p == null) continue;
 
                 // 현재 y의 가장 아래에 비어있는 y 찾기
                 int yGrid = 0;
                 for (int k = y-1; k >= 0; k--)
                 {
-                    if (GetPuzzle((k, x)) == null)
+                    if (info.GetPuzzle((k, x)) == null)
                     {
                         yGrid = k;
                     }
-
-                    else 
+                    else
+                    {
                         break;
+                    }
                 }
 
-                if (GetPuzzle((yGrid, x)) == null)
+                if (info.GetPuzzle((yGrid, x)) == null)
                 {
-                    Vector2 movePos = GetGridPosition((yGrid, x));
+                    Vector2 movePos = info.GetGridPosition((yGrid, x));
 
-                    p.GridNum = GetGridNum((yGrid, x));
-                    SetPuzzle(null, (y, x));
-                    SetPuzzle(p, (yGrid, x));
+                    p.GridNum = info.GetGridNum((yGrid, x));
+                    info.SetPuzzle(null, (y, x));
+                    info.SetPuzzle(p, (yGrid, x));
 
-                    if (yGrid < height)
+                    if (yGrid < info.height)
                     {
                         p.gameObject.SetActive(true);
                     }
@@ -369,18 +346,18 @@ public class Board : MonoBehaviour
 
     private void FillBlankBoard(int startY, int startX, int endX)
     {
-        for (int y = startY; y < grids.GetLength(0); y++)
+        for (int y = startY; y < info.grids.GetLength(0); y++)
         {
             for (int x = startX; x <= endX; x++)
             {
-                if (GetPuzzle((y, x)) == null)
+                if (info.GetPuzzle((y, x)) == null)
                 {
                     Puzzle p = puzzlePool.Get();
-                    p.GridNum = GetGridNum((y, x));
-                    p.SetPosition(GetGridPosition((y, x)));
-                    SetPuzzle(p, (y, x));
+                    p.GridNum = info.GetGridNum((y, x));
+                    p.SetPosition(info.GetGridPosition((y, x)));
+                    info.SetPuzzle(p, (y, x));
 
-                    if (y > height)
+                    if (y > info.height)
                     {
                         p.gameObject.SetActive(false);
                     }
@@ -448,14 +425,14 @@ public class Board : MonoBehaviour
                 }
                 break;
             case MouseMoveDir.Right:
-                if (currGn.Item2 < width - 1)
+                if (currGn.Item2 < info.width - 1)
                 {
                     newGn = (currGn.Item1, currGn.Item2 + 1);
                     gridSet = true;
                 }
                 break;
             case MouseMoveDir.Up:
-                if (currGn.Item1 < height - 1)
+                if (currGn.Item1 < info.height - 1)
                 {
                     newGn = (currGn.Item1 + 1, currGn.Item2);
                     gridSet = true;
@@ -475,8 +452,8 @@ public class Board : MonoBehaviour
         if (!gridSet)
             return;
 
-        Puzzle currPuzzle = GetPuzzle(currGn);
-        Puzzle movePuzzle = GetPuzzle(newGn);
+        Puzzle currPuzzle = info.GetPuzzle(currGn);
+        Puzzle movePuzzle = info.GetPuzzle(newGn);
 
         if (currPuzzle != null && movePuzzle != null)
         {
@@ -548,8 +525,8 @@ public class Board : MonoBehaviour
         currPuzzle.GridNum = newGn;
         movePuzzle.GridNum = currGn;
 
-        SetPuzzle(currPuzzle, newGn);
-        SetPuzzle(movePuzzle, currGn);
+        info.SetPuzzle(currPuzzle, newGn);
+        info.SetPuzzle(movePuzzle, currGn);
     }
 
     private MouseMoveDir CalcMouseMoveDirection(Vector2 moveDir)
@@ -600,11 +577,11 @@ public class Board : MonoBehaviour
 
     public void Mix()
     {
-        for (int y = 0; y < height; y++)
+        for (int y = 0; y < info.height; y++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < info.width; x++)
             {
-                var puzzle = GetPuzzle((y, x));
+                var puzzle = info.GetPuzzle((y, x));
                 puzzle.SetRandomPuzzleType();
             }
         }

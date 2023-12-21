@@ -133,7 +133,6 @@ GameObject:
   m_Component:
   - component: {fileID: 443289867}
   - component: {fileID: 443289868}
-  - component: {fileID: 443289869}
   m_Layer: 5
   m_Name: GridLayoutGroup
   m_TagString: Untagged
@@ -184,21 +183,6 @@ MonoBehaviour:
   m_Spacing: {x: 50, y: 50}
   m_Constraint: 0
   m_ConstraintCount: 2
---- !u!114 &443289869
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 443289866}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d68d30536c9d4f4479410a4436da609f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stageObjectParent: {fileID: 0}
-  stageInfoList: []
-  stagePrefab: {fileID: 0}
 --- !u!1 &530089996
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,9 +380,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stageObjectParent: {fileID: 443289868}
   stageInfoList:
-  - {fileID: 11400000, guid: 5cb7409b1e71c6b4cbba4f4bdffcfc46, type: 2}
-  - {fileID: 11400000, guid: 77c315a58b42cd14993852be5e07fc18, type: 2}
-  - {fileID: 11400000, guid: 783e1e54ca0f810449446bfeb688c7e4, type: 2}
+  - {fileID: 1620994355577815273, guid: d9b04b50914b6be4ca691e5bcdc5d29d, type: 3}
+  - {fileID: 9129830309575902771, guid: fc31d464aa0a49c47851b0cf946a8bac, type: 3}
+  - {fileID: 7421479312850567875, guid: fb3e243f73f1a9c438183b1d4ac7d7fe, type: 3}
   stagePrefab: {fileID: 2447702516561910982, guid: 91a0e39879126b5469bf7af1d9e38720, type: 3}
 --- !u!1 &1874518387
 GameObject:

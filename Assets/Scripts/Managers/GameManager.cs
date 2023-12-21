@@ -13,6 +13,7 @@ public class GameManager : Manager<GameManager>
         holder = FindAnyObjectByType<PuzzleSceneObjectHolder>();
 
         //var boardInfo = Instantiate(stage.StageInfo.boardInfo, holder.boardParentObject.transform);
+        holder.board.SetBoardInfo(stage.StageInfo.boardInfo);
         holder.board.Init(stage.StageInfo.boardInfo.width, stage.StageInfo.boardInfo.height);
         EffectManager.Instance.CreateEffects(holder.GetEffectPoolParent());
         holder.boardMixButton.onClick.AddListener(() => holder.board.Mix());

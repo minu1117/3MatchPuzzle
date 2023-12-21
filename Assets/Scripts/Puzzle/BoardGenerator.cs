@@ -161,11 +161,11 @@ public class BoardGenerator : MonoBehaviour
 
         SetGridNum();
         newBoardInfo.SetBoardSize(width, height);
-        newBoardInfo.CreateGrids();
+        //newBoardInfo.CreateGrids();
 
         for (int i = 0; i < elements.Count; i++)
         {
-            newBoardInfo.SetGridBlocked(elements[i].gridNum, true);
+            newBoardInfo.SaveGridBlocked(elements[i].gridNum, true);
         }
 
         string stagePrefabPath = $"{folderPath}/{name}_StageInfo.prefab";
