@@ -40,40 +40,40 @@ public class BoardInfo : MonoBehaviour
         }
     }
 
-    public Puzzle GetPuzzle((int, int) gridNum)
+    public Puzzle GetPuzzle(int x, int y)
     {
-        if (gridNum.Item1 >= height * 2 ||
-            gridNum.Item2 >= width ||
-            gridNum.Item1 < 0 ||
-            gridNum.Item2 < 0)
+        if (y >= height * 2 ||
+            x >= width ||
+            y < 0 ||
+            x < 0)
             return null;
 
-        return grids[gridNum.Item1, gridNum.Item2].Puzzle;
+        return grids[y, x].Puzzle;
     }
 
-    public void SetPuzzle(Puzzle p, (int, int) gridNum)
+    public void SetPuzzle(Puzzle p, int x, int y)
     {
-        grids[gridNum.Item1, gridNum.Item2].Puzzle = p;
+        grids[y, x].Puzzle = p;
     }
 
-    public void SetGridNum((int, int) gridNum)
+    public void SetGridNum(int x, int y)
     {
-        grids[gridNum.Item1, gridNum.Item2].GridNum = gridNum;
+        grids[y, x].GridNum = (y, x);
     }
 
-    public void SetGridPosition(Vector2 pos, (int, int) gridNum)
+    public void SetGridPosition(Vector2 pos, int x, int y)
     {
-        grids[gridNum.Item1, gridNum.Item2].Position = pos;
+        grids[y, x].Position = pos;
     }
 
-    public Vector2 GetGridPosition((int, int) gridNum)
+    public Vector2 GetGridPosition(int x, int y)
     {
-        return grids[gridNum.Item1, gridNum.Item2].Position;
+        return grids[y, x].Position;
     }
 
-    public (int, int) GetGridNum((int, int) gn)
+    public (int, int) GetGridNum(int x, int y)
     {
-        return grids[gn.Item1, gn.Item2].GridNum;
+        return grids[y, x].GridNum;
     }
 
     public void SaveGridBlocked(bool isBlocked)
@@ -84,9 +84,9 @@ public class BoardInfo : MonoBehaviour
         blockKeyList.Add(isBlocked);
     }
 
-    public bool GetBlockedGrid((int, int) gn)
+    public bool GetBlockedGrid(int x, int y)
     {
-        if (saveGridDict.TryGetValue(gn, out bool blockGrid))
+        if (saveGridDict.TryGetValue((y, x), out bool blockGrid))
             return blockGrid;
 
         return false;
@@ -113,8 +113,26 @@ public class BoardInfo : MonoBehaviour
         }
     }
 
-    public bool GetIsBlocked((int, int) gn)
+    public void ClearSaveDict()
     {
-        return grids[gn.Item1, gn.Item2].IsBlocked;
+        saveGridDict.Clear();
+    }
+
+    public bool GetBlocked(int checkX, int yIndex)
+    {
+        for (int y = yIndex; y < height; y++)
+        {
+            if (IsBlocked(checkX, y))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsBlocked(int x, int y)
+    {
+        return grids[y, x].IsBlocked;
     }
 }

@@ -95,6 +95,38 @@ public class Puzzle : MonoBehaviour
             .AsyncWaitForCompletion();
     }
 
+    // 사이즈 0 -> size 값
+    //public async Task Expands(Vector2 size, float duration)
+    //{
+    //    SetSize(Vector2.zero);
+
+    //    var tcs = new TaskCompletionSource<bool>();
+
+    //    RectTransform.DOSizeDelta(size, duration)
+    //        .OnComplete(() => tcs.SetResult(true));
+
+    //    await tcs.Task;
+    //}
+
+    // 사이즈 0 -> size 값 보다 조금 더 커지고 -> size 값으로 작아짐
+    public async Task Expands(Vector2 size, float duration)
+    {
+        Vector2 upSize = size + (size * 0.3f);
+        SetSize(Vector2.zero);
+
+        float halfDuration = duration * 0.5f;
+        var tcs1 = new TaskCompletionSource<bool>();
+        var tcs2 = new TaskCompletionSource<bool>();
+
+        RectTransform.DOSizeDelta(upSize, halfDuration)
+            .OnComplete(() => tcs1.SetResult(true));
+        await tcs1.Task;
+
+        RectTransform.DOSizeDelta(size, halfDuration)
+            .OnComplete(() => tcs2.SetResult(true));
+        await tcs2.Task;
+    }
+
     public void SetPuzzleType(PuzzleType pt)
     {
         type = pt;

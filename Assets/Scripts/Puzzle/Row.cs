@@ -24,13 +24,13 @@ public class Row
             pz.SetSize(size);
             (int, int) gn = (rowIndex, x);
 
-            if (info.GetBlockedGrid(gn))
+            if (info.GetBlockedGrid(x, rowIndex))
             {
                 pz.SetPuzzleType(PuzzleType.Blocked);
             }
             else if (rowIndex < height)
             {
-                info.SetPuzzle(pz, (rowIndex, x));
+                info.SetPuzzle(pz, x, rowIndex);
                 SetDuplicationPuzzle(info, pz, x, rowIndex);
             }
             else
@@ -40,9 +40,9 @@ public class Row
             }
 
             pz.GridNum = gn;
-            pz.RectTransform.localPosition = info.GetGridPosition(gn);
-            info.SetPuzzle(pz, gn);
-            info.SetGridNum(gn);
+            pz.RectTransform.localPosition = info.GetGridPosition(x, rowIndex);
+            info.SetPuzzle(pz, x, rowIndex);
+            info.SetGridNum(x, rowIndex);
         }
     }
 
@@ -100,11 +100,11 @@ public class Row
 
         if (x > 0)
         {
-            lp = info.GetPuzzle((y, x - 1));
+            lp = info.GetPuzzle(x - 1, y);
         }
         if (y > 0)
         {
-            bp = info.GetPuzzle((y - 1, x));
+            bp = info.GetPuzzle(x, y - 1);
         }
 
         // 왼쪽, 아래 타입 검사 후 매치되지 않는 퍼즐로 변경
