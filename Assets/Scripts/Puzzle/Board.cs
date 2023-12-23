@@ -379,7 +379,7 @@ public class Board : MonoBehaviour
 
     public void SetClickedPuzzle(Puzzle p)
     {
-        if (allowClick)
+        if (p.type != PuzzleType.Blocked && allowClick)
         {
             clickedPuzzle = p;
             clickStartPos = Input.mousePosition;
@@ -454,7 +454,11 @@ public class Board : MonoBehaviour
         Puzzle movePuzzle = info.GetPuzzle(newGn.Item2, newGn.Item1);
 
         if (currPuzzle == null || movePuzzle == null || movePuzzle.type == PuzzleType.Blocked)
+        {
+            allowClick = true;
+            isMoved = false;
             return;
+        }
 
         Vector2 currPos = currPuzzle.transform.localPosition;
         Vector2 movePos = movePuzzle.transform.localPosition;
