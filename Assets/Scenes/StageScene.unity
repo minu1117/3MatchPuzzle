@@ -380,7 +380,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stageObjectParent: {fileID: 443289868}
   stageInfoList:
-  - {fileID: 3271713433894344541, guid: ae5366bd6e03d0d4d8cf544c6ba8be81, type: 3}
+  - {fileID: 7069234577298400905, guid: 53bc8eb867202c148a4c06d3ef3bf789, type: 3}
   stagePrefab: {fileID: 2447702516561910982, guid: 91a0e39879126b5469bf7af1d9e38720, type: 3}
 --- !u!1 &1874518387
 GameObject:

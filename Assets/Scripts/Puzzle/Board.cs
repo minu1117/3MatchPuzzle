@@ -504,7 +504,6 @@ public class Board : MonoBehaviour
                 int subScore = 0;
                 subScore += currPuzzle.scoreNum;
                 subScore += movePuzzle.scoreNum;
-                //gameManager.score.SubScore(subScore);
                 gameManager.holder.score.SubScore(subScore);
             }
             else
