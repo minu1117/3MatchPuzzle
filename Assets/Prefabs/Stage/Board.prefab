@@ -49,12 +49,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87642401451b9244089c2d84e5ed20f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  backgroundTilePrefab: {fileID: 4836776147292935738, guid: 8f7758878c0cd1c4ab95a9bd211a26ad, type: 3}
+  backgroundTilePrefab: {fileID: -8542122575060554799, guid: 8f7758878c0cd1c4ab95a9bd211a26ad, type: 3}
   backgroundParentsObject: {fileID: 2082816542433586671}
   puzzleParentsObject: {fileID: 7394470019267665709}
   puzzlePrefab: {fileID: 5762712563435571662, guid: d947225270f7cfb4abafae003ba5d4ac, type: 3}
-  width: 0
-  height: 0
   moveTime: 0.5
 --- !u!1 &7394470019267665709
 GameObject:

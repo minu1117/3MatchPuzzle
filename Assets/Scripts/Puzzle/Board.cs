@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class Board : MonoBehaviour
 {
     [Header("Background Tile")]
-    [SerializeField] private GameObject backgroundTilePrefab;
+    [SerializeField] private Grid backgroundTilePrefab;
     [SerializeField] private GridLayoutGroup backgroundParentsObject;
 
     [Header("Puzzle")]
@@ -18,10 +18,6 @@ public class Board : MonoBehaviour
     private IObjectPool<Puzzle> puzzlePool;
 
     private BoardInfo info;
-    //private Row[] rows;
-    //private Grid[,] grids;
-    //private int width;
-    //private int height;
 
     private Vector2 puzzleSpriteSize;
 
@@ -31,7 +27,7 @@ public class Board : MonoBehaviour
     {
         gameManager = FindAnyObjectByType<GameManager>();
 
-        info.CreateGrids();
+        info.CreateGrids(backgroundTilePrefab, backgroundParentsObject);
         info.LoadGridsBlockData();
         //this.width = width;
         //this.height = height;
@@ -80,17 +76,17 @@ public class Board : MonoBehaviour
         Vector2 cellSize = backgroundParentsObject.cellSize;
         Vector2 spacing = backgroundParentsObject.spacing;
 
-        for (int i = 0; i < height * 2; i++)
-        {
-            for (int j = 0; j < width; j++)
-            {
-                if (i < height)
-                {
-                    // GridLayout Group 내부에 Instantiate (위치 자동 지정)
-                    Instantiate(backgroundTilePrefab, backgroundParentsObject.transform);
-                }
-            }
-        }
+        //for (int i = 0; i < height * 2; i++)
+        //{
+        //    for (int j = 0; j < width; j++)
+        //    {
+        //        if (i < height)
+        //        {
+        //            // GridLayout Group 내부에 Instantiate (위치 자동 지정)
+        //            Instantiate(backgroundTilePrefab, backgroundParentsObject.transform);
+        //        }
+        //    }
+        //}
 
         yield return null;
 
@@ -129,7 +125,7 @@ public class Board : MonoBehaviour
     {
         for (int i = 0; i < height * 2; i++)
         {
-            info.rows[i].CreateRowPuzzle(puzzlePool, this, size, i, width, height);
+            info.rows[i].CreateRowPuzzle(puzzlePool, info, size, i, width, height);
             yield return null;
         }
     }

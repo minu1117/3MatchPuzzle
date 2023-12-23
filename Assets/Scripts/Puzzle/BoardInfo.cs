@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BoardInfo : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class BoardInfo : MonoBehaviour
     public int height;
 
     private Dictionary<(int, int), bool> saveGridDict = new();
+    [SerializeField] private List<bool> blockKeyList;
 
     public void SetBoardSize(int width, int height)
     {
@@ -17,16 +19,23 @@ public class BoardInfo : MonoBehaviour
         this.height = height;
     }
 
-    public void CreateGrids()
+    public void CreateGrids(Grid backgroundTilePrefab, GridLayoutGroup backgroundParentsObject)
     {
         rows = new Row[height * 2];
         grids = new Grid[height * 2, width];
+
         for (int h = 0; h < height * 2; h++)
         {
             rows[h] = new Row();
             for (int w = 0; w < width; w++)
             {
-                grids[h, w] = new Grid();
+                var grid = Instantiate(backgroundTilePrefab, backgroundParentsObject.transform);
+                grids[h, w] = grid;
+
+                if (h >= height)
+                {
+                    grid.gameObject.SetActive(false);
+                }
             }
         }
     }
@@ -67,13 +76,36 @@ public class BoardInfo : MonoBehaviour
         return grids[gn.Item1, gn.Item2].GridNum;
     }
 
-    public void SaveGridBlocked((int, int) gn, bool isBlocked)
+    public void SaveGridBlocked(bool isBlocked)
     {
-        saveGridDict.Add(gn, isBlocked);
+        if (blockKeyList == null)
+            blockKeyList = new();
+
+        blockKeyList.Add(isBlocked);
+    }
+
+    public bool GetBlockedGrid((int, int) gn)
+    {
+        if (saveGridDict.TryGetValue(gn, out bool blockGrid))
+            return blockGrid;
+
+        return false;
     }
 
     public void LoadGridsBlockData()
     {
+        int index = 0;
+        for (int h = 0; h < height; h++)
+        {
+            for (int w = 0; w < width; w++)
+            {
+                bool blocked = blockKeyList[index];
+                saveGridDict.Add((h,w), blocked);
+
+                index++;
+            }
+        }
+        
         var gridKeys = saveGridDict.Keys;
         foreach ((int,int) grid in gridKeys)
         {

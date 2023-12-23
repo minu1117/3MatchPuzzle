@@ -165,7 +165,7 @@ public class BoardGenerator : MonoBehaviour
 
         for (int i = 0; i < elements.Count; i++)
         {
-            newBoardInfo.SaveGridBlocked(elements[i].gridNum, true);
+            newBoardInfo.SaveGridBlocked(elements[i].isBlocked);
         }
 
         string stagePrefabPath = $"{folderPath}/{name}_StageInfo.prefab";

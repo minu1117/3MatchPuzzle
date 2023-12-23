@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Row
 {
-    public void CreateRowPuzzle(IObjectPool<Puzzle> puzzlePool, Board board, Vector2 size, int rowIndex, int width, int height)
+    public void CreateRowPuzzle(IObjectPool<Puzzle> puzzlePool, BoardInfo info, Vector2 size, int rowIndex, int width, int height)
     {
         /*
 
@@ -24,10 +24,14 @@ public class Row
             pz.SetSize(size);
             (int, int) gn = (rowIndex, x);
 
-            if (rowIndex < height)
+            if (info.GetBlockedGrid(gn))
             {
-                board.GetInfo().SetPuzzle(pz, (rowIndex, x));
-                SetDuplicationPuzzle(board, pz, x, rowIndex);
+                pz.SetPuzzleType(PuzzleType.Blocked);
+            }
+            else if (rowIndex < height)
+            {
+                info.SetPuzzle(pz, (rowIndex, x));
+                SetDuplicationPuzzle(info, pz, x, rowIndex);
             }
             else
             {
@@ -36,9 +40,9 @@ public class Row
             }
 
             pz.GridNum = gn;
-            pz.RectTransform.localPosition = board.GetInfo().GetGridPosition(gn);
-            board.GetInfo().SetPuzzle(pz, gn);
-            board.GetInfo().SetGridNum(gn);
+            pz.RectTransform.localPosition = info.GetGridPosition(gn);
+            info.SetPuzzle(pz, gn);
+            info.SetGridNum(gn);
         }
     }
 
@@ -89,18 +93,18 @@ public class Row
         return newPt;
     }
 
-    public void SetDuplicationPuzzle(Board board, Puzzle pz, int x, int y)
+    public void SetDuplicationPuzzle(BoardInfo info, Puzzle pz, int x, int y)
     {
         Puzzle lp = null;
         Puzzle bp = null;
 
         if (x > 0)
         {
-            lp = board.GetInfo().GetPuzzle((y, x - 1));
+            lp = info.GetPuzzle((y, x - 1));
         }
         if (y > 0)
         {
-            bp = board.GetInfo().GetPuzzle((y - 1, x));
+            bp = info.GetPuzzle((y - 1, x));
         }
 
         // 왼쪽, 아래 타입 검사 후 매치되지 않는 퍼즐로 변경
