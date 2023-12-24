@@ -17,7 +17,7 @@ public class StageManager : MonoBehaviour
             stage.StageInfo = stageInfoList[i];
             stage.textMeshPro.text = $"{i+1}";
 
-            stage.button.onClick.AddListener(() => GameManager.Instance.SetStage(stage));
+            stage.button.onClick.AddListener(() => GameManager.Instance.SetStageInfo(stage.StageInfo));
             stage.button.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.gameSceneName));
 
             stageList.Add(stage);

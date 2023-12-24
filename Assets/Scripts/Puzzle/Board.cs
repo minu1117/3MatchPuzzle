@@ -56,7 +56,8 @@ public class Board : MonoBehaviour
         if (width == 0 || height == 0)
             yield break;
 
-        backgroundParentsObject.constraintCount = width;
+        backgroundParentsObject.constraint = info.GetConstraintType();
+        backgroundParentsObject.constraintCount = info.GetConstaintCount();
 
         // 셀 사이즈, 간격 값 조정
         UIManager.Instance.FitToCell(backgroundParentsObject, width, height);
@@ -259,7 +260,7 @@ public class Board : MonoBehaviour
             puzzlePool.Release(p);
         }
 
-        gameManager.holder.score.AddScore(addScore);
+        gameManager.puzzleSceneHolder.score.AddScore(addScore);
         SoundManager.Instance.PlayExplodingSound();
         await MoveDownAsync(maxY, minY, minX, maxX);
     }
@@ -504,7 +505,7 @@ public class Board : MonoBehaviour
                 int subScore = 0;
                 subScore += currPuzzle.scoreNum;
                 subScore += movePuzzle.scoreNum;
-                gameManager.holder.score.SubScore(subScore);
+                gameManager.puzzleSceneHolder.score.SubScore(subScore);
             }
             else
             {

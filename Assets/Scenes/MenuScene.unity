@@ -616,6 +616,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4023749678748571555, guid: e54a2713eabdb0b4da4ad6c47d98ee84, type: 3}
+      propertyPath: modeChoiceSceneName
+      value: ModeChoiceScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 4023749678748571555, guid: e54a2713eabdb0b4da4ad6c47d98ee84, type: 3}
+      propertyPath: boardCreateSceneName
+      value: BoardCreateScene
+      objectReference: {fileID: 0}
     - target: {fileID: 8390271150775289596, guid: e54a2713eabdb0b4da4ad6c47d98ee84, type: 3}
       propertyPath: m_Name
       value: SceneManager

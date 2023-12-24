@@ -15,6 +15,7 @@ public class BoardGenerator : MonoBehaviour
     [SerializeField] private TMP_InputField nameInputField;
     [SerializeField] private Toggle isInfinityModeToggle;
     [SerializeField] private Button saveButton;
+    [SerializeField] private Button exitButton;
 
     private List<BoardElements> elements = new();
 
@@ -40,6 +41,7 @@ public class BoardGenerator : MonoBehaviour
         heightInputField.onValueChanged.AddListener(SetHeight);
 
         saveButton.onClick.AddListener(Save);
+        exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.menuSceneName));
     }
 
     private void CreateOrDestroyTiles()
@@ -161,7 +163,7 @@ public class BoardGenerator : MonoBehaviour
 
         SetGridNum();
         newBoardInfo.SetBoardSize(width, height);
-        //newBoardInfo.CreateGrids();
+        newBoardInfo.SetGridLayoutData(elementsGroup);
 
         for (int i = 0; i < elements.Count; i++)
         {

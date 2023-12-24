@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Data;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,13 +12,32 @@ public class BoardInfo : MonoBehaviour
     public int width;
     public int height;
 
-    private Dictionary<(int, int), bool> saveGridDict = new();
     [SerializeField] private List<bool> blockKeyList;
+    private Dictionary<(int, int), bool> saveGridDict = new();
+
+    [SerializeField] private GridLayoutGroup.Constraint constraint;
+    [SerializeField] private int constraintCount;
 
     public void SetBoardSize(int width, int height)
     {
         this.width = width;
         this.height = height;
+    }
+
+    public void SetGridLayoutData(GridLayoutGroup gridlayout)
+    {
+        constraint = gridlayout.constraint;
+        constraintCount = gridlayout.constraintCount;
+    }
+
+    public GridLayoutGroup.Constraint GetConstraintType()
+    {
+        return constraint;
+    }
+
+    public int GetConstaintCount()
+    {
+        return constraintCount;
     }
 
     public void CreateGrids(Grid backgroundTilePrefab, GridLayoutGroup backgroundParentsObject)
@@ -94,6 +115,9 @@ public class BoardInfo : MonoBehaviour
 
     public void LoadGridsBlockData()
     {
+        if (saveGridDict.Count > 0)
+            return;
+
         int index = 0;
         for (int h = 0; h < height; h++)
         {
@@ -106,10 +130,13 @@ public class BoardInfo : MonoBehaviour
             }
         }
         
-        var gridKeys = saveGridDict.Keys;
-        foreach ((int,int) grid in gridKeys)
+        if (grids != null)
         {
-            grids[grid.Item1, grid.Item2].IsBlocked = saveGridDict[grid];
+            var gridKeys = saveGridDict.Keys;
+            foreach ((int, int) grid in gridKeys)
+            {
+                grids[grid.Item1, grid.Item2].IsBlocked = saveGridDict[grid];
+            }
         }
     }
 

@@ -1,7 +1,9 @@
 public class GameManager : Manager<GameManager>
 {
-    public PuzzleSceneObjectHolder holder;
-    private Stage stage;
+    public PuzzleSceneObjectHolder puzzleSceneHolder;
+    public ModeChoiceSceneHolder modeChoiceSceneHolder;
+    private StageInfo stageInfo;
+    public string prefabSaveFolderName;
 
     protected override void Awake()
     {
@@ -10,28 +12,43 @@ public class GameManager : Manager<GameManager>
 
     public void StartGame()
     {
-        holder = FindAnyObjectByType<PuzzleSceneObjectHolder>();
+        puzzleSceneHolder = FindAnyObjectByType<PuzzleSceneObjectHolder>();
 
-        holder.board.SetBoardInfo(stage.StageInfo.boardInfo);
-        holder.board.Init(stage.StageInfo.boardInfo.width, stage.StageInfo.boardInfo.height);
-        EffectManager.Instance.CreateEffects(holder.GetEffectPoolParent());
+        puzzleSceneHolder.board.SetBoardInfo(stageInfo.boardInfo);
+        puzzleSceneHolder.board.Init(stageInfo.boardInfo.width, stageInfo.boardInfo.height);
+        EffectManager.Instance.CreateEffects(puzzleSceneHolder.GetEffectPoolParent());
 
-        holder.boardMixButton.onClick.AddListener(() => holder.board.Mix());
+        puzzleSceneHolder.boardMixButton.onClick.AddListener(() => puzzleSceneHolder.board.Mix());
 
-        holder.exitButton.onClick.AddListener(() => holder.board.StopTask());
-        holder.exitButton.onClick.AddListener(() => stage.StageInfo.boardInfo.ClearSaveDict());
-        holder.exitButton.onClick.AddListener(() => stage = null);
-        holder.exitButton.onClick.AddListener(() => EffectManager.Instance.ClearEffectDict());
-        holder.exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.menuSceneName));
+        puzzleSceneHolder.exitButton.onClick.AddListener(() => puzzleSceneHolder.board.StopTask());
+        puzzleSceneHolder.exitButton.onClick.AddListener(() => stageInfo.boardInfo.ClearSaveDict());
+        puzzleSceneHolder.exitButton.onClick.AddListener(() => stageInfo = null);
+        puzzleSceneHolder.exitButton.onClick.AddListener(() => EffectManager.Instance.ClearEffectDict());
+        puzzleSceneHolder.exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.menuSceneName));
     }
 
-    public void SetStage(Stage st)
+    public void StartChoiceScene()
     {
-        stage = st;
+        modeChoiceSceneHolder = FindAnyObjectByType<ModeChoiceSceneHolder>();
+
+        modeChoiceSceneHolder.loader.Init();
+
+        modeChoiceSceneHolder.controler.ConnectEventTrigger();
+        modeChoiceSceneHolder.controler.Off();
+
+        modeChoiceSceneHolder.customBoardStart.onClick.AddListener(() => modeChoiceSceneHolder.controler.On());
+        modeChoiceSceneHolder.customBoardStart.onClick.AddListener(() => modeChoiceSceneHolder.loader.ConnectAllCreateGrid());
+        modeChoiceSceneHolder.stageStart.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.gameSceneName));
+        modeChoiceSceneHolder.createStart.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.boardCreateSceneName));
     }
 
-    public Stage GetStage()
+    public void SetStageInfo(StageInfo info)
     {
-        return stage;
+        stageInfo = info;
+    }
+
+    public StageInfo GetStage()
+    {
+        return stageInfo;
     }
 }
