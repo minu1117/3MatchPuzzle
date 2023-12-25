@@ -3,7 +3,8 @@ public class GameManager : Manager<GameManager>
     public PuzzleSceneObjectHolder puzzleSceneHolder;
     public ModeChoiceSceneHolder modeChoiceSceneHolder;
     private StageInfo stageInfo;
-    public string prefabSaveFolderName;
+    public string customBoardSaveFolderName;
+    public string stageSaveFolderName;
 
     protected override void Awake()
     {
@@ -38,7 +39,7 @@ public class GameManager : Manager<GameManager>
 
         modeChoiceSceneHolder.customBoardStart.onClick.AddListener(() => modeChoiceSceneHolder.controler.On());
         modeChoiceSceneHolder.customBoardStart.onClick.AddListener(() => modeChoiceSceneHolder.loader.ConnectAllCreateGrid());
-        modeChoiceSceneHolder.stageStart.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.gameSceneName));
+        modeChoiceSceneHolder.stageStart.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.stageSceneName));
         modeChoiceSceneHolder.createStart.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.boardCreateSceneName));
     }
 

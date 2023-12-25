@@ -1623,6 +1623,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1839466172771846554, guid: f516e7a24e9157a4a94aa05a9d05d407, type: 3}
+      propertyPath: stageSaveFolderName
+      value: Prefabs/Stage
+      objectReference: {fileID: 0}
+    - target: {fileID: 1839466172771846554, guid: f516e7a24e9157a4a94aa05a9d05d407, type: 3}
+      propertyPath: customBoardSaveFolderName
+      value: Prefabs/CustomBoard
+      objectReference: {fileID: 0}
     - target: {fileID: 4294821704259445199, guid: f516e7a24e9157a4a94aa05a9d05d407, type: 3}
       propertyPath: m_Name
       value: GameManager

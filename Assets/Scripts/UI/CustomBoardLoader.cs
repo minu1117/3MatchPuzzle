@@ -20,11 +20,11 @@ public class CustomBoardLoader : MonoBehaviour
     private void LoadCustomBoard()
     {
         // 스테이지 폴더들 로딩
-        //string[] stageFolders = Directory.GetDirectories(Application.dataPath, $"{GameManager.Instance.prefabSaveFolderName}");
-        if (!Directory.Exists($"{Application.dataPath}/Prefabs/Stage"))
+        string folderName = GameManager.Instance.customBoardSaveFolderName;
+        if (!Directory.Exists($"{Application.dataPath}/{folderName}"))
             return;
 
-        string[] stageFolders = Directory.GetDirectories(Application.dataPath, $"Prefabs/Stage/");
+        string[] stageFolders = Directory.GetDirectories(Application.dataPath, $"{folderName}/");
         foreach (string stageFolder in stageFolders)
         {
             string[] prefabs = Directory.GetFiles(stageFolder, "*StageInfo.prefab"); // 각 폴더 내의 StageInfo 프리펩 가져오기

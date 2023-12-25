@@ -14,6 +14,7 @@ public class BoardGenerator : MonoBehaviour
     [SerializeField] private TMP_InputField heightInputField;
     [SerializeField] private TMP_InputField nameInputField;
     [SerializeField] private Toggle isInfinityModeToggle;
+    [SerializeField] private Toggle isStageCreatedToggle;
     [SerializeField] private Button saveButton;
     [SerializeField] private Button exitButton;
 
@@ -151,10 +152,14 @@ public class BoardGenerator : MonoBehaviour
         }
     }
 
-    private void CreatePrefab(string name)
+    private void CreatePrefab(string name, bool isStageCreated)
     {
         // 프리팹을 저장할 폴더 경로
-        string folderPath = Path.Combine(Application.dataPath, $"{prefabSaveFolderName}/{name}");
+
+        string folderPath = Path.Combine(Application.dataPath, $"{GameManager.Instance.customBoardSaveFolderName}/{name}");
+        if (isStageCreated)
+            folderPath = Path.Combine(Application.dataPath, $"{GameManager.Instance.stageSaveFolderName}/{name}");
+
         CreateFolder(folderPath);
 
         // 새 프리팹 생성, 폴더에 추가
@@ -186,6 +191,6 @@ public class BoardGenerator : MonoBehaviour
 
     private void Save()
     {
-        CreatePrefab(nameInputField.text);
+        CreatePrefab(nameInputField.text, isStageCreatedToggle.isOn);
     }
 }
