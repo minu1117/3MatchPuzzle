@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class LoadingBoardUI : MonoBehaviour
@@ -25,22 +27,42 @@ public class LoadingBoardUI : MonoBehaviour
 
         sizeText.text = $"{width} X {height}";
         modeText.text = stageInfo.infinityMode ? "무한 모드" : "점수 모드";
+    }
 
+    public void ConnectChangeSceneStartButtonOnClick()
+    {
         startButton.onClick.AddListener(() => GameManager.Instance.SetStageInfo(stageInfo));
         startButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.gameSceneName));
     }
 
-    public void CreateGrid(GameObject gridPrefab, GameObject blockGridPrefab)
+    public void ConnectCreateGrid(GridLayoutGroup gridLayoutGroup, GameObject unBlockedPuzzle)
     {
-        if (boardPreviewGrid.transform.childCount > 0)
+        startButton.onClick.AddListener(() => CreateGrid(gridLayoutGroup, unBlockedPuzzle));
+    }
+
+    public void ConnectStartButtonAction(UnityAction action)
+    {
+        startButton.onClick.AddListener(action);
+    }
+
+    public GridLayoutGroup GetGridLayoutGroup()
+    {
+        return boardPreviewGrid;
+    }
+
+    public void CreateGrid(GridLayoutGroup gridLayoutGroup, GameObject unBlockedPuzzle)
+    {
+        if (gridLayoutGroup.transform.childCount > 0)
             return;
+
+        Debug.Log("2");
 
         int width = stageInfo.boardInfo.width;
         int height = stageInfo.boardInfo.height;
-        StartCoroutine(CoCreateGrid(gridPrefab, blockGridPrefab, width, height));
+        StartCoroutine(CoCreateGrid(gridLayoutGroup, unBlockedPuzzle, GameManager.Instance.blockedPuzzle, width, height));
     }
 
-    private IEnumerator CoCreateGrid(GameObject gridPrefab, GameObject blockGridPrefab, int width, int height)
+    private IEnumerator CoCreateGrid(GridLayoutGroup gridLayoutGroup, GameObject gridPrefab, GameObject blockGridPrefab, int width, int height)
     {
         stageInfo.boardInfo.LoadGridsBlockData();
 
@@ -51,9 +73,9 @@ public class LoadingBoardUI : MonoBehaviour
             {
                 GameObject obj;
                 if (stageInfo.boardInfo.GetBlockedGrid(x, y))
-                    obj = Instantiate(blockGridPrefab, boardPreviewGrid.transform);
+                    obj = Instantiate(blockGridPrefab, gridLayoutGroup.transform);
                 else
-                    obj = Instantiate(gridPrefab, boardPreviewGrid.transform);
+                    obj = Instantiate(gridPrefab, gridLayoutGroup.transform);
 
                 obj.gameObject.SetActive(false);
                 createdGrids.Add(obj);
@@ -66,9 +88,9 @@ public class LoadingBoardUI : MonoBehaviour
         if (width >= height) constraintType = GridLayoutGroup.Constraint.FixedColumnCount;
         if (width < height) constraintType = GridLayoutGroup.Constraint.FixedRowCount;
 
-        boardPreviewGrid.constraint = constraintType;
-        boardPreviewGrid.constraintCount = stageInfo.boardInfo.GetConstaintCount();
-        UIManager.Instance.FitToCell(boardPreviewGrid, width, height);
+        gridLayoutGroup.constraint = constraintType;
+        gridLayoutGroup.constraintCount = stageInfo.boardInfo.GetConstaintCount();
+        UIManager.Instance.FitToCell(gridLayoutGroup, width, height);
 
         for (int i = 0; i < createdGrids.Count; i++)
         {

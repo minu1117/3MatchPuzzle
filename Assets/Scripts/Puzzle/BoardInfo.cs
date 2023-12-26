@@ -124,12 +124,12 @@ public class BoardInfo : MonoBehaviour
             for (int w = 0; w < width; w++)
             {
                 bool blocked = blockKeyList[index];
-                saveGridDict.Add((h,w), blocked);
+                saveGridDict.Add((h, w), blocked);
 
                 index++;
             }
-        }
-        
+        }        
+
         if (grids != null)
         {
             var gridKeys = saveGridDict.Keys;

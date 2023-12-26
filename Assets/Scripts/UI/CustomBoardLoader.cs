@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class CustomBoardLoader : MonoBehaviour
@@ -44,11 +45,37 @@ public class CustomBoardLoader : MonoBehaviour
         }
     }
 
+    // 보드 생성기에 로딩해서 옮겨주기 (이름 못 정함)
+    public void ConnectUIStartButtonOnClick(GridLayoutGroup gridLayoutGroup, GameObject unBlockedPuzzle)
+    {
+        foreach (var loadingUI in loadingUIList)
+        {
+            loadingUI.ConnectCreateGrid(gridLayoutGroup, unBlockedPuzzle);
+        }
+    }
+
+    public void ConnectStartButtonsAction(UnityAction action)
+    {
+        foreach (var loadingUI in loadingUIList)
+        {
+            loadingUI.ConnectStartButtonAction(action);
+        }
+    }
+
+    public void ConnectUIStartButtonOnClick()
+    {
+        foreach (var loadingUI in loadingUIList)
+        {
+            loadingUI.ConnectChangeSceneStartButtonOnClick();
+        }
+    }
+
     public void ConnectAllCreateGrid()
     {
         foreach (var ui in loadingUIList)
         {
-            ui.CreateGrid(gridPrefab, blockGridPrefab);
+            var layoutGroup = ui.GetGridLayoutGroup();
+            ui.CreateGrid(layoutGroup, gridPrefab);
         }
     }
 }

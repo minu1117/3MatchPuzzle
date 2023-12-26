@@ -1624,6 +1624,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1839466172771846554, guid: f516e7a24e9157a4a94aa05a9d05d407, type: 3}
+      propertyPath: blockedPuzzle
+      value: 
+      objectReference: {fileID: 4836776147292935738, guid: 3a6f8ad3c9077ff49b287eeb5a5fcaa1, type: 3}
+    - target: {fileID: 1839466172771846554, guid: f516e7a24e9157a4a94aa05a9d05d407, type: 3}
+      propertyPath: unblockedPuzzle
+      value: 
+      objectReference: {fileID: 4836776147292935738, guid: d947225270f7cfb4abafae003ba5d4ac, type: 3}
+    - target: {fileID: 1839466172771846554, guid: f516e7a24e9157a4a94aa05a9d05d407, type: 3}
       propertyPath: stageSaveFolderName
       value: Prefabs/Stage
       objectReference: {fileID: 0}

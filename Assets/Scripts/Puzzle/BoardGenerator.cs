@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using System.Collections.Generic;
+using System.Collections;
 
 public class BoardGenerator : MonoBehaviour
 {
@@ -17,6 +18,9 @@ public class BoardGenerator : MonoBehaviour
     [SerializeField] private Toggle isStageCreatedToggle;
     [SerializeField] private Button saveButton;
     [SerializeField] private Button exitButton;
+    [SerializeField] private Button loadButton;
+
+    [SerializeField] private ModeChoiceSceneHolder holder;
 
     private List<BoardElements> elements = new();
 
@@ -42,7 +46,16 @@ public class BoardGenerator : MonoBehaviour
         heightInputField.onValueChanged.AddListener(SetHeight);
 
         saveButton.onClick.AddListener(Save);
+        loadButton.onClick.AddListener(() => holder.controler.On());
+        loadButton.onClick.AddListener(() => holder.loader.ConnectAllCreateGrid());
         exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.menuSceneName));
+
+        holder.loader.Init();
+        holder.loader.ConnectStartButtonsAction(() => StartCoroutine(CoDestroyElements()));
+        holder.loader.ConnectUIStartButtonOnClick(elementsGroup, elementPrefab.gameObject);
+        holder.loader.ConnectStartButtonsAction(() => GetElements());
+        holder.controler.ConnectEventTrigger();
+        holder.controler.Off();
     }
 
     private void CreateOrDestroyTiles()
@@ -156,9 +169,9 @@ public class BoardGenerator : MonoBehaviour
     {
         // 프리팹을 저장할 폴더 경로
 
-        string folderPath = Path.Combine(Application.dataPath, $"{GameManager.Instance.customBoardSaveFolderName}/{name}");
+        string folderPath = Path.Combine(UnityEngine.Application.dataPath, $"{GameManager.Instance.customBoardSaveFolderName}/{name}");
         if (isStageCreated)
-            folderPath = Path.Combine(Application.dataPath, $"{GameManager.Instance.stageSaveFolderName}/{name}");
+            folderPath = Path.Combine(UnityEngine.Application.dataPath, $"{GameManager.Instance.stageSaveFolderName}/{name}");
 
         CreateFolder(folderPath);
 
@@ -192,5 +205,35 @@ public class BoardGenerator : MonoBehaviour
     private void Save()
     {
         CreatePrefab(nameInputField.text, isStageCreatedToggle.isOn);
+    }
+
+    private IEnumerator CoDestroyElements()
+    {
+        for (int i = elementsGroup.transform.childCount - 1; i >= 0; i--)
+        {
+            Destroy(elementsGroup.transform.GetChild(i).gameObject);
+        }
+
+        yield return null;
+
+        int count = elementsGroup.transform.childCount; // Test
+        elements.Clear();
+
+        Debug.Log("1");
+    }    
+
+    private void GetElements()
+    {
+        for (int i = 0; i < elementsGroup.transform.childCount; i++) 
+        {
+            var child = elementsGroup.transform.GetChild(i).gameObject;
+            
+            if (child.TryGetComponent(out BoardElements element))
+            {
+                elements.Add(element);
+            }
+        }
+
+        Debug.Log("3");
     }
 }

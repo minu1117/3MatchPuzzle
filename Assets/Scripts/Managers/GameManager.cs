@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class GameManager : Manager<GameManager>
 {
     public PuzzleSceneObjectHolder puzzleSceneHolder;
@@ -5,6 +7,9 @@ public class GameManager : Manager<GameManager>
     private StageInfo stageInfo;
     public string customBoardSaveFolderName;
     public string stageSaveFolderName;
+
+    public GameObject unblockedPuzzle;
+    public GameObject blockedPuzzle;
 
     protected override void Awake()
     {
@@ -33,6 +38,7 @@ public class GameManager : Manager<GameManager>
         modeChoiceSceneHolder = FindAnyObjectByType<ModeChoiceSceneHolder>();
 
         modeChoiceSceneHolder.loader.Init();
+        modeChoiceSceneHolder.loader.ConnectUIStartButtonOnClick();
 
         modeChoiceSceneHolder.controler.ConnectEventTrigger();
         modeChoiceSceneHolder.controler.Off();
