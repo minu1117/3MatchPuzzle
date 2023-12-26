@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using System.Collections.Generic;
-using System.Collections;
 
 public class BoardGenerator : MonoBehaviour
 {
@@ -51,9 +50,7 @@ public class BoardGenerator : MonoBehaviour
         exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.menuSceneName));
 
         holder.loader.Init();
-        holder.loader.ConnectStartButtonsAction(() => StartCoroutine(CoDestroyElements()));
-        holder.loader.ConnectUIStartButtonOnClick(elementsGroup, elementPrefab.gameObject);
-        holder.loader.ConnectStartButtonsAction(() => GetElements());
+        holder.loader.ConnectGeneratorAction(DestroyElements, GetElements, elementsGroup, GameManager.Instance.blockedElement.gameObject, elementPrefab.gameObject);
         holder.controler.ConnectEventTrigger();
         holder.controler.Off();
     }
@@ -207,20 +204,15 @@ public class BoardGenerator : MonoBehaviour
         CreatePrefab(nameInputField.text, isStageCreatedToggle.isOn);
     }
 
-    private IEnumerator CoDestroyElements()
+    private void DestroyElements()
     {
         for (int i = elementsGroup.transform.childCount - 1; i >= 0; i--)
         {
             Destroy(elementsGroup.transform.GetChild(i).gameObject);
         }
 
-        yield return null;
-
-        int count = elementsGroup.transform.childCount; // Test
         elements.Clear();
-
-        Debug.Log("1");
-    }    
+    }
 
     private void GetElements()
     {
@@ -234,6 +226,6 @@ public class BoardGenerator : MonoBehaviour
             }
         }
 
-        Debug.Log("3");
+        Debug.Log(elements.Count);
     }
 }

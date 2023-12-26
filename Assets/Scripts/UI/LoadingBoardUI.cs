@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -35,11 +34,6 @@ public class LoadingBoardUI : MonoBehaviour
         startButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.gameSceneName));
     }
 
-    public void ConnectCreateGrid(GridLayoutGroup gridLayoutGroup, GameObject unBlockedPuzzle)
-    {
-        startButton.onClick.AddListener(() => CreateGrid(gridLayoutGroup, unBlockedPuzzle));
-    }
-
     public void ConnectStartButtonAction(UnityAction action)
     {
         startButton.onClick.AddListener(action);
@@ -50,20 +44,18 @@ public class LoadingBoardUI : MonoBehaviour
         return boardPreviewGrid;
     }
 
-    public void CreateGrid(GridLayoutGroup gridLayoutGroup, GameObject unBlockedPuzzle)
+    public void CreateGrid(GridLayoutGroup gridLayoutGroup, GameObject blockedPuzzle, GameObject unblockedPuzzle)
+    {
+        StartCoroutine(CoCreateGrid(gridLayoutGroup, blockedPuzzle, unblockedPuzzle));
+    }
+
+    public IEnumerator CoCreateGrid(GridLayoutGroup gridLayoutGroup, GameObject blockedPuzzle, GameObject unblockedPuzzle)
     {
         if (gridLayoutGroup.transform.childCount > 0)
-            return;
-
-        Debug.Log("2");
+            yield break;
 
         int width = stageInfo.boardInfo.width;
         int height = stageInfo.boardInfo.height;
-        StartCoroutine(CoCreateGrid(gridLayoutGroup, unBlockedPuzzle, GameManager.Instance.blockedPuzzle, width, height));
-    }
-
-    private IEnumerator CoCreateGrid(GridLayoutGroup gridLayoutGroup, GameObject gridPrefab, GameObject blockGridPrefab, int width, int height)
-    {
         stageInfo.boardInfo.LoadGridsBlockData();
 
         List<GameObject> createdGrids = new();
@@ -73,9 +65,9 @@ public class LoadingBoardUI : MonoBehaviour
             {
                 GameObject obj;
                 if (stageInfo.boardInfo.GetBlockedGrid(x, y))
-                    obj = Instantiate(blockGridPrefab, gridLayoutGroup.transform);
+                    obj = Instantiate(blockedPuzzle, gridLayoutGroup.transform);
                 else
-                    obj = Instantiate(gridPrefab, gridLayoutGroup.transform);
+                    obj = Instantiate(unblockedPuzzle, gridLayoutGroup.transform);
 
                 obj.gameObject.SetActive(false);
                 createdGrids.Add(obj);

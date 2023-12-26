@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
@@ -45,21 +46,29 @@ public class CustomBoardLoader : MonoBehaviour
         }
     }
 
-    // 보드 생성기에 로딩해서 옮겨주기 (이름 못 정함)
-    public void ConnectUIStartButtonOnClick(GridLayoutGroup gridLayoutGroup, GameObject unBlockedPuzzle)
-    {
-        foreach (var loadingUI in loadingUIList)
-        {
-            loadingUI.ConnectCreateGrid(gridLayoutGroup, unBlockedPuzzle);
-        }
-    }
-
     public void ConnectStartButtonsAction(UnityAction action)
     {
         foreach (var loadingUI in loadingUIList)
         {
             loadingUI.ConnectStartButtonAction(action);
         }
+    }
+
+    public void ConnectGeneratorAction(UnityAction destroyAction, UnityAction elementSettingAction, GridLayoutGroup group, GameObject block, GameObject unblock)
+    {
+        foreach (var loadingUI in loadingUIList)
+        {
+            loadingUI.ConnectStartButtonAction(() => StartCoroutine(WaitForDestroyThenCreate(destroyAction, elementSettingAction, group, block, unblock, loadingUI)));
+        }
+    }
+
+    private IEnumerator WaitForDestroyThenCreate(UnityAction destroyAction, UnityAction elementSettingAction, GridLayoutGroup group, GameObject block, GameObject unblock, LoadingBoardUI ui)
+    {
+        destroyAction.Invoke();
+        yield return null;
+
+        yield return StartCoroutine(ui.CoCreateGrid(group, block, unblock));
+        elementSettingAction.Invoke();
     }
 
     public void ConnectUIStartButtonOnClick()
@@ -75,7 +84,12 @@ public class CustomBoardLoader : MonoBehaviour
         foreach (var ui in loadingUIList)
         {
             var layoutGroup = ui.GetGridLayoutGroup();
-            ui.CreateGrid(layoutGroup, gridPrefab);
+            ui.CreateGrid(layoutGroup, GameManager.Instance.blockedPuzzle, gridPrefab);
         }
+    }
+
+    public List<LoadingBoardUI> GetLoadingUIList()
+    {
+        return loadingUIList;
     }
 }

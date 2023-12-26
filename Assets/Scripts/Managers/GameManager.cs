@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class GameManager : Manager<GameManager>
@@ -10,6 +11,7 @@ public class GameManager : Manager<GameManager>
 
     public GameObject unblockedPuzzle;
     public GameObject blockedPuzzle;
+    public BoardElements blockedElement;
 
     protected override void Awake()
     {

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5062004303728634436}
   - component: {fileID: 7782015598873712135}
   m_Layer: 5
-  m_Name: BoardElement
+  m_Name: UnblockedElement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
