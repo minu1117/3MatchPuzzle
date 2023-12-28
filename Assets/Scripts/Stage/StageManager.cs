@@ -13,15 +13,6 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
-        //for (int i = 0; i < stageInfoList.Count; i++) 
-        //{ 
-        //    var stage = Instantiate(stagePrefab, stageObjectParent.transform);
-        //    stage.StageInfo = stageInfoList[i];
-        //    stage.textMeshPro.text = $"{i+1}";
-
-        //    stage.button.onClick.AddListener(() => GameManager.Instance.SetStageInfo(stage.StageInfo));
-        //    stage.button.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.gameSceneName));
-        //}
         LoadStage();
     }
 

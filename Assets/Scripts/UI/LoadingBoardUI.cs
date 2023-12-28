@@ -25,7 +25,7 @@ public class LoadingBoardUI : MonoBehaviour
         int height = stageInfo.boardInfo.height;
 
         sizeText.text = $"{width} X {height}";
-        modeText.text = stageInfo.infinityMode ? "무한 모드" : "점수 모드";
+        modeText.text = stageInfo.isInfinityMode ? "무한 모드" : "점수 모드";
     }
 
     public void ConnectChangeSceneStartButtonOnClick()
@@ -98,5 +98,9 @@ public class LoadingBoardUI : MonoBehaviour
     public void SetStageInfo(StageInfo info)
     {
         stageInfo = info;
+    }
+    public StageInfo GetStageInfo()
+    {
+        return stageInfo;
     }
 }

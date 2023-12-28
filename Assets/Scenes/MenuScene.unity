@@ -1626,11 +1626,15 @@ PrefabInstance:
     - target: {fileID: 1839466172771846554, guid: f516e7a24e9157a4a94aa05a9d05d407, type: 3}
       propertyPath: blockedPuzzle
       value: 
-      objectReference: {fileID: 889637017988837031, guid: 9a0abd777a894cc4d99f4831128209dd, type: 3}
+      objectReference: {fileID: 4836776147292935738, guid: 3a6f8ad3c9077ff49b287eeb5a5fcaa1, type: 3}
+    - target: {fileID: 1839466172771846554, guid: f516e7a24e9157a4a94aa05a9d05d407, type: 3}
+      propertyPath: blockedElement
+      value: 
+      objectReference: {fileID: 7782015598873712135, guid: def7ca538a239794c85074eccfcd752c, type: 3}
     - target: {fileID: 1839466172771846554, guid: f516e7a24e9157a4a94aa05a9d05d407, type: 3}
       propertyPath: unblockedPuzzle
       value: 
-      objectReference: {fileID: 889637017988837031, guid: def7ca538a239794c85074eccfcd752c, type: 3}
+      objectReference: {fileID: 4836776147292935738, guid: d947225270f7cfb4abafae003ba5d4ac, type: 3}
     - target: {fileID: 1839466172771846554, guid: f516e7a24e9157a4a94aa05a9d05d407, type: 3}
       propertyPath: stageSaveFolderName
       value: Prefabs/Stage

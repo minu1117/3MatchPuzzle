@@ -21,4 +21,10 @@ public class BoardElements : MonoBehaviour
         image.sprite = image.sprite == blockedSprite ? unBlockedSprite : blockedSprite;
         isBlocked = image.sprite == blockedSprite;
     }
+
+    public void SetBlocked(bool isBlocked)
+    {
+        image.sprite = isBlocked ? blockedSprite : unBlockedSprite;
+        this.isBlocked = isBlocked;
+    }
 }

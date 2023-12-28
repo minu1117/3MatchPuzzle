@@ -44,6 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8cd8f6913c12d44e8ac7c8cf2100100, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boardInfo: {fileID: 4909142794300930804, guid: 2817f723f5cee484aabf70f5d58b84b3, type: 3}
+  boardInfo: {fileID: 4909142794300930804, guid: b3ab15544daec1045a0150d25aa682ba, type: 3}
   clearScore: 0
-  infinityMode: 1
+  isInfinityMode: 0
+  isStageMode: 1
+  stageName: Stage1

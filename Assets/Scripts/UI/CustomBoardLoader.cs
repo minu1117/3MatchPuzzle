@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
@@ -54,21 +53,12 @@ public class CustomBoardLoader : MonoBehaviour
         }
     }
 
-    public void ConnectGeneratorAction(UnityAction destroyAction, UnityAction elementSettingAction, GridLayoutGroup group, GameObject block, GameObject unblock)
+    public void LoadInGenerator(BoardGenerator generator)
     {
         foreach (var loadingUI in loadingUIList)
         {
-            loadingUI.ConnectStartButtonAction(() => StartCoroutine(WaitForDestroyThenCreate(destroyAction, elementSettingAction, group, block, unblock, loadingUI)));
+            loadingUI.ConnectStartButtonAction(() => generator.Load(loadingUI.GetStageInfo()));
         }
-    }
-
-    private IEnumerator WaitForDestroyThenCreate(UnityAction destroyAction, UnityAction elementSettingAction, GridLayoutGroup group, GameObject block, GameObject unblock, LoadingBoardUI ui)
-    {
-        destroyAction.Invoke();
-        yield return null;
-
-        yield return StartCoroutine(ui.CoCreateGrid(group, block, unblock));
-        elementSettingAction.Invoke();
     }
 
     public void ConnectUIStartButtonOnClick()

@@ -50,7 +50,7 @@ public class BoardGenerator : MonoBehaviour
         exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.menuSceneName));
 
         holder.loader.Init();
-        holder.loader.ConnectGeneratorAction(DestroyElements, GetElements, elementsGroup, GameManager.Instance.blockedElement.gameObject, elementPrefab.gameObject);
+        holder.loader.LoadInGenerator(this);
         holder.controler.ConnectEventTrigger();
         holder.controler.Off();
     }
@@ -131,20 +131,23 @@ public class BoardGenerator : MonoBehaviour
 
     private void SetGridNum()
     {
+        elements.Clear();
+
+        int x = 0;
+        int y = 0;
         for (int i = 0; i < elementsGroup.transform.childCount; i++) 
         {
             var elem = elementsGroup.transform.GetChild(i).GetComponent<BoardElements>();
-            elements.Add(elem);
-        }
+            elem.gridNum = (y, x);
 
-        int index = 0;
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
+            x++;
+            if (x == width)
             {
-                elements[index].gridNum = (y, x);
-                index++;
+                x = 0;
+                y++;
             }
+
+            elements.Add(elem);
         }
     }
 
@@ -192,7 +195,9 @@ public class BoardGenerator : MonoBehaviour
 
         newStageInfo.boardInfo = boardInfoPrefab.GetComponent<BoardInfo>();
         newStageInfo.clearScore = clearScore;
-        newStageInfo.infinityMode = isInfinityModeToggle.isOn;
+        newStageInfo.stageName = Path.GetFileName(folderPath);
+        newStageInfo.isInfinityMode = isInfinityModeToggle.isOn;
+        newStageInfo.isStageMode = isStageCreatedToggle.isOn;
         PrefabUtility.SaveAsPrefabAsset(newStageInfo.gameObject, stagePrefabPath);
 
         Destroy(newBoardInfo.gameObject);
@@ -204,28 +209,30 @@ public class BoardGenerator : MonoBehaviour
         CreatePrefab(nameInputField.text, isStageCreatedToggle.isOn);
     }
 
-    private void DestroyElements()
+    public void Load(StageInfo info)
     {
-        for (int i = elementsGroup.transform.childCount - 1; i >= 0; i--)
+        width = info.boardInfo.width;
+        height = info.boardInfo.height;
+        widthInputField.text = width.ToString();
+        heightInputField.text = height.ToString();
+        nameInputField.text = info.stageName;
+        isInfinityModeToggle.isOn = info.isInfinityMode;
+        if (isStageCreatedToggle != null)
         {
-            Destroy(elementsGroup.transform.GetChild(i).gameObject);
+            isStageCreatedToggle.isOn = info.isStageMode;
         }
 
-        elements.Clear();
-    }
-
-    private void GetElements()
-    {
-        for (int i = 0; i < elementsGroup.transform.childCount; i++) 
+        CreateOrDestroyTiles();
+        elementsGroup.constraint = info.boardInfo.GetConstraintType();
+        elementsGroup.constraintCount = info.boardInfo.GetConstaintCount();
+        SetGridNum();
+        for (int i = 0; i < elements.Count; i++)
         {
-            var child = elementsGroup.transform.GetChild(i).gameObject;
-            
-            if (child.TryGetComponent(out BoardElements element))
-            {
-                elements.Add(element);
-            }
-        }
+            int x = elements[i].gridNum.Item2;
+            int y = elements[i].gridNum.Item1;
 
-        Debug.Log(elements.Count);
+            bool blocked = info.boardInfo.GetBlockedGrid(x,y);
+            elements[i].SetBlocked(blocked);
+        }
     }
 }
