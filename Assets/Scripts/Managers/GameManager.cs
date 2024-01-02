@@ -33,6 +33,8 @@ public class GameManager : Manager<GameManager>
         puzzleSceneHolder.exitButton.onClick.AddListener(() => stageInfo = null);
         puzzleSceneHolder.exitButton.onClick.AddListener(() => EffectManager.Instance.ClearEffectDict());
         puzzleSceneHolder.exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.menuSceneName));
+
+        puzzleSceneHolder.clearUI.Init();
     }
 
     public void StartChoiceScene()
@@ -56,7 +58,7 @@ public class GameManager : Manager<GameManager>
         stageInfo = info;
     }
 
-    public StageInfo GetStage()
+    public StageInfo GetStageInfo()
     {
         return stageInfo;
     }

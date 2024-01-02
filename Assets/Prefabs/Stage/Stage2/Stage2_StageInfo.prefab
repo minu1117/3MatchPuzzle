@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardInfo: {fileID: 3305616998267943436, guid: 08cf2e6bc6e6e5b47a9c2a7a109bd45f, type: 3}
-  clearScore: 0
+  clearScore: 10
   isInfinityMode: 0
   isStageMode: 1
   stageName: Stage2

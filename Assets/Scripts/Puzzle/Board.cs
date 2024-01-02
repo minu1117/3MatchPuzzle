@@ -155,6 +155,8 @@ public class Board : MonoBehaviour
     private MouseMoveDir saveDir;
 
     private bool allowClick = true;
+    private int clickCount = 0;
+    private float playTime = 0;
 
     private enum MouseMoveDir
     {
@@ -170,6 +172,7 @@ public class Board : MonoBehaviour
 
     public void Update()
     {
+        playTime += Time.deltaTime;
         MoveAndFillAsync();
     }
 
@@ -262,13 +265,23 @@ public class Board : MonoBehaviour
 
         gameManager.puzzleSceneHolder.score.AddScore(addScore);
         SoundManager.Instance.PlayExplodingSound();
+
+        if (!gameManager.GetStageInfo().isInfinityMode)
+        {
+            if (gameManager.puzzleSceneHolder.score.GetScore() >= gameManager.GetStageInfo().clearScore)
+            {
+                gameManager.puzzleSceneHolder.clearUI.SetClickCountText(clickCount);
+                gameManager.puzzleSceneHolder.clearUI.SetClearTimeText((int)playTime);
+                gameManager.puzzleSceneHolder.clearUI.OnActive();
+                return;
+            }
+        }
+
         await MoveDownAsync(maxY, minY, minX, maxX);
     }
 
     private async Task MoveDownAsync(int maxY, int minY, int minX, int maxX)
     {
-        //List<Task> tasks = new();
-
         for (int y = minY; y < info.grids.GetLength(0); y++)
         {
             for (int x = minX; x <= maxX; x++)
@@ -384,6 +397,7 @@ public class Board : MonoBehaviour
         {
             clickedPuzzle = p;
             clickStartPos = Input.mousePosition;
+            clickCount++;
         }
     }
 

@@ -48,6 +48,9 @@ TagManager:
   - name: Effect
     uniqueID: 214976213
     locked: 0
+  - name: StageClearUI
+    uniqueID: 3870110029
+    locked: 0
   - name: Option
     uniqueID: 1287578903
     locked: 0
