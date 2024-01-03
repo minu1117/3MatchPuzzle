@@ -2,22 +2,26 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class StageClearUI : MonoBehaviour
 {
-    [SerializeField] private Sprite starSprite;
-    [SerializeField] private Sprite emptyStarSprite;
     [SerializeField] private List<Image> starImages;
     [SerializeField] private TextMeshProUGUI clearTimeText;
     [SerializeField] private TextMeshProUGUI clickCountText;
     [SerializeField] private Button exitButton;
     [SerializeField] private GameObject backgroundObject;
 
+    private Dictionary<Image, Animator> starDict = new();
+
     public void Init()
     {
         for (int i = 0; i < starImages.Count; i++)
         {
-            starImages[i].sprite = emptyStarSprite;
+            if (starImages[i].TryGetComponent(out Animator anim))
+            {
+                starDict.Add(starImages[i], anim);
+            }
         }
 
         exitButton.onClick.AddListener(() => EffectManager.Instance.ClearEffectDict());
@@ -54,6 +58,25 @@ public class StageClearUI : MonoBehaviour
         }
 
         clearTimeText.text = $"걸린 시간 : {timeStr}";
+    }
+
+    public void StartFillStars(int count)
+    {
+        StartCoroutine(FillStars(count));
+    }
+
+    private IEnumerator FillStars(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            if (starImages.Count > i)
+            {
+                starImages[i].gameObject.SetActive(true);
+                starDict[starImages[i]].SetTrigger("Start");
+
+                yield return new WaitForSeconds(0.3f);
+            }
+        }
     }
 
     public void OnActive()

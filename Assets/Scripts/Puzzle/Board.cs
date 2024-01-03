@@ -270,9 +270,14 @@ public class Board : MonoBehaviour
         {
             if (gameManager.puzzleSceneHolder.score.GetScore() >= gameManager.GetStageInfo().clearScore)
             {
+                gameManager.puzzleSceneHolder.clearUI.OnActive();
                 gameManager.puzzleSceneHolder.clearUI.SetClickCountText(clickCount);
                 gameManager.puzzleSceneHolder.clearUI.SetClearTimeText((int)playTime);
-                gameManager.puzzleSceneHolder.clearUI.OnActive();
+
+                float maxTime = gameManager.GetStageInfo().maxPlayTime;
+                float normalizeTime = (maxTime - playTime) / maxTime;
+                int starCount = (int)Mathf.Round(normalizeTime * 3f);
+                gameManager.puzzleSceneHolder.clearUI.StartFillStars(starCount);
                 return;
             }
         }

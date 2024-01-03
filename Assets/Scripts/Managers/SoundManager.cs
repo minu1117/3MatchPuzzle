@@ -114,9 +114,8 @@ public class SoundManager : Manager<SoundManager>
         doorOpenSoundSfxObject.Stop();
     }
 
-    public void PlayDoorSlideSound(float playTime)
+    public void PlayDoorSlideSound()
     {
-        doorOpenSoundSfxObject.time = playTime;
         doorOpenSoundSfxObject.Play();
     }
 
