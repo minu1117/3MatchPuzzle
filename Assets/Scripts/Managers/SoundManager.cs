@@ -6,11 +6,15 @@ public class SoundManager : Manager<SoundManager>
 {
     [SerializeField] private AudioSource bgm;
     [SerializeField] private AudioSource puzzlePopSoundSFX;
+    [SerializeField] private AudioSource doorCloseSoundSFX;
+    [SerializeField] private AudioSource doorOpenSoundSFX;
     [SerializeField] private AudioMixerGroup bgmGroup;
     [SerializeField] private AudioMixerGroup sfxGroup;
 
     private AudioSource bgmObject;
     private AudioSource puzzlePopSoundSfxObject;
+    private AudioSource doorCloseSoundSfxObject;
+    private AudioSource doorOpenSoundSfxObject;
 
     private bool muteBGM;
     private bool muteSFX;
@@ -100,6 +104,22 @@ public class SoundManager : Manager<SoundManager>
         puzzlePopSoundSfxObject.PlayOneShot(puzzlePopSoundSfxObject.clip);
     }
 
+    public void PlayFullDoorSound()
+    {
+        doorCloseSoundSfxObject.PlayOneShot(doorCloseSoundSfxObject.clip);
+    }
+    
+    public void StopSlideDoorSound()
+    {
+        doorOpenSoundSfxObject.Stop();
+    }
+
+    public void PlayDoorSlideSound(float playTime)
+    {
+        doorOpenSoundSfxObject.time = playTime;
+        doorOpenSoundSfxObject.Play();
+    }
+
     public void PlayBgm()
     {
         bgmObject.Play();
@@ -110,6 +130,8 @@ public class SoundManager : Manager<SoundManager>
     {
         bgmObject = Instantiate(bgm, gameObject.transform);
         puzzlePopSoundSfxObject = Instantiate(puzzlePopSoundSFX, gameObject.transform);
+        doorCloseSoundSfxObject = Instantiate(doorCloseSoundSFX, gameObject.transform);
+        doorOpenSoundSfxObject = Instantiate(doorOpenSoundSFX, gameObject.transform);
     }
 
     public string GetBGMGroupName()

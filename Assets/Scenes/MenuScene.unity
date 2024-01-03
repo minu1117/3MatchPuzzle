@@ -136,6 +136,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8244018208165821131, guid: 5d9e6d1c7f9c94d409c51046ebf58176, type: 3}
     - target: {fileID: 1590151637157684063, guid: 729697b445857fe40a008d0c2c6dcba4, type: 3}
+      propertyPath: doorOpenSoundSFX
+      value: 
+      objectReference: {fileID: 8244018208165821131, guid: 6fca27c1d4199654f9cb97a905ae0bfd, type: 3}
+    - target: {fileID: 1590151637157684063, guid: 729697b445857fe40a008d0c2c6dcba4, type: 3}
+      propertyPath: doorCloseSoundSFX
+      value: 
+      objectReference: {fileID: 8244018208165821131, guid: ed24d10b620174c48823a8cab209f8c2, type: 3}
+    - target: {fileID: 1590151637157684063, guid: 729697b445857fe40a008d0c2c6dcba4, type: 3}
       propertyPath: puzzlePopSoundSFX
       value: 
       objectReference: {fileID: 8244018208165821131, guid: 5d9e6d1c7f9c94d409c51046ebf58176, type: 3}
@@ -1278,7 +1286,7 @@ MonoBehaviour:
   canvas: {fileID: 1713734393}
   leftDoor: {fileID: 1953117325}
   rightDoor: {fileID: 1900733145}
-  slideTime: 1
+  slideTime: 0.5
 --- !u!1001 &1693249955
 PrefabInstance:
   m_ObjectHideFlags: 0

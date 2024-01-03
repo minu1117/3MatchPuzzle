@@ -29,10 +29,15 @@ public class DoorControler : MonoBehaviour
 
     public async Task Move(Vector2 leftDoorPos, Vector2 rightDoorPos)
     {
+        SoundManager.Instance.PlayDoorSlideSound(slideTime);
+
         await DOTween.Sequence()
             .Join(leftDoor.transform.DOLocalMove(leftDoorPos, slideTime))
             .Join(rightDoor.transform.DOLocalMove(rightDoorPos, slideTime))
             .AsyncWaitForCompletion();
+
+        SoundManager.Instance.StopSlideDoorSound();
+        SoundManager.Instance.PlayFullDoorSound();
     }
 
     public async Task CloseDoor()
