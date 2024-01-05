@@ -47,7 +47,7 @@ public class BoardGenerator : MonoBehaviour
         saveButton.onClick.AddListener(Save);
         loadButton.onClick.AddListener(() => holder.controler.On());
         loadButton.onClick.AddListener(() => holder.loader.ConnectAllCreateGrid());
-        exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.menuSceneName));
+        //exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.menuSceneName));
 
         holder.loader.Init();
         holder.loader.LoadInGenerator(this);

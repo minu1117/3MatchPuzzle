@@ -1921,7 +1921,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4730170077300218095, guid: f1fa8273cef30e842ada09b01b2017ae, type: 3}
-      propertyPath: optionButton
+      propertyPath: optionOnButton
       value: 
       objectReference: {fileID: 984104652}
     - target: {fileID: 6363459879021295634, guid: f1fa8273cef30e842ada09b01b2017ae, type: 3}

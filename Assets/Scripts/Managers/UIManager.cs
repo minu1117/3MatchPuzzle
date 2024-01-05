@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : Manager<UIManager>
@@ -18,10 +19,23 @@ public class UIManager : Manager<UIManager>
     public void FindOptionObject()
     {
         option = FindFirstObjectByType<Option>();
-        if (option != null)
+        if (option != null) 
         {
-            option.Init();
-            option.SynchronizeVolumeSliderValue();
+            string sceneName = SceneManager.GetActiveScene().name;
+            if (sceneName == MySceneManager.Instance.modeChoiceSceneName)
+            {
+                option.OnMenuExitButton();
+            }
+            else if (sceneName == MySceneManager.Instance.boardCreateSceneName ||
+                     sceneName == MySceneManager.Instance.stageSceneName)
+            {
+                option.OnMenuExitButton();
+                option.OnModeChoiceExitButton();
+            }
+            else if (sceneName == MySceneManager.Instance.gameSceneName)
+            {
+                option.OnAllButtons();
+            }
         }
     }
 

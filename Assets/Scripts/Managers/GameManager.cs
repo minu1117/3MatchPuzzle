@@ -30,8 +30,6 @@ public class GameManager : Manager<GameManager>
         puzzleSceneHolder.exitButton.onClick.AddListener(() => puzzleSceneHolder.board.StopTask());
         puzzleSceneHolder.exitButton.onClick.AddListener(() => stageInfo.boardInfo.ClearSaveDict());
         puzzleSceneHolder.exitButton.onClick.AddListener(() => stageInfo = null);
-        puzzleSceneHolder.exitButton.onClick.AddListener(() => EffectManager.Instance.ClearEffectDict());
-        puzzleSceneHolder.exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.menuSceneName));
 
         puzzleSceneHolder.clearUI.Init();
     }
