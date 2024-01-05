@@ -47,7 +47,6 @@ public class BoardGenerator : MonoBehaviour
         saveButton.onClick.AddListener(Save);
         loadButton.onClick.AddListener(() => holder.controler.On());
         loadButton.onClick.AddListener(() => holder.loader.ConnectAllCreateGrid());
-        //exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.menuSceneName));
 
         holder.loader.Init();
         holder.loader.LoadInGenerator(this);
@@ -88,20 +87,16 @@ public class BoardGenerator : MonoBehaviour
             elementsGroup.constraint = GridLayoutGroup.Constraint.FixedRowCount;
             elementsGroup.constraintCount = height;
         }
-        else if (width > height) 
+        else if (width >= height)
         {
             elementsGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             elementsGroup.constraintCount = width;
         }
-        else if (width == height)
-        {
-            elementsGroup.constraint = GridLayoutGroup.Constraint.Flexible;
-        }
     }
 
-    private void SetSize(ref int size, int maxSize, TMP_InputField inputField, string sizeStr)
+    private void SetSize(ref int size, int maxSize, TMP_InputField inputField)
     {
-        if (int.TryParse(sizeStr, out int parseInt))
+        if (int.TryParse(inputField.text, out int parseInt))
         {
             if (parseInt == size)
                 return;
@@ -114,19 +109,24 @@ public class BoardGenerator : MonoBehaviour
             }
 
             SetConstaintType();
-            inputField.text = sizeStr;
             CreateOrDestroyTiles();
         }
     }
 
     private void SetWidth(string widthStr)
     {
-        SetSize(ref width, maxWidth, widthInputField, widthStr);
+        if (int.TryParse(widthStr, out int parseInt))
+        {
+            SetSize(ref width, maxWidth, widthInputField);
+        }
     }
 
     private void SetHeight(string heightStr)
     {
-        SetSize(ref height, maxHeight, heightInputField, heightStr);
+        if (int.TryParse(heightStr, out int parseInt))
+        {
+            SetSize(ref height, maxHeight, heightInputField);
+        }
     }
 
     private void SetGridNum()
