@@ -12,7 +12,6 @@ public class PuzzleSceneObjectHolder : MonoBehaviour
 
     [Header("UI")]
     public Score score;
-    public Button exitButton;
     public StageClearUI clearUI;
 
     public GameObject GetEffectPoolParent()

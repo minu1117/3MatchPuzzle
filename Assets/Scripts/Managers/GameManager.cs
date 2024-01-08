@@ -27,9 +27,9 @@ public class GameManager : Manager<GameManager>
 
         puzzleSceneHolder.boardMixButton.onClick.AddListener(() => puzzleSceneHolder.board.Mix());
 
-        puzzleSceneHolder.exitButton.onClick.AddListener(() => puzzleSceneHolder.board.StopTask());
-        puzzleSceneHolder.exitButton.onClick.AddListener(() => stageInfo.boardInfo.ClearSaveDict());
-        puzzleSceneHolder.exitButton.onClick.AddListener(() => stageInfo = null);
+        //puzzleSceneHolder.exitButton.onClick.AddListener(() => puzzleSceneHolder.board.StopTask());
+        //puzzleSceneHolder.exitButton.onClick.AddListener(() => stageInfo.boardInfo.ClearSaveDict());
+        //puzzleSceneHolder.exitButton.onClick.AddListener(() => stageInfo = null);
 
         puzzleSceneHolder.clearUI.Init();
     }

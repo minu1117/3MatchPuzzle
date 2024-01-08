@@ -86,6 +86,9 @@ public class Option : MonoBehaviour
     {
         if (SceneManager.GetActiveScene().name == MySceneManager.Instance.gameSceneName)
         {
+            btn.onClick.AddListener(() => GameManager.Instance.puzzleSceneHolder.board.StopTask());
+            btn.onClick.AddListener(() => GameManager.Instance.GetStageInfo().boardInfo.ClearSaveDict());
+            btn.onClick.AddListener(() => GameManager.Instance.SetStageInfo(null));
             btn.onClick.AddListener(() => EffectManager.Instance.ClearEffectDict());
         }
 
