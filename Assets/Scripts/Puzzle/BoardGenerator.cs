@@ -13,6 +13,8 @@ public class BoardGenerator : MonoBehaviour
     [SerializeField] private TMP_InputField widthInputField;
     [SerializeField] private TMP_InputField heightInputField;
     [SerializeField] private TMP_InputField nameInputField;
+    [SerializeField] private TMP_InputField scoreInputField;
+    [SerializeField] private TMP_InputField maxPlayTimeInputField;
     [SerializeField] private Toggle isInfinityModeToggle;
     [SerializeField] private Toggle isStageCreatedToggle;
     [SerializeField] private Button saveButton;
@@ -29,14 +31,14 @@ public class BoardGenerator : MonoBehaviour
     private int maxWidth = 10;
     private int maxHeight = 10;
 
-    private int clearScore = 0;
-
     public string prefabSaveFolderName;
 
     private void Start()
     {
         widthInputField.contentType = TMP_InputField.ContentType.IntegerNumber;
         heightInputField.contentType = TMP_InputField.ContentType.IntegerNumber;
+        scoreInputField.contentType = TMP_InputField.ContentType.IntegerNumber;
+        maxPlayTimeInputField.contentType = TMP_InputField.ContentType.IntegerNumber;
 
         widthInputField.characterLimit = 2;
         heightInputField.characterLimit = 2;
@@ -45,10 +47,11 @@ public class BoardGenerator : MonoBehaviour
         heightInputField.onValueChanged.AddListener(SetHeight);
 
         saveButton.onClick.AddListener(Save);
+        loadButton.onClick.AddListener(() => holder.loader.LoadCustomBoard());
         loadButton.onClick.AddListener(() => holder.controler.On());
         loadButton.onClick.AddListener(() => holder.loader.ConnectAllCreateGrid());
 
-        holder.loader.Init();
+        holder.loader.LoadCustomBoard();
         holder.loader.LoadInGenerator(this);
         holder.controler.ConnectEventTrigger();
         holder.controler.Off();
@@ -167,8 +170,14 @@ public class BoardGenerator : MonoBehaviour
 
     private void CreatePrefab(string name, bool isStageCreated)
     {
-        // 프리팹을 저장할 폴더 경로
+        if (nameInputField.text == string.Empty || 
+            scoreInputField.text == string.Empty || 
+            widthInputField.text == string.Empty ||
+            heightInputField.text == string.Empty ||
+            (!isInfinityModeToggle.isOn && maxPlayTimeInputField.text == string.Empty))
+            return;
 
+        // 프리팹을 저장할 폴더 경로
         string folderPath = Path.Combine(UnityEngine.Application.dataPath, $"{GameManager.Instance.customBoardSaveFolderName}/{name}");
         if (isStageCreated)
             folderPath = Path.Combine(UnityEngine.Application.dataPath, $"{GameManager.Instance.stageSaveFolderName}/{name}");
@@ -194,8 +203,9 @@ public class BoardGenerator : MonoBehaviour
         GameObject boardInfoPrefab = PrefabUtility.SaveAsPrefabAsset(newBoardInfo.gameObject, boardPrefabPath);
 
         newStageInfo.boardInfo = boardInfoPrefab.GetComponent<BoardInfo>();
-        newStageInfo.clearScore = clearScore;
         newStageInfo.stageName = Path.GetFileName(folderPath);
+        newStageInfo.clearScore = int.Parse(scoreInputField.text);
+        newStageInfo.maxPlayTime = int.Parse(maxPlayTimeInputField.text);
         newStageInfo.isInfinityMode = isInfinityModeToggle.isOn;
         newStageInfo.isStageMode = isStageCreatedToggle.isOn;
         PrefabUtility.SaveAsPrefabAsset(newStageInfo.gameObject, stagePrefabPath);
@@ -215,6 +225,8 @@ public class BoardGenerator : MonoBehaviour
         height = info.boardInfo.height;
         widthInputField.text = width.ToString();
         heightInputField.text = height.ToString();
+        scoreInputField.text = info.clearScore.ToString();
+        maxPlayTimeInputField.text = info.maxPlayTime.ToString();
         nameInputField.text = info.stageName;
         isInfinityModeToggle.isOn = info.isInfinityMode;
         if (isStageCreatedToggle != null)

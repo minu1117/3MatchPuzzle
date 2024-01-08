@@ -13,17 +13,18 @@ public class CustomBoardLoader : MonoBehaviour
     [SerializeField] private GameObject blockGridPrefab;
     private List<LoadingBoardUI> loadingUIList = new();
 
-    public void Init()
-    {
-        LoadCustomBoard();
-    }
-
-    private void LoadCustomBoard()
+    public void LoadCustomBoard()
     {
         // 스테이지 폴더들 로딩
         string folderName = GameManager.Instance.customBoardSaveFolderName;
         if (!Directory.Exists($"{Application.dataPath}/{folderName}"))
             return;
+
+        for (int i = loadingUIList.Count-1; i >= 0; i--)
+        {
+            Destroy(loadingUIList[i].gameObject);
+        }
+        loadingUIList.Clear();
 
         string[] stageFolders = Directory.GetDirectories(Application.dataPath, $"{folderName}/");
         foreach (string stageFolder in stageFolders)

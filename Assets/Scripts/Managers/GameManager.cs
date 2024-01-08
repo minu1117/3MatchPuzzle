@@ -26,11 +26,6 @@ public class GameManager : Manager<GameManager>
         EffectManager.Instance.CreateEffects(puzzleSceneHolder.GetEffectPoolParent());
 
         puzzleSceneHolder.boardMixButton.onClick.AddListener(() => puzzleSceneHolder.board.Mix());
-
-        //puzzleSceneHolder.exitButton.onClick.AddListener(() => puzzleSceneHolder.board.StopTask());
-        //puzzleSceneHolder.exitButton.onClick.AddListener(() => stageInfo.boardInfo.ClearSaveDict());
-        //puzzleSceneHolder.exitButton.onClick.AddListener(() => stageInfo = null);
-
         puzzleSceneHolder.clearUI.Init();
     }
 
@@ -38,7 +33,7 @@ public class GameManager : Manager<GameManager>
     {
         modeChoiceSceneHolder = FindAnyObjectByType<ModeChoiceSceneHolder>();
 
-        modeChoiceSceneHolder.loader.Init();
+        modeChoiceSceneHolder.loader.LoadCustomBoard();
         modeChoiceSceneHolder.loader.ConnectUIStartButtonOnClick();
 
         modeChoiceSceneHolder.controler.ConnectEventTrigger();
