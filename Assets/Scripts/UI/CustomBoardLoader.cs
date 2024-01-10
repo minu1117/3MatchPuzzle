@@ -13,10 +13,9 @@ public class CustomBoardLoader : MonoBehaviour
     [SerializeField] private GameObject blockGridPrefab;
     private List<LoadingBoardUI> loadingUIList = new();
 
-    public void LoadCustomBoard()
+    public void LoadCustomBoard(string folderName)
     {
         // 스테이지 폴더들 로딩
-        string folderName = GameManager.Instance.customBoardSaveFolderName;
         if (!Directory.Exists($"{Application.dataPath}/{folderName}"))
             return;
 
@@ -59,6 +58,14 @@ public class CustomBoardLoader : MonoBehaviour
         foreach (var loadingUI in loadingUIList)
         {
             loadingUI.ConnectStartButtonAction(() => generator.Load(loadingUI.GetStageInfo()));
+        }
+    }
+
+    public void RemoveAllButtonsAction()
+    {
+        foreach (var loadingUI in loadingUIList)
+        {
+            loadingUI.RemoveButtonAction();
         }
     }
 

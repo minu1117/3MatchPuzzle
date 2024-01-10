@@ -15,8 +15,9 @@ public class BoardGenerator : MonoBehaviour
     [SerializeField] private TMP_InputField nameInputField;
     [SerializeField] private TMP_InputField scoreInputField;
     [SerializeField] private TMP_InputField maxPlayTimeInputField;
-    [SerializeField] private Toggle isInfinityModeToggle;
-    [SerializeField] private Toggle isStageCreatedToggle;
+    [SerializeField] private Toggle infinityModeToggle;
+    [SerializeField] private Toggle stageCreatedToggle;
+    [SerializeField] private GameObject stageModeGameObject;
     [SerializeField] private Button saveButton;
     [SerializeField] private Button exitButton;
     [SerializeField] private Button loadButton;
@@ -47,14 +48,23 @@ public class BoardGenerator : MonoBehaviour
         heightInputField.onValueChanged.AddListener(SetHeight);
 
         saveButton.onClick.AddListener(Save);
-        loadButton.onClick.AddListener(() => holder.loader.LoadCustomBoard());
-        loadButton.onClick.AddListener(() => holder.controler.On());
-        loadButton.onClick.AddListener(() => holder.loader.ConnectAllCreateGrid());
 
-        holder.loader.LoadCustomBoard();
-        holder.loader.LoadInGenerator(this);
         holder.controler.ConnectEventTrigger();
         holder.controler.Off();
+
+        ControlDevelopMode(false);
+    }
+
+    public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            ControlDevelopMode(true);
+        }
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            ControlDevelopMode(false);
+        }
     }
 
     private void CreateOrDestroyTiles()
@@ -168,20 +178,20 @@ public class BoardGenerator : MonoBehaviour
         }
     }
 
-    private void CreatePrefab(string name, bool isStageCreated)
+    private void CreatePrefab(string folderName, string name)
     {
         if (nameInputField.text == string.Empty || 
-            scoreInputField.text == string.Empty || 
             widthInputField.text == string.Empty ||
             heightInputField.text == string.Empty ||
-            (!isInfinityModeToggle.isOn && maxPlayTimeInputField.text == string.Empty))
+            (!infinityModeToggle.isOn && maxPlayTimeInputField.text == string.Empty) ||
+            (!infinityModeToggle.isOn && scoreInputField.text == string.Empty))
             return;
 
-        // 프리팹을 저장할 폴더 경로
-        string folderPath = Path.Combine(UnityEngine.Application.dataPath, $"{GameManager.Instance.customBoardSaveFolderName}/{name}");
-        if (isStageCreated)
-            folderPath = Path.Combine(UnityEngine.Application.dataPath, $"{GameManager.Instance.stageSaveFolderName}/{name}");
+        if (!GameManager.Instance.developMode)
+            stageCreatedToggle.isOn = false;
 
+        // 프리팹을 저장할 폴더 경로
+        string folderPath = Path.Combine(UnityEngine.Application.dataPath, $"{folderName}/{name}");
         CreateFolder(folderPath);
 
         // 새 프리팹 생성, 폴더에 추가
@@ -204,10 +214,14 @@ public class BoardGenerator : MonoBehaviour
 
         newStageInfo.boardInfo = boardInfoPrefab.GetComponent<BoardInfo>();
         newStageInfo.stageName = Path.GetFileName(folderPath);
-        newStageInfo.clearScore = int.Parse(scoreInputField.text);
-        newStageInfo.maxPlayTime = int.Parse(maxPlayTimeInputField.text);
-        newStageInfo.isInfinityMode = isInfinityModeToggle.isOn;
-        newStageInfo.isStageMode = isStageCreatedToggle.isOn;
+
+        if (!infinityModeToggle.isOn)
+        {
+            newStageInfo.clearScore = int.Parse(scoreInputField.text);
+            newStageInfo.maxPlayTime = int.Parse(maxPlayTimeInputField.text);
+        }
+        newStageInfo.isInfinityMode = infinityModeToggle.isOn;
+        newStageInfo.isStageMode = stageCreatedToggle.isOn;
         PrefabUtility.SaveAsPrefabAsset(newStageInfo.gameObject, stagePrefabPath);
 
         Destroy(newBoardInfo.gameObject);
@@ -216,7 +230,8 @@ public class BoardGenerator : MonoBehaviour
 
     private void Save()
     {
-        CreatePrefab(nameInputField.text, isStageCreatedToggle.isOn);
+        string folderName = GameManager.Instance.developMode ? GameManager.Instance.stageSaveFolderName : GameManager.Instance.customBoardSaveFolderName;
+        CreatePrefab(folderName, nameInputField.text);
     }
 
     public void Load(StageInfo info)
@@ -228,10 +243,10 @@ public class BoardGenerator : MonoBehaviour
         scoreInputField.text = info.clearScore.ToString();
         maxPlayTimeInputField.text = info.maxPlayTime.ToString();
         nameInputField.text = info.stageName;
-        isInfinityModeToggle.isOn = info.isInfinityMode;
-        if (isStageCreatedToggle != null)
+        infinityModeToggle.isOn = info.isInfinityMode;
+        if (stageModeGameObject.activeSelf)
         {
-            isStageCreatedToggle.isOn = info.isStageMode;
+            stageCreatedToggle.isOn = info.isStageMode;
         }
 
         CreateOrDestroyTiles();
@@ -246,5 +261,29 @@ public class BoardGenerator : MonoBehaviour
             bool blocked = info.boardInfo.GetBlockedGrid(x,y);
             elements[i].SetBlocked(blocked);
         }
+    }
+
+    public void ControlDevelopMode(bool set)
+    {
+        loadButton.onClick.RemoveAllListeners();
+        holder.loader.RemoveAllButtonsAction();
+
+        GameManager.Instance.developMode = set;
+        stageModeGameObject.SetActive(set);
+
+        if (set)
+        {
+            loadButton.onClick.AddListener(() => holder.loader.LoadCustomBoard(GameManager.Instance.stageSaveFolderName));
+            holder.loader.LoadCustomBoard(GameManager.Instance.stageSaveFolderName);
+        }
+        else
+        {
+            loadButton.onClick.AddListener(() => holder.loader.LoadCustomBoard(GameManager.Instance.customBoardSaveFolderName));
+            holder.loader.LoadCustomBoard(GameManager.Instance.customBoardSaveFolderName);
+        }
+
+        loadButton.onClick.AddListener(() => holder.controler.On());
+        loadButton.onClick.AddListener(() => holder.loader.ConnectAllCreateGrid());
+        holder.loader.LoadInGenerator(this);
     }
 }
