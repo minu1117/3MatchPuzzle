@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class GameManager : Manager<GameManager>
 {
-    public bool developMode = false;
-
     public PuzzleSceneObjectHolder puzzleSceneHolder;
     public ModeChoiceSceneHolder modeChoiceSceneHolder;
     private StageInfo stageInfo;
@@ -35,7 +33,7 @@ public class GameManager : Manager<GameManager>
     {
         modeChoiceSceneHolder = FindAnyObjectByType<ModeChoiceSceneHolder>();
 
-        modeChoiceSceneHolder.loader.LoadCustomBoard(customBoardSaveFolderName);
+        modeChoiceSceneHolder.loader.LoadCustomBoard();
         modeChoiceSceneHolder.loader.ConnectUIStartButtonOnClick();
 
         modeChoiceSceneHolder.controler.ConnectEventTrigger();

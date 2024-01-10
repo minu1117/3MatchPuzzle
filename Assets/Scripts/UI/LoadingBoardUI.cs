@@ -103,9 +103,4 @@ public class LoadingBoardUI : MonoBehaviour
     {
         return stageInfo;
     }
-
-    public void RemoveButtonAction()
-    {
-        startButton.onClick.RemoveAllListeners();
-    }
 }

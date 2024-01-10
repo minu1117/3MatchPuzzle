@@ -2118,7 +2118,7 @@ GameObject:
   - component: {fileID: 587199470}
   - component: {fileID: 587199471}
   m_Layer: 5
-  m_Name: Toggle
+  m_Name: IsInfinityMode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6005,7 +6005,7 @@ GameObject:
   - component: {fileID: 1891064088}
   - component: {fileID: 1891064089}
   m_Layer: 5
-  m_Name: Toggle
+  m_Name: IsStageMode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7054,9 +7054,8 @@ MonoBehaviour:
   nameInputField: {fileID: 10405554}
   scoreInputField: {fileID: 1813191271}
   maxPlayTimeInputField: {fileID: 1815722272}
-  infinityModeToggle: {fileID: 587199470}
-  stageCreatedToggle: {fileID: 1891064088}
-  stageModeGameObject: {fileID: 1229928997}
+  isInfinityModeToggle: {fileID: 587199470}
+  isStageCreatedToggle: {fileID: 1891064088}
   saveButton: {fileID: 880040620}
   exitButton: {fileID: 0}
   loadButton: {fileID: 301506101}
