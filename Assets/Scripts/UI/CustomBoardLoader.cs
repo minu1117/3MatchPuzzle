@@ -41,6 +41,8 @@ public class CustomBoardLoader : MonoBehaviour
                     loadingUI.SetStageName(name);
                     loadingUIList.Add(loadingUI);
                 }
+
+                PrefabUtility.UnloadPrefabContents(prefab);
             }
         }
     }
@@ -57,7 +59,8 @@ public class CustomBoardLoader : MonoBehaviour
     {
         foreach (var loadingUI in loadingUIList)
         {
-            loadingUI.ConnectStartButtonAction(() => generator.Load(loadingUI.GetStageInfo()));
+            var info = loadingUI.GetStageInfo();
+            loadingUI.ConnectStartButtonAction(() => generator.Load(info));
         }
     }
 

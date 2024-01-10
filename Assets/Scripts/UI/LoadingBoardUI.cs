@@ -14,7 +14,6 @@ public class LoadingBoardUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI modeText;
 
     [SerializeField] private Button startButton;
-
     private StageInfo stageInfo;
 
     public void Init(StageInfo info)

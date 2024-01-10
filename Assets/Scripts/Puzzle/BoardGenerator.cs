@@ -271,19 +271,19 @@ public class BoardGenerator : MonoBehaviour
         GameManager.Instance.developMode = set;
         stageModeGameObject.SetActive(set);
 
+        string folderName = string.Empty;
         if (set)
         {
-            loadButton.onClick.AddListener(() => holder.loader.LoadCustomBoard(GameManager.Instance.stageSaveFolderName));
-            holder.loader.LoadCustomBoard(GameManager.Instance.stageSaveFolderName);
+            folderName = GameManager.Instance.stageSaveFolderName;
         }
         else
         {
-            loadButton.onClick.AddListener(() => holder.loader.LoadCustomBoard(GameManager.Instance.customBoardSaveFolderName));
-            holder.loader.LoadCustomBoard(GameManager.Instance.customBoardSaveFolderName);
+            folderName = GameManager.Instance.customBoardSaveFolderName;
         }
 
+        loadButton.onClick.AddListener(() => holder.loader.LoadCustomBoard(folderName));
         loadButton.onClick.AddListener(() => holder.controler.On());
         loadButton.onClick.AddListener(() => holder.loader.ConnectAllCreateGrid());
-        holder.loader.LoadInGenerator(this);
+        loadButton.onClick.AddListener(() => holder.loader.LoadInGenerator(this));
     }
 }
