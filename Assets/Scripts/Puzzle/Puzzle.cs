@@ -151,17 +151,20 @@ public class Puzzle : MonoBehaviour
     {
         switch (type)
         {
-            case PuzzleType.Blue:
+            case PuzzleType.Apple:
                 scoreNum = 10;
                 break;
-            case PuzzleType.Green:
+            case PuzzleType.Kiwi:
                 scoreNum = 7;
                 break;
-            case PuzzleType.Red:
+            case PuzzleType.Orange:
                 scoreNum = 8;
                 break;
-            case PuzzleType.Orange:
+            case PuzzleType.Avocado:
                 scoreNum = 12;
+                break;
+            case PuzzleType.Grape:
+                scoreNum = 9;
                 break;
             default:
                 break;
