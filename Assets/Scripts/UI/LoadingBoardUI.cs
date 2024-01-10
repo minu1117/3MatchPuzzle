@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LoadingBoardUI : MonoBehaviour
@@ -14,6 +15,7 @@ public class LoadingBoardUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI modeText;
 
     [SerializeField] private Button startButton;
+    [SerializeField] private TextMeshProUGUI startButtonText;
     private StageInfo stageInfo;
 
     public void Init(StageInfo info)
@@ -25,6 +27,11 @@ public class LoadingBoardUI : MonoBehaviour
 
         sizeText.text = $"{width} X {height}";
         modeText.text = stageInfo.isInfinityMode ? "무한 모드" : "점수 모드";
+
+        if (SceneManager.GetActiveScene().name == MySceneManager.Instance.boardCreateSceneName)
+        {
+            SetStartButtonText("로드");
+        }
     }
 
     public void ConnectChangeSceneStartButtonOnClick()
@@ -98,6 +105,12 @@ public class LoadingBoardUI : MonoBehaviour
     {
         stageInfo = info;
     }
+
+    public void SetStartButtonText(string text)
+    {
+        startButtonText.text = text;
+    }
+
     public StageInfo GetStageInfo()
     {
         return stageInfo;
