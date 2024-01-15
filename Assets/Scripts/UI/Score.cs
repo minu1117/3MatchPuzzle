@@ -5,9 +5,11 @@ public class Score : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI scoreText;
     private int scoreNum;
+    private Animator scoreAnim;
 
     private void Start()
     {
+        scoreAnim = scoreText.GetComponent<Animator>();
         scoreNum = 0;
         SetScore(scoreNum);
     }
@@ -34,6 +36,8 @@ public class Score : MonoBehaviour
 
     public void SetScore(int score)
     {
+        scoreAnim.SetTrigger("Start");
+
         scoreNum = score;
         scoreText.text = scoreNum.ToString();
     }
