@@ -113,20 +113,20 @@ public class BoardInfo : MonoBehaviour
 
     public void LoadGridsBlockData()
     {
-        if (saveGridDict.Count > 0)
-            return;
-
-        int index = 0;
-        for (int h = 0; h < height; h++)
+        if (saveGridDict.Count == 0)
         {
-            for (int w = 0; w < width; w++)
+            int index = 0;
+            for (int h = 0; h < height; h++)
             {
-                bool blocked = blockKeyList[index];
-                saveGridDict.Add((h, w), blocked);
+                for (int w = 0; w < width; w++)
+                {
+                    bool blocked = blockKeyList[index];
+                    saveGridDict.Add((h, w), blocked);
 
-                index++;
+                    index++;
+                }
             }
-        }        
+        }      
 
         if (grids != null)
         {

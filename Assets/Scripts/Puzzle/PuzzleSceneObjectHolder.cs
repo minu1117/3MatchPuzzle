@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,7 @@ public class PuzzleSceneObjectHolder : MonoBehaviour
     [Header("UI")]
     public Score score;
     public StageClearUI clearUI;
+    public TextMeshProUGUI modeText;
 
     public GameObject GetEffectPoolParent()
     {

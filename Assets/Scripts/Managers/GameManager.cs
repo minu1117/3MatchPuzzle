@@ -29,6 +29,8 @@ public class GameManager : Manager<GameManager>
 
         puzzleSceneHolder.boardMixButton.onClick.AddListener(() => puzzleSceneHolder.board.Mix());
         puzzleSceneHolder.clearUI.Init();
+
+        puzzleSceneHolder.modeText.text = stageInfo.isInfinityMode ? "무한 ∞" : "점수";
     }
 
     public void StartChoiceScene()
