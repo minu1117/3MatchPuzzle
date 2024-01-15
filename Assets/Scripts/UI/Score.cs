@@ -36,7 +36,8 @@ public class Score : MonoBehaviour
 
     public void SetScore(int score)
     {
-        scoreAnim.SetTrigger("Start");
+        if (score > 0)
+            scoreAnim.SetTrigger("Start");
 
         scoreNum = score;
         scoreText.text = scoreNum.ToString();
