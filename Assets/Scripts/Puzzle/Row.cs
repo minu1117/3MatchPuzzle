@@ -21,12 +21,13 @@ public class Row
         for (int x = 0; x < width; x++)
         {
             Puzzle pz = puzzlePool.Get();
-            pz.SetSize(size - size/4);
             (int, int) gn = (rowIndex, x);
 
+            Vector2 customSize = size - (size / 4);
             if (info.GetBlockedGrid(x, rowIndex))
             {
                 pz.SetPuzzleType(PuzzleType.Blocked);
+                customSize = size;
             }
             else if (rowIndex < height)
             {
@@ -39,6 +40,7 @@ public class Row
                 pz.gameObject.SetActive(false);
             }
 
+            pz.SetSize(customSize);
             pz.GridNum = gn;
             pz.RectTransform.localPosition = info.GetGridPosition(x, rowIndex);
             info.SetPuzzle(pz, x, rowIndex);
