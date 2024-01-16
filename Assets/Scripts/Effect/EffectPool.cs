@@ -9,6 +9,7 @@ public class EffectPool : MonoBehaviour
     [SerializeField] private Effect effect;
     public IObjectPool<Effect> pool;
     public int poolSize;
+    private float particleSize;
 
     public void Init()
     {
@@ -21,6 +22,11 @@ public class EffectPool : MonoBehaviour
         );
     }
 
+    public void SetSize(float size)
+    {
+        particleSize = size;
+    }
+
     public PuzzleType GetEffectType()
     {
         return puzzleEffectType;
@@ -30,6 +36,7 @@ public class EffectPool : MonoBehaviour
     {
         var effectObject = Instantiate(effect, gameObject.transform);
         effectObject.CreateEffect();
+        effectObject.SetSize(particleSize);
         effectObject.gameObject.SetActive(false);
         return effectObject;
     }

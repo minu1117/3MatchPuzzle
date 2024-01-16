@@ -11,13 +11,16 @@ public class EffectManager : Singleton<EffectManager>
         base.Awake();
     }
 
-    public void CreateEffects(GameObject effectPoolObject)
+    public void CreateEffects(GameObject effectPoolObject, Vector2 size)
     {
+        float sizeDelta = Mathf.Max(size.x, size.y);
+
         for (int i = 0; i < effectPools.Count; i++)
         {
             var type = effectPools[i].GetEffectType();
             var effectPool = Instantiate(effectPools[i], effectPoolObject.transform);
             effectPool.Init();
+            effectPool.SetSize(sizeDelta);
 
             effectPoolDict.Add(type, effectPool);
         }

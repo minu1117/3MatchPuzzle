@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UIElements;
 
 public class Effect : MonoBehaviour
 {
@@ -42,6 +43,30 @@ public class Effect : MonoBehaviour
         foreach (var particle in createdParticles)
         {
             particle.gameObject.transform.localPosition = position;
+        }
+    }
+
+    public void SetSize(float size)
+    {
+        foreach (var particle in createdParticles)
+        {
+            var childrenParticles = particle.GetComponentsInChildren<ParticleSystem>();
+            foreach (var childParticle in childrenParticles)
+            {
+                var mainModule = childParticle.main;
+                if (mainModule.startSize3D)
+                {
+                    float constantValueX = mainModule.startSizeX.constant;
+                    float constantValueY = mainModule.startSizeY.constant;
+                    mainModule.startSizeX = constantValueX * (size/5);
+                    mainModule.startSizeY = constantValueY * (size/5);
+                }
+                else
+                {
+                    float constantSize = mainModule.startSize.constant;
+                    mainModule.startSize = constantSize * (size/5);
+                }
+            }
         }
     }
 

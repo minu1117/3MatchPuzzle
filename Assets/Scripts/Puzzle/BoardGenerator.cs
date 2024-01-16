@@ -29,8 +29,8 @@ public class BoardGenerator : MonoBehaviour
     private int width = 0;
     private int height = 0;
 
-    private int maxWidth = 10;
-    private int maxHeight = 10;
+    private int maxWidth = 15;
+    private int maxHeight = 15;
 
     public string prefabSaveFolderName;
 

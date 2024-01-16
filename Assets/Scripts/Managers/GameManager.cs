@@ -36,7 +36,7 @@ public class GameManager : Singleton<GameManager>
 
         puzzleSceneHolder.board.SetBoardInfo(stageInfo.boardInfo);
         puzzleSceneHolder.board.Init(stageInfo.boardInfo.width, stageInfo.boardInfo.height);
-        EffectManager.Instance.CreateEffects(puzzleSceneHolder.GetEffectPoolParent());
+        EffectManager.Instance.CreateEffects(puzzleSceneHolder.GetEffectPoolParent(), puzzleSceneHolder.board.GetGridSize());
 
         puzzleSceneHolder.boardMixButton.onClick.AddListener(() => puzzleSceneHolder.board.Mix());
         puzzleSceneHolder.clearUI.Init();

@@ -21,7 +21,7 @@ public class Row
         for (int x = 0; x < width; x++)
         {
             Puzzle pz = puzzlePool.Get();
-            pz.SetSize(size);
+            pz.SetSize(size - size/4);
             (int, int) gn = (rowIndex, x);
 
             if (info.GetBlockedGrid(x, rowIndex))

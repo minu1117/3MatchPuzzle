@@ -41,6 +41,11 @@ public class Board : MonoBehaviour
         StartCoroutine(CoCreateBoard(width, height));
     }
 
+    public Vector2 GetGridSize()
+    {
+        return gridParents.cellSize;
+    }
+
     public void SetBoardInfo(BoardInfo info)
     {
         this.info = info;
@@ -306,7 +311,7 @@ public class Board : MonoBehaviour
                         createPuzzle.SetPosition(pos);
 
                         Vector2 size = gridParents.cellSize;
-                        tasks.Add(createPuzzle.Expands(size, moveTime));
+                        tasks.Add(createPuzzle.Expands(size - size/4, moveTime));
                     }
 
                     continue;
