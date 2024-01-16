@@ -1,17 +1,14 @@
 using System.Collections;
 using System.Threading.Tasks;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MySceneManager : Manager<MySceneManager>
+public class MySceneManager : Singleton<MySceneManager>
 {
     public string gameSceneName;
     public string menuSceneName;
     public string stageSceneName;
     public string boardCreateSceneName;
     public string modeChoiceSceneName;
-
-    public DoorControler doorControler;
 
     protected override void Awake()
     {
@@ -20,7 +17,7 @@ public class MySceneManager : Manager<MySceneManager>
 
     public async void StartCoLoadScene(string name)
     {
-        await doorControler.CloseDoor();
+        await DoorControler.Instance.CloseDoor();
 
         StartCoroutine(CoLoadScene(name));
         while (!IsSceneLoaded(name))
@@ -28,7 +25,7 @@ public class MySceneManager : Manager<MySceneManager>
             await Task.Yield();
         }
 
-        await doorControler.OpenDoor();
+        await DoorControler.Instance.OpenDoor();
     }
 
     public IEnumerator CoLoadScene(string name)

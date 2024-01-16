@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class UIManager : Manager<UIManager>
+public class UIManager : Singleton<UIManager>
 {
     public Option option;
 

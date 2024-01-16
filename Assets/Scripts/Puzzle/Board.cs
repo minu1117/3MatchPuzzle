@@ -11,7 +11,9 @@ public class Board : MonoBehaviour
 {
     [Header("Background Tile")]
     [SerializeField] private Grid backgroundTilePrefab;
+    [SerializeField] private Grid gridPrefab;
     [SerializeField] private GridLayoutGroup backgroundParentsObject;
+    [SerializeField] private GridLayoutGroup gridParents;
 
     [Header("Puzzle")]
     [SerializeField] private GameObject puzzleParentsObject;

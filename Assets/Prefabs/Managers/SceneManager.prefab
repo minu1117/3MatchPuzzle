@@ -47,3 +47,5 @@ MonoBehaviour:
   gameSceneName: PuzzleScene
   menuSceneName: MenuScene
   stageSceneName: StageScene
+  boardCreateSceneName: BoardCreateScene
+  modeChoiceSceneName: ModeChoiceScene

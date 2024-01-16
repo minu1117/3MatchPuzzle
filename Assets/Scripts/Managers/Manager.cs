@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Manager<T> : MonoBehaviour
+public class Singleton<T> : MonoBehaviour
 {
     public static T Instance;
 

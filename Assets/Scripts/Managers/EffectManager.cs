@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EffectManager : Manager<EffectManager>
+public class EffectManager : Singleton<EffectManager>
 {
     [SerializeField] private List<EffectPool> effectPools;
     private Dictionary<PuzzleType, EffectPool> effectPoolDict = new();

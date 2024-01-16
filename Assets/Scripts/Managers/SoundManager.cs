@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
-public class SoundManager : Manager<SoundManager>
+public class SoundManager : Singleton<SoundManager>
 {
     [SerializeField] private AudioSource bgm;
     [SerializeField] private AudioSource puzzlePopSoundSFX;

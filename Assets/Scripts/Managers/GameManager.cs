@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GameManager : Manager<GameManager>
+public class GameManager : Singleton<GameManager>
 {
     public bool developMode = false;
 
@@ -10,17 +10,28 @@ public class GameManager : Manager<GameManager>
     public string customBoardSaveFolderName;
     public string stageSaveFolderName;
 
-    public GameObject unblockedPuzzle;
-    public GameObject blockedPuzzle;
-    public BoardElements blockedElement;
+    public GameObject unblockedGrid;
+    public GameObject blockedGrid;
+
+    public SpriteObject[] puzzleSprites { get; set; }
 
     protected override void Awake()
     {
         base.Awake();
     }
 
+    private void LoadPuzzleSprites()
+    {
+        if (puzzleSprites != null)
+            return;
+
+        puzzleSprites = Resources.LoadAll<SpriteObject>("PuzzleSpriteObjects/");
+    }
+
     public void StartGame()
     {
+        LoadPuzzleSprites();
+
         puzzleSceneHolder = FindAnyObjectByType<PuzzleSceneObjectHolder>();
 
         puzzleSceneHolder.board.SetBoardInfo(stageInfo.boardInfo);

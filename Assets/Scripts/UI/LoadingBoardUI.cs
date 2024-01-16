@@ -50,9 +50,9 @@ public class LoadingBoardUI : MonoBehaviour
         return boardPreviewGrid;
     }
 
-    public void CreateGrid(GridLayoutGroup gridLayoutGroup, GameObject blockedPuzzle, GameObject unblockedPuzzle)
+    public void CreateGrid(GridLayoutGroup gridLayoutGroup, GameObject blockGrid, GameObject unblockGrid)
     {
-        StartCoroutine(CoCreateGrid(gridLayoutGroup, blockedPuzzle, unblockedPuzzle));
+        StartCoroutine(CoCreateGrid(gridLayoutGroup, blockGrid, unblockGrid));
     }
 
     public IEnumerator CoCreateGrid(GridLayoutGroup gridLayoutGroup, GameObject blockedPuzzle, GameObject unblockedPuzzle)

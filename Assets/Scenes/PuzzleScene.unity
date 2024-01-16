@@ -1797,6 +1797,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Board
       objectReference: {fileID: 0}
+    - target: {fileID: 5367539618338195434, guid: f00e2c2c7e1e2b64f876eebe4d221661, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -853402810, guid: 840d685607484bc4d9f2470cf587a5d9, type: 3}
+    - target: {fileID: 5367539618338195434, guid: f00e2c2c7e1e2b64f876eebe4d221661, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5367539618338195434, guid: f00e2c2c7e1e2b64f876eebe4d221661, type: 3}
+      propertyPath: m_Color.b
+      value: 0.79886085
+      objectReference: {fileID: 0}
+    - target: {fileID: 5367539618338195434, guid: f00e2c2c7e1e2b64f876eebe4d221661, type: 3}
+      propertyPath: m_Color.g
+      value: 0.8473605
+      objectReference: {fileID: 0}
+    - target: {fileID: 5367539618338195434, guid: f00e2c2c7e1e2b64f876eebe4d221661, type: 3}
+      propertyPath: m_Color.r
+      value: 0.9056604
+      objectReference: {fileID: 0}
     - target: {fileID: 6812620421018694672, guid: f00e2c2c7e1e2b64f876eebe4d221661, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2084,14 +2104,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.01886791, g: 0.01860091, b: 0.01860091, a: 0.392}
+  m_Color: {r: 0.6226415, g: 0.6226415, b: 0.6226415, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 362260591, guid: 01181f0aa792253418e4339584246be5, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1

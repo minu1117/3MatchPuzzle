@@ -44,5 +44,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70610c3db6a6d4147a57ac2f4eeafa43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  holder: {fileID: 0}
-  prefabSaveFolderName: Prefabs/Stage
+  developMode: 0
+  puzzleSceneHolder: {fileID: 0}
+  modeChoiceSceneHolder: {fileID: 0}
+  customBoardSaveFolderName: Prefabs/CustomBoard
+  stageSaveFolderName: Prefabs/Stage
+  unblockedGrid: {fileID: 889637017988837031, guid: 9a0abd777a894cc4d99f4831128209dd, type: 3}
+  blockedGrid: {fileID: 889637017988837031, guid: def7ca538a239794c85074eccfcd752c, type: 3}
+  blockedElement: {fileID: 7782015598873712135, guid: def7ca538a239794c85074eccfcd752c, type: 3}
+  puzzleSprites: []
+  doorControler: {fileID: 0}

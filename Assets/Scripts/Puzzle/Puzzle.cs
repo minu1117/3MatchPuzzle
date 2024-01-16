@@ -66,7 +66,7 @@ public class Puzzle : MonoBehaviour
 
     private Sprite FindSprite()
     {
-        var sprites = LoadManager.Sprites;
+        var sprites = GameManager.Instance.puzzleSprites;
         for (int i = 0; i < sprites.Length; i++)
         {
             if (sprites[i].type == type)

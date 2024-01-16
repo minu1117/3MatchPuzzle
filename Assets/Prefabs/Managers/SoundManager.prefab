@@ -45,7 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bgm: {fileID: 3199592785071928729, guid: 7cd1f8d1e572dd54fbf906f43ef1493f, type: 3}
-  explodingSound: {fileID: 8244018208165821131, guid: 5d9e6d1c7f9c94d409c51046ebf58176, type: 3}
-  mixer: {fileID: 24100000, guid: 6398111593c671d4a8306f2d048667b5, type: 2}
+  puzzlePopSoundSFX: {fileID: 8244018208165821131, guid: 5d9e6d1c7f9c94d409c51046ebf58176, type: 3}
+  doorCloseSoundSFX: {fileID: 8244018208165821131, guid: ed24d10b620174c48823a8cab209f8c2, type: 3}
+  doorOpenSoundSFX: {fileID: 8244018208165821131, guid: 6fca27c1d4199654f9cb97a905ae0bfd, type: 3}
   bgmGroup: {fileID: -6437025990875113961, guid: 6398111593c671d4a8306f2d048667b5, type: 2}
   sfxGroup: {fileID: 79651376797038412, guid: 6398111593c671d4a8306f2d048667b5, type: 2}
