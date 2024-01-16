@@ -10,9 +10,7 @@ using UnityEngine.UI;
 public class Board : MonoBehaviour
 {
     [Header("Background Tile")]
-    [SerializeField] private Grid backgroundTilePrefab;
     [SerializeField] private Grid gridPrefab;
-    [SerializeField] private GridLayoutGroup backgroundParentsObject;
     [SerializeField] private GridLayoutGroup gridParents;
 
     [Header("Puzzle")]
@@ -30,7 +28,7 @@ public class Board : MonoBehaviour
     {
         gameManager = FindAnyObjectByType<GameManager>();
 
-        info.CreateGrids(backgroundTilePrefab, backgroundParentsObject);
+        info.CreateGrids(gridPrefab, gridParents);
         info.LoadGridsBlockData();
         puzzlePool = new ObjectPool<Puzzle>(
             CreatePuzzle,
@@ -58,18 +56,18 @@ public class Board : MonoBehaviour
         if (width == 0 || height == 0)
             yield break;
 
-        backgroundParentsObject.constraint = info.GetConstraintType();
-        backgroundParentsObject.constraintCount = info.GetConstaintCount();
+        gridParents.constraint = info.GetConstraintType();
+        gridParents.constraintCount = info.GetConstaintCount();
 
         // 셀 사이즈, 간격 값 조정
-        UIManager.Instance.FitToCell(backgroundParentsObject, width, height);
-        Vector2 cellSize = backgroundParentsObject.cellSize;
-        Vector2 spacing = backgroundParentsObject.spacing;
+        UIManager.Instance.FitToCell(gridParents, width, height);
+        Vector2 cellSize = gridParents.cellSize;
+        Vector2 spacing = gridParents.spacing;
 
         yield return null;
 
         // 첫 위치
-        Vector2 startPosition = backgroundParentsObject.transform.GetChild(0).GetComponent<RectTransform>().localPosition;
+        Vector2 startPosition = gridParents.transform.GetChild(0).GetComponent<RectTransform>().localPosition;
 
         // X, Y 간격 계산
         float objectIntervalX = cellSize.x + spacing.x;
@@ -94,7 +92,7 @@ public class Board : MonoBehaviour
             }
         }
 
-        puzzleParentsObject.transform.localPosition = backgroundParentsObject.transform.localPosition;
+        puzzleParentsObject.transform.localPosition = gridParents.transform.localPosition;
         StartCoroutine(CoCreateAllPuzzles(cellSize, width, height));
     }
 
@@ -307,7 +305,7 @@ public class Board : MonoBehaviour
                         Vector2 pos = info.GetGridPosition(x, y);
                         createPuzzle.SetPosition(pos);
 
-                        Vector2 size = backgroundParentsObject.cellSize;
+                        Vector2 size = gridParents.cellSize;
                         tasks.Add(createPuzzle.Expands(size, moveTime));
                     }
 

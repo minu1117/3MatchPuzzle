@@ -9,7 +9,6 @@ public class CustomBoardLoader : MonoBehaviour
 {
     [SerializeField] private LoadingBoardUI loadingUIPrefab;
     [SerializeField] private VerticalLayoutGroup content;
-    //[SerializeField] private GameObject gridPrefab;
     private List<LoadingBoardUI> loadingUIList = new();
 
     public void LoadCustomBoard(string folderName)

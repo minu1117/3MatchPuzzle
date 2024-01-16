@@ -1797,26 +1797,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Board
       objectReference: {fileID: 0}
-    - target: {fileID: 5367539618338195434, guid: f00e2c2c7e1e2b64f876eebe4d221661, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -853402810, guid: 840d685607484bc4d9f2470cf587a5d9, type: 3}
-    - target: {fileID: 5367539618338195434, guid: f00e2c2c7e1e2b64f876eebe4d221661, type: 3}
-      propertyPath: m_Color.a
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5367539618338195434, guid: f00e2c2c7e1e2b64f876eebe4d221661, type: 3}
-      propertyPath: m_Color.b
-      value: 0.79886085
-      objectReference: {fileID: 0}
-    - target: {fileID: 5367539618338195434, guid: f00e2c2c7e1e2b64f876eebe4d221661, type: 3}
-      propertyPath: m_Color.g
-      value: 0.8473605
-      objectReference: {fileID: 0}
-    - target: {fileID: 5367539618338195434, guid: f00e2c2c7e1e2b64f876eebe4d221661, type: 3}
-      propertyPath: m_Color.r
-      value: 0.9056604
-      objectReference: {fileID: 0}
     - target: {fileID: 6812620421018694672, guid: f00e2c2c7e1e2b64f876eebe4d221661, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
