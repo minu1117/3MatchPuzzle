@@ -1,4 +1,5 @@
 using System.Collections;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
 
@@ -10,6 +11,8 @@ public class MySceneManager : Singleton<MySceneManager>
     public string boardCreateSceneName;
     public string modeChoiceSceneName;
 
+    private bool isLoading = false;
+
     protected override void Awake()
     {
         base.Awake();
@@ -17,6 +20,10 @@ public class MySceneManager : Singleton<MySceneManager>
 
     public async void StartCoLoadScene(string name)
     {
+        if (isLoading)
+            return;
+
+        isLoading = true;
         await DoorControler.Instance.CloseDoor();
 
         StartCoroutine(CoLoadScene(name));
@@ -26,6 +33,7 @@ public class MySceneManager : Singleton<MySceneManager>
         }
 
         await DoorControler.Instance.OpenDoor();
+        isLoading = false;
     }
 
     public IEnumerator CoLoadScene(string name)
