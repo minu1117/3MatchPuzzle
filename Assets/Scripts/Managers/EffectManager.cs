@@ -33,6 +33,9 @@ public class EffectManager : Singleton<EffectManager>
 
     public void GetEffect(PuzzleType type, Vector2 position)
     {
+        if (effectPoolDict == null || effectPoolDict.Count == 0)
+            return;
+
         var effectPool = effectPoolDict[type];
         var particles = effectPool.pool.Get();
         effectPool.SetUseEffectPosition(particles, position);

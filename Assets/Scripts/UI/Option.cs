@@ -93,6 +93,8 @@ public class Option : MonoBehaviour
 
     private void AddButtonOnClick(Button btn, string sceneName)
     {
+        btn.onClick.AddListener(GameManager.Instance.Resume);
+
         if (SceneManager.GetActiveScene().name == MySceneManager.Instance.gameSceneName)
         {
             btn.onClick.AddListener(() => GameManager.Instance.puzzleSceneHolder.board.StopTask());

@@ -14,7 +14,7 @@ public class GameManager : Singleton<GameManager>
     public GameObject blockedGrid;
 
     public SpriteObject[] puzzleSprites { get; set; }
-    private bool isPaused = false;
+    public bool isPaused = false;
 
     protected override void Awake()
     {
