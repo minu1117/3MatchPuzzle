@@ -1,3 +1,4 @@
+using DG.Tweening.Core.Easing;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -52,16 +53,24 @@ public class Option : MonoBehaviour
     public void OnOptionPanel()
     {
         optionPanel.gameObject.SetActive(true);
+        GameManager.Instance.Pause();
     }
 
     public void OffOptionPanel()
     {
         optionPanel.gameObject.SetActive(false);
+        GameManager.Instance.Resume();
     }
 
     public void SwitchOptionActive()
     {
-        optionPanel.gameObject.SetActive(!optionPanel.gameObject.activeSelf);
+        bool isActive = !optionPanel.gameObject.activeSelf;
+        optionPanel.gameObject.SetActive(isActive);
+        
+        if (isActive)
+            GameManager.Instance.Pause();
+        else
+            GameManager.Instance.Resume();
     }
 
     public void InitSoundOption()

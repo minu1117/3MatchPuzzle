@@ -23,6 +23,7 @@ public class StageManager : MonoBehaviour
         if (!Directory.Exists($"{Application.dataPath}/{folderName}"))
             return;
 
+        int nameOrder = 1;
         string[] stageFolders = Directory.GetDirectories(Application.dataPath, $"{folderName}/");
         foreach (string stageFolder in stageFolders)
         {
@@ -38,10 +39,13 @@ public class StageManager : MonoBehaviour
 
                 if (stage.StageInfo != null)
                 {
-                    stage.textMeshPro.text = Path.GetFileName(stageFolder);
+                    //stage.stageName.text = Path.GetFileName(stageFolder);
+                    stage.stageName.text = nameOrder.ToString();
                     stage.button.onClick.AddListener(() => GameManager.Instance.SetStageInfo(stage.StageInfo));
                     stage.button.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.gameSceneName));
                     stageList.Add(stage);
+
+                    nameOrder++;
                 }
             }
         }

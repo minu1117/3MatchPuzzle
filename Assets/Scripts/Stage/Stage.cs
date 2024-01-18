@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class Stage : MonoBehaviour
 {
     public StageInfo StageInfo;
-    public TextMeshProUGUI textMeshPro;
+    public TextMeshProUGUI stageName;
     public Button button;
 
     private void Awake()

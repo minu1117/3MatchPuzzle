@@ -14,6 +14,7 @@ public class GameManager : Singleton<GameManager>
     public GameObject blockedGrid;
 
     public SpriteObject[] puzzleSprites { get; set; }
+    private bool isPaused = false;
 
     protected override void Awake()
     {
@@ -68,5 +69,17 @@ public class GameManager : Singleton<GameManager>
     public StageInfo GetStageInfo()
     {
         return stageInfo;
+    }
+
+    public void Pause()
+    {
+        Time.timeScale = 0f;
+        isPaused = true;
+    }
+
+    public void Resume()
+    {
+        Time.timeScale = 1f;
+        isPaused = false;
     }
 }
