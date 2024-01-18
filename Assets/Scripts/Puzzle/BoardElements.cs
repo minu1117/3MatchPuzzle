@@ -5,8 +5,8 @@ public class BoardElements : MonoBehaviour
 {
     [SerializeField] private Image image;
     [SerializeField] private Button button;
-    [SerializeField] private Sprite unBlockedSprite;
-    [SerializeField] private Sprite blockedSprite;
+    private Sprite unBlockedSprite;
+    private Sprite blockedSprite;
 
     public bool isBlocked { get; private set; } = false;
     public (int, int) gridNum { get; set; } // (y,x)
@@ -14,6 +14,8 @@ public class BoardElements : MonoBehaviour
     private void Awake()
     {
         button.onClick.AddListener(SwitchBlocked);
+        blockedSprite = GameManager.Instance.blockedGrid.GetComponent<Image>().sprite;
+        unBlockedSprite = GameManager.Instance.unblockedGrid.GetComponent<Image>().sprite;
     }
 
     private void SwitchBlocked()

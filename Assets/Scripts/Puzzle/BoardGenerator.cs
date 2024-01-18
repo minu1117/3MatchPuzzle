@@ -19,7 +19,6 @@ public class BoardGenerator : MonoBehaviour
     [SerializeField] private Toggle stageCreatedToggle;
     [SerializeField] private GameObject stageModeGameObject;
     [SerializeField] private Button saveButton;
-    [SerializeField] private Button exitButton;
     [SerializeField] private Button loadButton;
 
     [SerializeField] private LoadUIHolder holder;
@@ -46,6 +45,9 @@ public class BoardGenerator : MonoBehaviour
 
         widthInputField.onValueChanged.AddListener(SetWidth);
         heightInputField.onValueChanged.AddListener(SetHeight);
+
+        saveButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
+        loadButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
 
         saveButton.onClick.AddListener(Save);
 

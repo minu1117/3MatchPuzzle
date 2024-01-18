@@ -1,5 +1,6 @@
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
 
@@ -38,6 +39,7 @@ public class MySceneManager : Singleton<MySceneManager>
 
     public IEnumerator CoLoadScene(string name)
     {
+        string prevSceneName = SceneManager.GetActiveScene().name;
         var asyncLoad = SceneManager.LoadSceneAsync(name);
         
         // 로드가 완료될 때까지 대기
@@ -46,6 +48,15 @@ public class MySceneManager : Singleton<MySceneManager>
             //float progress = Mathf.Clamp01(asyncLoad.progress);
             //Debug.Log($"Loading... {progress * 100f}%");
             yield return null;
+        }
+
+        if (SceneManager.GetSceneByName(prevSceneName).isLoaded)
+        {
+            var asyncUnload = SceneManager.UnloadSceneAsync(prevSceneName);
+            while (!asyncUnload.isDone)
+            {
+                yield return null;
+            }
         }
 
         UIManager.Instance.FindOptionObject();
