@@ -6,15 +6,19 @@ public class SoundManager : Singleton<SoundManager>
 {
     [SerializeField] private AudioSource bgm;
     [SerializeField] private AudioSource puzzlePopSoundSFX;
-    [SerializeField] private AudioSource doorCloseSoundSFX;
     [SerializeField] private AudioSource doorOpenSoundSFX;
+    [SerializeField] private AudioSource buttonClickSoundSFX;
+    [SerializeField] private AudioSource stageClearSoundSFX;
+    [SerializeField] private AudioSource starSparkSoundSFX;
     [SerializeField] private AudioMixerGroup bgmGroup;
     [SerializeField] private AudioMixerGroup sfxGroup;
 
     private AudioSource bgmObject;
     private AudioSource puzzlePopSoundSfxObject;
-    private AudioSource doorCloseSoundSfxObject;
     private AudioSource doorOpenSoundSfxObject;
+    private AudioSource buttonClickSoundSfxObject;
+    private AudioSource stageClearSoundSfxObject;
+    private AudioSource starSparkSoundSfxObject;
 
     private bool muteBGM;
     private bool muteSFX;
@@ -99,19 +103,27 @@ public class SoundManager : Singleton<SoundManager>
         }
     }
 
-    public void PlayExplodingSound()
+    private void PlaySound(AudioSource source, bool playOneShot)
     {
-        puzzlePopSoundSfxObject.PlayOneShot(puzzlePopSoundSfxObject.clip);
+        if (playOneShot)
+            source.PlayOneShot(source.clip);
+        else
+            source.Play();
     }
 
-    public void PlayFullDoorSound()
+    private void StopSound(AudioSource source)
     {
-        doorCloseSoundSfxObject.PlayOneShot(doorCloseSoundSfxObject.clip);
+        source.Stop();
+    }
+
+    public void PlayExplodingSound()
+    {
+        PlaySound(puzzlePopSoundSfxObject, true);
     }
     
     public void StopSlideDoorSound()
     {
-        doorOpenSoundSfxObject.Stop();
+        StopSound(doorOpenSoundSfxObject);
     }
 
     public void PlayDoorSlideSound()
@@ -119,9 +131,24 @@ public class SoundManager : Singleton<SoundManager>
         doorOpenSoundSfxObject.Play();
     }
 
+    public void PlayStarSparkSound()
+    {
+        PlaySound(starSparkSoundSfxObject, true);
+    }
+
+    public void PlayStageClearSound()
+    {
+        PlaySound(stageClearSoundSfxObject, true);
+    }
+
+    public void PlayButtonClickSound()
+    {
+        PlaySound(buttonClickSoundSfxObject, true);
+    }
+
     public void PlayBgm()
     {
-        bgmObject.Play();
+        PlaySound(bgmObject, false);
         bgmObject.loop = true;
     }
 
@@ -129,7 +156,9 @@ public class SoundManager : Singleton<SoundManager>
     {
         bgmObject = Instantiate(bgm, gameObject.transform);
         puzzlePopSoundSfxObject = Instantiate(puzzlePopSoundSFX, gameObject.transform);
-        doorCloseSoundSfxObject = Instantiate(doorCloseSoundSFX, gameObject.transform);
+        buttonClickSoundSfxObject = Instantiate(buttonClickSoundSFX, gameObject.transform);
+        stageClearSoundSfxObject = Instantiate(stageClearSoundSFX, gameObject.transform);
+        starSparkSoundSfxObject = Instantiate(starSparkSoundSFX, gameObject.transform);
         doorOpenSoundSfxObject = Instantiate(doorOpenSoundSFX, gameObject.transform);
     }
 

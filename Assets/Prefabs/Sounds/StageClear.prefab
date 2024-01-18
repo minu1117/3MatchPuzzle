@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8428115925627820703}
   - component: {fileID: 8244018208165821131}
   m_Layer: 0
-  m_Name: DoorOpen
+  m_Name: StageClear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42,7 +42,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 79651376797038412, guid: 6398111593c671d4a8306f2d048667b5, type: 2}
-  m_audioClip: {fileID: 8300000, guid: 28edb8fa1d78b3c4592356294604c014, type: 3}
+  m_audioClip: {fileID: 8300000, guid: beddf512f4ec01a49917ba97aad02a58, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

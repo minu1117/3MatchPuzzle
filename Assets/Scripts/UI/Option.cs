@@ -1,4 +1,3 @@
-using DG.Tweening.Core.Easing;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -25,8 +24,10 @@ public class Option : MonoBehaviour
     {
         if (optionOnButton != null)
         {
+            optionOnButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
             optionOnButton.onClick.AddListener(() => OnOptionPanel());
         }
+        soundOptionButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
         soundOptionButton.onClick.AddListener(() => soundOption.gameObject.SetActive(true));
         InitSoundOption();
         AddOnClickAllButtons();
@@ -93,6 +94,7 @@ public class Option : MonoBehaviour
 
     private void AddButtonOnClick(Button btn, string sceneName)
     {
+        btn.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
         btn.onClick.AddListener(GameManager.Instance.Resume);
 
         if (SceneManager.GetActiveScene().name == MySceneManager.Instance.gameSceneName)

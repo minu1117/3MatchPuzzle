@@ -27,7 +27,6 @@ public class DoorControler : Singleton<DoorControler>
             .AsyncWaitForCompletion();
 
         SoundManager.Instance.StopSlideDoorSound();
-        SoundManager.Instance.PlayFullDoorSound();
     }
 
     public async Task CloseDoor()

@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardInfo: {fileID: 4909142794300930804, guid: b3ab15544daec1045a0150d25aa682ba, type: 3}
-  clearScore: 1000
+  clearScore: 5
   maxPlayTime: 300
   isInfinityMode: 0
   isStageMode: 1

@@ -73,7 +73,7 @@ public class StageClearUI : MonoBehaviour
             {
                 starImages[i].gameObject.SetActive(true);
                 starDict[starImages[i]].SetTrigger("Start");
-
+                SoundManager.Instance.PlayStarSparkSound();
                 yield return new WaitForSeconds(0.3f);
             }
         }
@@ -82,5 +82,6 @@ public class StageClearUI : MonoBehaviour
     public void OnActive()
     {
         backgroundObject.SetActive(true);
+        SoundManager.Instance.PlayStageClearSound();
     }
 }
