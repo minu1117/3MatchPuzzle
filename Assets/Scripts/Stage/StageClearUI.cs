@@ -24,6 +24,7 @@ public class StageClearUI : MonoBehaviour
             }
         }
 
+        exitButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
         exitButton.onClick.AddListener(() => EffectManager.Instance.ClearEffectDict());
         exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.stageSceneName));
         SetClearTimeText(0);

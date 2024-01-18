@@ -32,6 +32,8 @@ public class LoadingBoardUI : MonoBehaviour
         {
             SetStartButtonText("·Îµå");
         }
+
+        startButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
     }
 
     public void ConnectChangeSceneStartButtonOnClick()

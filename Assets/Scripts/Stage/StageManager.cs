@@ -39,8 +39,8 @@ public class StageManager : MonoBehaviour
 
                 if (stage.StageInfo != null)
                 {
-                    //stage.stageName.text = Path.GetFileName(stageFolder);
                     stage.stageName.text = nameOrder.ToString();
+                    stage.button.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
                     stage.button.onClick.AddListener(() => GameManager.Instance.SetStageInfo(stage.StageInfo));
                     stage.button.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.gameSceneName));
                     stageList.Add(stage);

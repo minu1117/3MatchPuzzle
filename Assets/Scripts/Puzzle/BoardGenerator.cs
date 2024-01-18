@@ -22,7 +22,7 @@ public class BoardGenerator : MonoBehaviour
     [SerializeField] private Button exitButton;
     [SerializeField] private Button loadButton;
 
-    [SerializeField] private ModeChoiceSceneHolder holder;
+    [SerializeField] private LoadUIHolder holder;
 
     private List<BoardElements> elements = new();
 

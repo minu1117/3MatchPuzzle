@@ -49,14 +49,18 @@ public class GameManager : Singleton<GameManager>
     {
         modeChoiceSceneHolder = FindAnyObjectByType<ModeChoiceSceneHolder>();
 
-        modeChoiceSceneHolder.loader.LoadCustomBoard(customBoardSaveFolderName);
-        modeChoiceSceneHolder.loader.ConnectUIStartButtonOnClick();
+        modeChoiceSceneHolder.loadUIHolder.loader.LoadCustomBoard(customBoardSaveFolderName);
+        modeChoiceSceneHolder.loadUIHolder.loader.ConnectUIStartButtonOnClick();
 
-        modeChoiceSceneHolder.controler.ConnectEventTrigger();
-        modeChoiceSceneHolder.controler.Off();
+        modeChoiceSceneHolder.loadUIHolder.controler.ConnectEventTrigger();
+        modeChoiceSceneHolder.loadUIHolder.controler.Off();
 
-        modeChoiceSceneHolder.customBoardStart.onClick.AddListener(() => modeChoiceSceneHolder.controler.On());
-        modeChoiceSceneHolder.customBoardStart.onClick.AddListener(() => modeChoiceSceneHolder.loader.ConnectAllCreateGrid());
+        modeChoiceSceneHolder.customBoardStart.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
+        modeChoiceSceneHolder.stageStart.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
+        modeChoiceSceneHolder.createStart.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
+
+        modeChoiceSceneHolder.customBoardStart.onClick.AddListener(() => modeChoiceSceneHolder.loadUIHolder.controler.On());
+        modeChoiceSceneHolder.customBoardStart.onClick.AddListener(() => modeChoiceSceneHolder.loadUIHolder.loader.ConnectAllCreateGrid());
         modeChoiceSceneHolder.stageStart.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.stageSceneName));
         modeChoiceSceneHolder.createStart.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.boardCreateSceneName));
     }

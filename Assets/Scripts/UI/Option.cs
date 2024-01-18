@@ -35,6 +35,8 @@ public class Option : MonoBehaviour
 
     public void EscapeControl()
     {
+        SoundManager.Instance.PlayButtonClickSound();
+
         if (soundOption.gameObject.activeSelf)
         {
             soundOption.gameObject.SetActive(false);
