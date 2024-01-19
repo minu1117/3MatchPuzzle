@@ -232,7 +232,13 @@ public class BoardGenerator : MonoBehaviour
 
     private void Save()
     {
-        string folderName = GameManager.Instance.developMode ? GameManager.Instance.stageSaveFolderName : GameManager.Instance.customBoardSaveFolderName;
+        string folderName = string.Empty;
+
+        if (stageCreatedToggle.gameObject.activeSelf && stageCreatedToggle.isOn && GameManager.Instance.developMode)
+            folderName = GameManager.Instance.stageSaveFolderName;
+        else
+            folderName = GameManager.Instance.customBoardSaveFolderName;
+
         CreatePrefab(folderName, nameInputField.text);
     }
 

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.IO;
 
 public class LoadingBoardUI : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class LoadingBoardUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI modeText;
 
     [SerializeField] private Button startButton;
+    [SerializeField] private Button removeButton;
     [SerializeField] private TextMeshProUGUI startButtonText;
     private StageInfo stageInfo;
 
@@ -31,6 +33,14 @@ public class LoadingBoardUI : MonoBehaviour
         if (SceneManager.GetActiveScene().name == MySceneManager.Instance.boardCreateSceneName)
         {
             SetStartButtonText("로드");
+
+            if (removeButton != null)
+                removeButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            if (removeButton != null)
+                removeButton.gameObject.SetActive(false);
         }
 
         startButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
@@ -45,6 +55,42 @@ public class LoadingBoardUI : MonoBehaviour
     public void ConnectStartButtonAction(UnityAction action)
     {
         startButton.onClick.AddListener(action);
+    }
+
+    public void ConnectRemoveFolder(string folderName)
+    {
+        if (removeButton.gameObject.activeSelf)
+            removeButton.onClick.AddListener(() => RemoveBoard(folderName));
+    }
+
+    public void RemoveBoard(string folderName)
+    {
+        if (!Directory.Exists($"{Application.dataPath}/{folderName}"))
+            return;
+
+        string[] stageFolders = Directory.GetDirectories(Application.dataPath, $"{folderName}/");
+        foreach (string stageFolder in stageFolders)
+        {
+            string name = Path.GetFileName(stageFolder);
+            if (name == nameText.text)
+            {
+                // 폴더 지우기
+                if (Directory.Exists(stageFolder))
+                {
+                    Directory.Delete(stageFolder, true);
+
+                    // 메타 파일 지우기
+                    string metaFilePath = stageFolder + ".meta";
+                    if (File.Exists(metaFilePath))
+                    {
+                        File.Delete(metaFilePath);
+                    }
+
+                    Destroy(gameObject);
+                    break;
+                }
+            }
+        }
     }
 
     public GridLayoutGroup GetGridLayoutGroup()

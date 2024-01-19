@@ -20,7 +20,8 @@ public class CustomBoardLoader : MonoBehaviour
 
         for (int i = loadingUIList.Count-1; i >= 0; i--)
         {
-            Destroy(loadingUIList[i].gameObject);
+            if (loadingUIList[i] != null)
+                Destroy(loadingUIList[i].gameObject);
         }
         loadingUIList.Clear();
 
@@ -35,6 +36,7 @@ public class CustomBoardLoader : MonoBehaviour
                 {
                     var loadingUI = Instantiate(loadingUIPrefab, content.transform);
                     loadingUI.Init(info);
+                    loadingUI.ConnectRemoveFolder(folderName);
 
                     string name = Path.GetFileName(stageFolder);
                     loadingUI.SetStageName(name);
