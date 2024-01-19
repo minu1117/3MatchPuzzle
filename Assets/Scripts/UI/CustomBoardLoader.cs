@@ -9,6 +9,7 @@ public class CustomBoardLoader : MonoBehaviour
 {
     [SerializeField] private LoadingBoardUI loadingUIPrefab;
     [SerializeField] private VerticalLayoutGroup content;
+    [SerializeField] private Image noneContentUI;
     private List<LoadingBoardUI> loadingUIList = new();
 
     public void LoadCustomBoard(string folderName)
@@ -42,6 +43,22 @@ public class CustomBoardLoader : MonoBehaviour
 
                 PrefabUtility.UnloadPrefabContents(prefab);
             }
+        }
+
+        OnContentUI(loadingUIList.Count > 0);
+    }
+
+    private void OnContentUI(bool set)
+    {
+        if (set)
+        {
+            content.gameObject.SetActive(true);
+            noneContentUI.gameObject.SetActive(false);
+        }
+        else
+        {
+            content.gameObject.SetActive(false);
+            noneContentUI.gameObject.SetActive(true);
         }
     }
 
