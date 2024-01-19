@@ -39,6 +39,7 @@ public class BoardGenerator : MonoBehaviour
         heightInputField.contentType = TMP_InputField.ContentType.IntegerNumber;
         scoreInputField.contentType = TMP_InputField.ContentType.IntegerNumber;
         maxPlayTimeInputField.contentType = TMP_InputField.ContentType.IntegerNumber;
+        nameInputField.characterLimit = 10;
 
         widthInputField.characterLimit = 2;
         heightInputField.characterLimit = 2;
@@ -47,8 +48,6 @@ public class BoardGenerator : MonoBehaviour
         heightInputField.onValueChanged.AddListener(SetHeight);
 
         saveButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
-        loadButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
-
         saveButton.onClick.AddListener(Save);
 
         holder.controler.ConnectEventTrigger();
@@ -289,6 +288,7 @@ public class BoardGenerator : MonoBehaviour
             folderName = GameManager.Instance.customBoardSaveFolderName;
         }
 
+        loadButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
         loadButton.onClick.AddListener(() => holder.loader.LoadCustomBoard(folderName));
         loadButton.onClick.AddListener(() => holder.controler.On());
         loadButton.onClick.AddListener(() => holder.loader.ConnectAllCreateGrid());

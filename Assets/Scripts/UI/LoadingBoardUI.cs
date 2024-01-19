@@ -44,6 +44,7 @@ public class LoadingBoardUI : MonoBehaviour
         }
 
         startButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
+        removeButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
     }
 
     public void ConnectChangeSceneStartButtonOnClick()
