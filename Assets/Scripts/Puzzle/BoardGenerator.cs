@@ -59,18 +59,14 @@ public class BoardGenerator : MonoBehaviour
         holder.controler.ConnectEventTrigger();
         holder.controler.Off();
 
-        ControlDevelopMode(false);
+        ConnectLoadButtonOnClick(GameManager.Instance.customBoardSaveFolderName);
     }
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.F1))
         {
-            ControlDevelopMode(true);
-        }
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            ControlDevelopMode(false);
+            ControlDevelopMode();
         }
     }
 
@@ -289,12 +285,12 @@ public class BoardGenerator : MonoBehaviour
         }
     }
 
-    public void ControlDevelopMode(bool set)
+    public void ControlDevelopMode()
     {
         loadButton.onClick.RemoveAllListeners();
         holder.loader.RemoveAllButtonsAction();
 
-        GameManager.Instance.developMode = set;
+        bool set = GameManager.Instance.developMode = !GameManager.Instance.developMode;
         stageModeGameObject.SetActive(set);
 
         string folderName = string.Empty;
@@ -307,6 +303,11 @@ public class BoardGenerator : MonoBehaviour
             folderName = GameManager.Instance.customBoardSaveFolderName;
         }
 
+        ConnectLoadButtonOnClick(folderName);
+    }
+
+    private void ConnectLoadButtonOnClick(string folderName)
+    {
         loadButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
         loadButton.onClick.AddListener(() => holder.loader.LoadCustomBoard(folderName));
         loadButton.onClick.AddListener(() => holder.controler.On());
