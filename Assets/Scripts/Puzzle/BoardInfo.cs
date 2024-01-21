@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BoardInfo : MonoBehaviour
+public class BoardInfo : MonoBehaviour, IPrefabSaveable
 {
     public Row[] rows { get; private set; }
     public Grid[,] grids { get; private set; } // grids[y,x]
@@ -159,5 +160,12 @@ public class BoardInfo : MonoBehaviour
     private bool IsBlocked(int x, int y)
     {
         return grids[y, x].IsBlocked;
+    }
+
+    public GameObject SavePrefab(string folderPath, string name)
+    {
+        string prefabPath = $"{folderPath}/{name}_BoardInfo.prefab";
+        GameObject prefab = PrefabUtility.SaveAsPrefabAsset(gameObject, prefabPath);
+        return prefab;
     }
 }

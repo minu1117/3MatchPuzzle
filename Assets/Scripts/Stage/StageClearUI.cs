@@ -26,7 +26,14 @@ public class StageClearUI : MonoBehaviour
 
         exitButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
         exitButton.onClick.AddListener(() => EffectManager.Instance.ClearEffectDict());
-        exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.stageSceneName));
+
+        string sceneName = string.Empty;
+
+        if (GameManager.Instance.GetStageInfo().isStageMode)    sceneName = MySceneManager.Instance.stageSceneName;
+        else                                                    sceneName = MySceneManager.Instance.modeChoiceSceneName;
+
+        exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(sceneName));
+
         SetClearTimeText(0);
         SetClickCountText(0);
     }
@@ -63,7 +70,14 @@ public class StageClearUI : MonoBehaviour
 
     public void StartFillStars(int count)
     {
+        if (count == 0)
+            return;
+
         StartCoroutine(FillStars(count));
+
+        var stageInfo = GameManager.Instance.GetStageInfo();
+        stageInfo.SetStarCount(count);
+        stageInfo.OverWritePrefab();
     }
 
     private IEnumerator FillStars(int count)

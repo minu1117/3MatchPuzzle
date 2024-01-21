@@ -31,17 +31,19 @@ public class StageManager : MonoBehaviour
             foreach (string prefabPath in prefabs)
             {
                 var stage = Instantiate(stagePrefab, stageObjectParent.transform);
+
                 GameObject prefab = PrefabUtility.LoadPrefabContents(prefabPath);
                 if (prefab != null && prefab.TryGetComponent(out StageInfo stageInfo))
                 {
-                    stage.StageInfo = stageInfo;
+                    stage.stageInfo = stageInfo;
+                    stage.OnStars();
                 }
 
-                if (stage.StageInfo != null)
+                if (stage.stageInfo != null)
                 {
                     stage.stageName.text = nameOrder.ToString();
                     stage.button.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
-                    stage.button.onClick.AddListener(() => GameManager.Instance.SetStageInfo(stage.StageInfo));
+                    stage.button.onClick.AddListener(() => GameManager.Instance.SetStageInfo(stage.stageInfo));
                     stage.button.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.gameSceneName));
                     stageList.Add(stage);
 

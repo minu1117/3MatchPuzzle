@@ -1,9 +1,9 @@
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using System.Collections.Generic;
+using System.Collections;
 
 public class BoardGenerator : MonoBehaviour
 {
@@ -20,6 +20,12 @@ public class BoardGenerator : MonoBehaviour
     [SerializeField] private GameObject stageModeGameObject;
     [SerializeField] private Button saveButton;
     [SerializeField] private Button loadButton;
+
+    [SerializeField] private Image saveImage;
+    [SerializeField] private TextMeshProUGUI saveText;
+    private float startAlphaValue = 1f;
+    private float alphaDuration = 0.5f;
+    private Coroutine saveImageRoutine;
 
     [SerializeField] private LoadUIHolder holder;
 
@@ -179,42 +185,45 @@ public class BoardGenerator : MonoBehaviour
         }
     }
 
-    private void CreatePrefab(string folderName, string name)
+    private bool CreatePrefab(string folderName, string name)
     {
         if (nameInputField.text == string.Empty || 
             widthInputField.text == string.Empty ||
             heightInputField.text == string.Empty ||
             (!infinityModeToggle.isOn && maxPlayTimeInputField.text == string.Empty) ||
             (!infinityModeToggle.isOn && scoreInputField.text == string.Empty))
-            return;
+            return false;
 
         if (!GameManager.Instance.developMode)
             stageCreatedToggle.isOn = false;
 
-        // 프리팹을 저장할 폴더 경로
+        /********************* Board Info Save *********************/
+
+        // 프리펩을 저장할 폴더 경로
         string folderPath = Path.Combine(UnityEngine.Application.dataPath, $"{folderName}/{name}");
         CreateFolder(folderPath);
 
         // 새 프리팹 생성, 폴더에 추가
         var newBoardInfo = new GameObject().AddComponent<BoardInfo>();
-        var newStageInfo = new GameObject().AddComponent<StageInfo>();
 
+        // 설정 후 저장
         SetGridNum();
         newBoardInfo.SetBoardSize(width, height);
         newBoardInfo.SetGridLayoutData(elementsGroup);
 
         for (int i = 0; i < elements.Count; i++)
-        {
             newBoardInfo.SaveGridBlocked(elements[i].isBlocked);
-        }
 
-        string stagePrefabPath = $"{folderPath}/{name}_StageInfo.prefab";
-        string boardPrefabPath = $"{folderPath}/{name}_BoardInfo.prefab";
+        // StageInfo에 사용될 프리펩
+        var boardInfoPrefab = newBoardInfo.SavePrefab(folderPath, name);
 
-        GameObject boardInfoPrefab = PrefabUtility.SaveAsPrefabAsset(newBoardInfo.gameObject, boardPrefabPath);
 
+
+        /********************* Stage Info Save *********************/
+
+        var newStageInfo = new GameObject().AddComponent<StageInfo>();
         newStageInfo.boardInfo = boardInfoPrefab.GetComponent<BoardInfo>();
-        newStageInfo.stageName = Path.GetFileName(folderPath);
+        //newStageInfo.stageName = Path.GetFileName(folderPath);
 
         if (!infinityModeToggle.isOn)
         {
@@ -223,10 +232,12 @@ public class BoardGenerator : MonoBehaviour
         }
         newStageInfo.isInfinityMode = infinityModeToggle.isOn;
         newStageInfo.isStageMode = stageCreatedToggle.isOn;
-        PrefabUtility.SaveAsPrefabAsset(newStageInfo.gameObject, stagePrefabPath);
+        newStageInfo.SavePrefab(folderPath, name);
 
+        // 생성된 오브젝트들 삭제
         Destroy(newBoardInfo.gameObject);
         Destroy(newStageInfo.gameObject);
+        return true;
     }
 
     private void Save()
@@ -238,7 +249,15 @@ public class BoardGenerator : MonoBehaviour
         else
             folderName = GameManager.Instance.customBoardSaveFolderName;
 
-        CreatePrefab(folderName, nameInputField.text);
+        if (CreatePrefab(folderName, nameInputField.text))
+            saveText.text = "저장 성공";
+        else
+            saveText.text = "저장 실패";
+
+        if (saveImageRoutine != null)
+            StopCoroutine(saveImageRoutine);
+
+        saveImageRoutine = StartCoroutine(CoFadeSaveImage());
     }
 
     public void Load(StageInfo info)
@@ -293,5 +312,32 @@ public class BoardGenerator : MonoBehaviour
         loadButton.onClick.AddListener(() => holder.controler.On());
         loadButton.onClick.AddListener(() => holder.loader.ConnectAllCreateGrid());
         loadButton.onClick.AddListener(() => holder.loader.LoadInGenerator(this));
+    }
+
+    private IEnumerator CoFadeSaveImage()
+    {
+        Color startImageColor = new Color(saveImage.color.r, saveImage.color.g, saveImage.color.b, startAlphaValue);
+        Color startTextColor = new Color(saveImage.color.r, saveImage.color.g, saveImage.color.b, startAlphaValue);
+
+        float elapsedTime = 0f;
+        var waitForSecond = new WaitForSeconds(Time.deltaTime);
+        while (elapsedTime < alphaDuration)
+        {
+            float t = elapsedTime / alphaDuration;
+
+            startImageColor.a = Mathf.Lerp(startAlphaValue, 0f, t);
+            startTextColor.a = Mathf.Lerp(startAlphaValue, 0f, t);
+
+            saveImage.color = startImageColor;
+            saveText.color = startTextColor;
+
+            elapsedTime += Time.deltaTime;
+            yield return waitForSecond;
+        }
+
+        saveImage.color = new Color(saveImage.color.r, saveImage.color.g, saveImage.color.b, 0f);
+        saveText.color = new Color(saveText.color.r, saveText.color.g, saveText.color.b, 0f);
+
+        saveImageRoutine = null;
     }
 }

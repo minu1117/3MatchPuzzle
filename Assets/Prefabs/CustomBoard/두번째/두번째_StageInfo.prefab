@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardInfo: {fileID: 4730528027958932753, guid: 57c6954b6430a9c4588c4985b94a8f4e, type: 3}
-  clearScore: 1000
-  maxPlayTime: 500
+  clearScore: 0
+  maxPlayTime: 0
   isInfinityMode: 1
   isStageMode: 0
   stageName: "\uB450\uBC88\uC9F8"

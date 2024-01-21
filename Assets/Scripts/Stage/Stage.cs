@@ -1,15 +1,25 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Stage : MonoBehaviour
 {
-    public StageInfo StageInfo;
+    public StageInfo stageInfo;
     public TextMeshProUGUI stageName;
     public Button button;
 
-    private void Awake()
+    [SerializeField] private List<Image> stars;
+
+    public void OnStars()
     {
-        button = GetComponent<Button>();
+        if (stageInfo == null)
+            return;
+
+        for (int i = 0; i < stageInfo.clearStarCount; i++)
+        {
+            if (stars.Count >= i)
+                stars[i].gameObject.SetActive(true);
+        }
     }
 }

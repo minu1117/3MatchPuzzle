@@ -50,3 +50,4 @@ MonoBehaviour:
   isInfinityMode: 0
   isStageMode: 1
   stageName: 1
+  clearStarCount: 3

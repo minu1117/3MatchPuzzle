@@ -42,7 +42,7 @@ public class GameManager : Singleton<GameManager>
         puzzleSceneHolder.boardMixButton.onClick.AddListener(() => puzzleSceneHolder.board.Mix());
         puzzleSceneHolder.clearUI.Init();
 
-        puzzleSceneHolder.modeText.text = stageInfo.isInfinityMode ? "무한 ∞" : $"목표 점수 : {stageInfo.clearScore.ToString()}";
+        puzzleSceneHolder.modeText.text = stageInfo.isInfinityMode ? "무한 ∞" : $"목표 점수 : {stageInfo.clearScore}";
     }
 
     public void StartChoiceScene()
