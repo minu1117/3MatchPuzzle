@@ -105,11 +105,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33998b1999ce3e04a876c09a9c39a840, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StageInfo: {fileID: 0}
+  stageInfo: {fileID: 0}
   stageName: {fileID: 3844420273991692086}
   button: {fileID: 7914322450460437785}
-  isClear: 0
-  clearStarCount: 0
   stars:
   - {fileID: 3819496134998905525}
   - {fileID: 1351105693474145248}
@@ -519,7 +517,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -20, y: -6}
+  m_SizeDelta: {x: -40, y: -15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5409724779628438501
 MonoBehaviour:

@@ -26,6 +26,8 @@ public class BoardGenerator : MonoBehaviour
     private float startAlphaValue = 1f;
     private float alphaDuration = 0.5f;
     private Coroutine saveImageRoutine;
+    [SerializeField] Sprite spriteSaveSuccess;
+    [SerializeField] Sprite spriteSaveFail;
 
     [SerializeField] private LoadUIHolder holder;
 
@@ -246,9 +248,15 @@ public class BoardGenerator : MonoBehaviour
             folderName = GameManager.Instance.customBoardSaveFolderName;
 
         if (CreatePrefab(folderName, nameInputField.text))
+        {
+            saveImage.sprite = spriteSaveSuccess;
             saveText.text = "저장 성공";
+        }
         else
+        {
+            saveImage.sprite = spriteSaveFail;
             saveText.text = "저장 실패";
+        }
 
         if (saveImageRoutine != null)
             StopCoroutine(saveImageRoutine);
