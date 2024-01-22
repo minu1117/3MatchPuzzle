@@ -53,12 +53,17 @@ public class LoadingBoardUI : MonoBehaviour
         startButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.gameSceneName));
     }
 
-    public void ConnectStartButtonAction(UnityAction action)
+    public void AddOnClickStartButton(UnityAction action)
     {
         startButton.onClick.AddListener(action);
     }
 
-    public void ConnectRemoveFolder(string folderName)
+    public void AddOnClickRemoveButton(UnityAction action)
+    {
+        removeButton.onClick.AddListener(action);
+    }
+
+    public void AddOnClickRemoveFolder(string folderName)
     {
         if (removeButton.gameObject.activeSelf)
             removeButton.onClick.AddListener(() => RemoveBoard(folderName));

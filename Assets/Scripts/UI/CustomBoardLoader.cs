@@ -36,7 +36,9 @@ public class CustomBoardLoader : MonoBehaviour
                 {
                     var loadingUI = Instantiate(loadingUIPrefab, content.transform);
                     loadingUI.Init(info);
-                    loadingUI.ConnectRemoveFolder(folderName);
+                    loadingUI.AddOnClickRemoveFolder(folderName);
+                    loadingUI.AddOnClickRemoveButton(() => loadingUIList.Remove(loadingUI));
+                    loadingUI.AddOnClickRemoveButton(() => OnContentUI());
 
                     string name = Path.GetFileName(stageFolder);
                     loadingUI.SetStageName(name);
@@ -47,12 +49,14 @@ public class CustomBoardLoader : MonoBehaviour
             }
         }
 
-        OnContentUI(loadingUIList.Count > 0);
+        OnContentUI();
     }
 
-    private void OnContentUI(bool set)
+    private void OnContentUI()
     {
-        if (set)
+        loadingUIList.RemoveAll(ui => ui == null);
+
+        if (loadingUIList.Count > 0)
         {
             content.gameObject.SetActive(true);
             noneContentUI.gameObject.SetActive(false);
@@ -68,7 +72,7 @@ public class CustomBoardLoader : MonoBehaviour
     {
         foreach (var loadingUI in loadingUIList)
         {
-            loadingUI.ConnectStartButtonAction(action);
+            loadingUI.AddOnClickStartButton(action);
         }
     }
 
@@ -77,7 +81,7 @@ public class CustomBoardLoader : MonoBehaviour
         foreach (var loadingUI in loadingUIList)
         {
             var info = loadingUI.GetStageInfo();
-            loadingUI.ConnectStartButtonAction(() => generator.Load(info));
+            loadingUI.AddOnClickStartButton(() => generator.Load(info));
         }
     }
 
