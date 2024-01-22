@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -17,6 +18,9 @@ public class StageInfo : MonoBehaviour, IPrefabSaveable
         stageName = name;
         string prefabPath = $"{folderPath}/{stageName}_StageInfo.prefab";
         GameObject prefab = PrefabUtility.SaveAsPrefabAsset(gameObject, prefabPath);
+
+        DirectoryInfo directoryInfo = new(folderPath);
+        directoryInfo.CreationTime = DateTime.Now;
         return prefab;
     }
 

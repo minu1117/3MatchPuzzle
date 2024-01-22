@@ -221,7 +221,6 @@ public class BoardGenerator : MonoBehaviour
 
         var newStageInfo = new GameObject().AddComponent<StageInfo>();
         newStageInfo.boardInfo = boardInfoPrefab.GetComponent<BoardInfo>();
-        //newStageInfo.stageName = Path.GetFileName(folderPath);
 
         if (!infinityModeToggle.isOn)
         {

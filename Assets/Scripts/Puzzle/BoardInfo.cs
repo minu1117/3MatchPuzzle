@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -166,6 +168,9 @@ public class BoardInfo : MonoBehaviour, IPrefabSaveable
     {
         string prefabPath = $"{folderPath}/{name}_BoardInfo.prefab";
         GameObject prefab = PrefabUtility.SaveAsPrefabAsset(gameObject, prefabPath);
+
+        DirectoryInfo directoryInfo = new(folderPath);
+        directoryInfo.CreationTime = DateTime.Now;
         return prefab;
     }
 }
