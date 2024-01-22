@@ -24,14 +24,18 @@ public class StageManager : MonoBehaviour
             return;
 
         int nameOrder = 1;
-        string[] stageFolders = Directory.GetDirectories(Application.dataPath, $"{folderName}/");
-        foreach (string stageFolder in stageFolders)
+        DirectoryInfo directoryInfo = new($"{Application.dataPath}/{folderName}");
+        List<DirectoryInfo> stageFolders = new(directoryInfo.GetDirectories());
+        stageFolders.Sort((a, b) => a.CreationTime.CompareTo(b.CreationTime));
+
+        foreach (DirectoryInfo stageFolder in stageFolders)
         {
-            string[] prefabs = Directory.GetFiles(stageFolder, "*StageInfo.prefab"); // 각 폴더 내의 StageInfo 프리펩 가져오기
-            foreach (string prefabPath in prefabs)
+            FileInfo[] prefabs = stageFolder.GetFiles("*StageInfo.prefab"); // 각 폴더 내의 StageInfo 프리펩 가져오기
+            foreach (FileInfo prefabFile in prefabs)
             {
                 var stage = Instantiate(stagePrefab, stageObjectParent.transform);
 
+                string prefabPath = prefabFile.FullName;
                 GameObject prefab = PrefabUtility.LoadPrefabContents(prefabPath);
                 if (prefab != null && prefab.TryGetComponent(out StageInfo stageInfo))
                 {

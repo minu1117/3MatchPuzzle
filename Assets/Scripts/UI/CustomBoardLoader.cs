@@ -18,20 +18,26 @@ public class CustomBoardLoader : MonoBehaviour
         if (!Directory.Exists($"{Application.dataPath}/{folderName}"))
             return;
 
-        for (int i = loadingUIList.Count-1; i >= 0; i--)
+        for (int i = loadingUIList.Count - 1; i >= 0; i--)
         {
             if (loadingUIList[i] != null)
                 Destroy(loadingUIList[i].gameObject);
         }
         loadingUIList.Clear();
 
-        string[] stageFolders = Directory.GetDirectories(Application.dataPath, $"{folderName}/");
-        foreach (string stageFolder in stageFolders)
+        DirectoryInfo directoryInfo = new ($"{Application.dataPath}/{folderName}");
+        List<DirectoryInfo> folders = new (directoryInfo.GetDirectories());
+        folders.Sort((a, b) => a.CreationTime.CompareTo(b.CreationTime));
+
+        foreach (DirectoryInfo folder in folders)
         {
-            string[] prefabs = Directory.GetFiles(stageFolder, "*StageInfo.prefab"); // 각 폴더 내의 StageInfo 프리펩 가져오기
-            foreach (string prefabPath in prefabs)
+            // 각 폴더 내의 StageInfo 프리펩 가져오기
+            FileInfo[] prefabs = folder.GetFiles("*StageInfo.prefab");
+            foreach (FileInfo prefabFile in prefabs)
             {
+                string prefabPath = prefabFile.FullName;
                 GameObject prefab = PrefabUtility.LoadPrefabContents(prefabPath);
+
                 if (prefab != null && prefab.TryGetComponent(out StageInfo info))
                 {
                     var loadingUI = Instantiate(loadingUIPrefab, content.transform);
@@ -40,7 +46,7 @@ public class CustomBoardLoader : MonoBehaviour
                     loadingUI.AddOnClickRemoveButton(() => loadingUIList.Remove(loadingUI));
                     loadingUI.AddOnClickRemoveButton(() => OnContentUI());
 
-                    string name = Path.GetFileName(stageFolder);
+                    string name = Path.GetFileName(folder.Name);
                     loadingUI.SetStageName(name);
                     loadingUIList.Add(loadingUI);
                 }
