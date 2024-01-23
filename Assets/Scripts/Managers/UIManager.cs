@@ -42,6 +42,9 @@ public class UIManager : Singleton<UIManager>
     // 가로, 세로 크기에 맞춰 Grid Layout Group의 Cell Size, Spacing 조정 (넘치지 않게)
     public void FitToCell(GridLayoutGroup group, int width, int height)
     {
+        if (width == 0 || height == 0)
+            return;
+
         RectTransform parentRect = group.GetComponent<RectTransform>();
         float parentWidth = parentRect.rect.width;
         float parentHeight = parentRect.rect.height;

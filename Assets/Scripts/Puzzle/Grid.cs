@@ -8,6 +8,5 @@ public class Grid : MonoBehaviour
 
     public (int, int) GridNum { get; set; }
 
-    //public bool IsBlocked { get; set; }
-    public bool IsBlocked;
+    public bool IsBlocked { get; set; }
 }

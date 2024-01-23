@@ -1,32 +1,41 @@
-using System;
 using System.IO;
-using UnityEditor;
 using UnityEngine;
 
-public class StageInfo : MonoBehaviour, IPrefabSaveable
+[SerializeField]
+public struct StageInfoData
 {
-    public BoardInfo boardInfo;
     public int clearScore;
     public float maxPlayTime;
     public bool isInfinityMode;
     public bool isStageMode;
     public string stageName;
     public int clearStarCount;
+}
 
-    public GameObject SavePrefab(string folderPath, string name)
+public class StageInfo : IPrefabSaveable
+{
+    public StageInfoData data;
+
+    public StageInfo(StageInfoData data)
     {
-        stageName = name;
-        string prefabPath = $"{folderPath}/{stageName}_StageInfo.prefab";
-        GameObject prefab = PrefabUtility.SaveAsPrefabAsset(gameObject, prefabPath);
+        this.data = data;
+    }
 
-        DirectoryInfo directoryInfo = new(folderPath);
-        directoryInfo.CreationTime = DateTime.Now;
-        return prefab;
+    public void Save(string name, BoardType type)
+    {
+        data.stageName = name;
+        var json = MyJsonUtility.ToJson(this);
+        MyJsonUtility.SaveJson(json, name, InfoType.Stage, type);
+    }
+
+    public void LoadData(string name, BoardType type)
+    {
+        data = MyJsonUtility.LoadJson<StageInfoData>(name, InfoType.Board, type);
     }
 
     public void OverWritePrefab()
     {
-        string stageFileName = $"{stageName}_StageInfo.prefab";
+        string stageFileName = $"{data.stageName}_StageInfo.prefab";
 
         string[] stageFolders = Directory.GetDirectories(Application.dataPath, $"{GameManager.Instance.stageSaveFolderName}/");
         foreach (string stageFolder in stageFolders)
@@ -38,7 +47,7 @@ public class StageInfo : MonoBehaviour, IPrefabSaveable
                 string fileName = Path.GetFileName(prefabPath);
                 if (fileName == stageFileName)
                 {
-                    PrefabUtility.SaveAsPrefabAsset(gameObject, prefabPath);
+                    //PrefabUtility.SaveAsPrefabAsset(gameObject, prefabPath);
                     isSaved = true;
                     break;
                 }
@@ -51,9 +60,9 @@ public class StageInfo : MonoBehaviour, IPrefabSaveable
 
     public void SetStarCount(int count)
     {
-        if (clearStarCount >= count)
+        if (data.clearStarCount >= count)
             return;
 
-        clearStarCount = count;
+        data.clearStarCount = count;
     }
 }

@@ -61,7 +61,7 @@ public class BoardGenerator : MonoBehaviour
         holder.controler.ConnectEventTrigger();
         holder.controler.Off();
 
-        ConnectLoadButtonOnClick(GameManager.Instance.customBoardSaveFolderName);
+        ConnectLoadButtonOnClick(GameManager.Instance.customBoardSaveFolderName, BoardType.Custom);
     }
 
     public void Update()
@@ -195,6 +195,8 @@ public class BoardGenerator : MonoBehaviour
         if (!GameManager.Instance.developMode)
             stageCreatedToggle.isOn = false;
 
+        BoardType boardType = (GameManager.Instance.developMode && stageCreatedToggle.isOn) ? BoardType.Stage : BoardType.Custom;
+
         /********************* Board Info Save *********************/
 
         // 프리펩을 저장할 폴더 경로
@@ -202,38 +204,38 @@ public class BoardGenerator : MonoBehaviour
         CreateFolder(folderPath);
 
         // 새 프리팹 생성, 폴더에 추가
-        var newBoardInfo = new GameObject().AddComponent<BoardInfo>();
+        //var newBoardInfo = new GameObject().AddComponent<BoardInfo>();
 
         // 설정 후 저장
         SetGridNum();
-        newBoardInfo.SetBoardSize(width, height);
-        newBoardInfo.SetGridLayoutData(elementsGroup);
+        //newBoardInfo.SetBoardSize(width, height);
+        //newBoardInfo.SetGridLayoutData(elementsGroup);
 
-        for (int i = 0; i < elements.Count; i++)
-            newBoardInfo.SaveGridBlocked(elements[i].isBlocked);
+        //for (int i = 0; i < elements.Count; i++)
+            //newBoardInfo.SaveGridBlocked(elements[i].isBlocked);
 
         // StageInfo에 사용될 프리펩
-        var boardInfoPrefab = newBoardInfo.SavePrefab(folderPath, name);
+        //var boardInfoPrefab = newBoardInfo.Save(folderPath, name);
 
 
 
         /********************* Stage Info Save *********************/
 
-        var newStageInfo = new GameObject().AddComponent<StageInfo>();
-        newStageInfo.boardInfo = boardInfoPrefab.GetComponent<BoardInfo>();
+        //var newStageInfo = new GameObject().AddComponent<StageInfo>();
+        //newStageInfo.boardInfo = boardInfoPrefab.GetComponent<BoardInfo>();
 
-        if (!infinityModeToggle.isOn)
-        {
-            newStageInfo.clearScore = int.Parse(scoreInputField.text);
-            newStageInfo.maxPlayTime = int.Parse(maxPlayTimeInputField.text);
-        }
-        newStageInfo.isInfinityMode = infinityModeToggle.isOn;
-        newStageInfo.isStageMode = stageCreatedToggle.isOn;
-        newStageInfo.SavePrefab(folderPath, name);
+        //if (!infinityModeToggle.isOn)
+        //{
+        //    newStageInfo.clearScore = int.Parse(scoreInputField.text);
+        //    newStageInfo.maxPlayTime = int.Parse(maxPlayTimeInputField.text);
+        //}
+        //newStageInfo.isInfinityMode = infinityModeToggle.isOn;
+        //newStageInfo.isStageMode = stageCreatedToggle.isOn;
+        //newStageInfo.Save(name, boardType);
 
         // 생성된 오브젝트들 삭제
-        Destroy(newBoardInfo.gameObject);
-        Destroy(newStageInfo.gameObject);
+        //Destroy(newBoardInfo.gameObject);
+        //Destroy(newStageInfo.gameObject);
         return true;
     }
 
@@ -263,31 +265,31 @@ public class BoardGenerator : MonoBehaviour
         saveImageRoutine = StartCoroutine(CoFadeSaveImage());
     }
 
-    public void Load(StageInfo info)
+    public void Load(StageInfo stageInfo, BoardInfo boardInfo)
     {
-        width = info.boardInfo.width;
-        height = info.boardInfo.height;
+        width = boardInfo.data.width;
+        height = boardInfo.data.height;
         widthInputField.text = width.ToString();
         heightInputField.text = height.ToString();
-        scoreInputField.text = info.clearScore.ToString();
-        maxPlayTimeInputField.text = info.maxPlayTime.ToString();
-        nameInputField.text = info.stageName;
-        infinityModeToggle.isOn = info.isInfinityMode;
+        scoreInputField.text = stageInfo.data.clearScore.ToString();
+        maxPlayTimeInputField.text = stageInfo.data.maxPlayTime.ToString();
+        nameInputField.text = stageInfo.data.stageName;
+        infinityModeToggle.isOn = stageInfo.data.isInfinityMode;
         if (stageModeGameObject.activeSelf)
         {
-            stageCreatedToggle.isOn = info.isStageMode;
+            stageCreatedToggle.isOn = stageInfo.data.isStageMode;
         }
 
         CreateOrDestroyTiles();
-        elementsGroup.constraint = info.boardInfo.GetConstraintType();
-        elementsGroup.constraintCount = info.boardInfo.GetConstaintCount();
+        elementsGroup.constraint = boardInfo.GetConstraintType();
+        elementsGroup.constraintCount = boardInfo.GetConstaintCount();
         SetGridNum();
         for (int i = 0; i < elements.Count; i++)
         {
             int x = elements[i].gridNum.Item2;
             int y = elements[i].gridNum.Item1;
 
-            bool blocked = info.boardInfo.GetBlockedGrid(x,y);
+            bool blocked = boardInfo.GetBlockedGrid(x,y);
             elements[i].SetBlocked(blocked);
         }
     }
@@ -301,23 +303,28 @@ public class BoardGenerator : MonoBehaviour
         stageModeGameObject.SetActive(set);
 
         string folderName = string.Empty;
+        BoardType type;
         if (set)
         {
             folderName = GameManager.Instance.stageSaveFolderName;
+            type = BoardType.Stage;
         }
         else
         {
             folderName = GameManager.Instance.customBoardSaveFolderName;
+            type = BoardType.Custom;
         }
 
-        ConnectLoadButtonOnClick(folderName);
+        ConnectLoadButtonOnClick(folderName, type);
     }
 
-    private void ConnectLoadButtonOnClick(string folderName)
+    private void ConnectLoadButtonOnClick(string folderName, BoardType type)
     {
         loadButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
-        loadButton.onClick.AddListener(() => holder.loader.LoadCustomBoard(folderName));
+        loadButton.onClick.AddListener(() => holder.loader.LoadCustomBoard(type));
         loadButton.onClick.AddListener(() => holder.controler.On());
+        // 로딩
+        loadButton.onClick.AddListener(() => holder.loader.LoadAllBoardData(type));
         loadButton.onClick.AddListener(() => holder.loader.ConnectAllCreateGrid());
         loadButton.onClick.AddListener(() => holder.loader.LoadInGenerator(this));
     }

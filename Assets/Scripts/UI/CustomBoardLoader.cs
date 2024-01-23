@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -12,11 +12,18 @@ public class CustomBoardLoader : MonoBehaviour
     [SerializeField] private Image noneContentUI;
     private List<LoadingBoardUI> loadingUIList = new();
 
-    public void LoadCustomBoard(string folderName)
+    public void LoadCustomBoard(BoardType boardType)
     {
         // 스테이지 폴더들 로딩
-        if (!Directory.Exists($"{Application.dataPath}/{folderName}"))
+        if (!MyJsonUtility.Exists(boardType))
             return;
+
+        string folderPath = MyJsonUtility.GetSaveFolderPath(boardType);
+        if (!Directory.Exists(folderPath))
+        {
+            Debug.Log($"{folderPath}, None");
+            return;
+        }
 
         for (int i = loadingUIList.Count - 1; i >= 0; i--)
         {
@@ -25,33 +32,27 @@ public class CustomBoardLoader : MonoBehaviour
         }
         loadingUIList.Clear();
 
-        DirectoryInfo directoryInfo = new ($"{Application.dataPath}/{folderName}");
-        List<DirectoryInfo> folders = new (directoryInfo.GetDirectories());
-        folders.Sort((a, b) => a.CreationTime.CompareTo(b.CreationTime));
-
-        foreach (DirectoryInfo folder in folders)
+        var folders = Directory.GetDirectories(folderPath);
+        Array.Sort(folders, (a, b) => Directory.GetCreationTime(a).CompareTo(Directory.GetCreationTime(b)));
+        foreach (var folder in folders)
         {
-            // 각 폴더 내의 StageInfo 프리펩 가져오기
-            FileInfo[] prefabs = folder.GetFiles("*StageInfo.prefab");
-            foreach (FileInfo prefabFile in prefabs)
+            var boardFolder = Directory.GetFiles(folder);
+            string folderName = Path.GetFileName(folder);
+
+            StageInfoData stageInfoData = MyJsonUtility.LoadJson<StageInfoData>(folderName, InfoType.Stage, boardType);
+            BoardInfoData boardInfoData = MyJsonUtility.LoadJson<BoardInfoData>(folderName, InfoType.Board, boardType);
+            StageInfo stageInfo = new StageInfo(stageInfoData);
+            BoardInfo boardInfo = new BoardInfo(boardInfoData);
+
+            if (stageInfo != null && boardInfo != null)
             {
-                string prefabPath = prefabFile.FullName;
-                GameObject prefab = PrefabUtility.LoadPrefabContents(prefabPath);
-
-                if (prefab != null && prefab.TryGetComponent(out StageInfo info))
-                {
-                    var loadingUI = Instantiate(loadingUIPrefab, content.transform);
-                    loadingUI.Init(info);
-                    loadingUI.AddOnClickRemoveFolder(folderName);
-                    loadingUI.AddOnClickRemoveButton(() => loadingUIList.Remove(loadingUI));
-                    loadingUI.AddOnClickRemoveButton(() => OnContentUI());
-
-                    string name = Path.GetFileName(folder.Name);
-                    loadingUI.SetStageName(name);
-                    loadingUIList.Add(loadingUI);
-                }
-
-                PrefabUtility.UnloadPrefabContents(prefab);
+                var loadingUI = Instantiate(loadingUIPrefab, content.transform);
+                loadingUI.Init(stageInfo, boardInfo);
+                loadingUI.AddOnClickRemoveFolder(folderName, boardType);
+                loadingUI.AddOnClickRemoveButton(() => loadingUIList.Remove(loadingUI));
+                loadingUI.AddOnClickRemoveButton(() => OnContentUI());
+                loadingUI.SetStageName(folderName);
+                loadingUIList.Add(loadingUI);
             }
         }
 
@@ -86,8 +87,9 @@ public class CustomBoardLoader : MonoBehaviour
     {
         foreach (var loadingUI in loadingUIList)
         {
-            var info = loadingUI.GetStageInfo();
-            loadingUI.AddOnClickStartButton(() => generator.Load(info));
+            var stageInfo = loadingUI.GetStageInfo();
+            var boardInfo = loadingUI.GetBoardInfo();
+            loadingUI.AddOnClickStartButton(() => generator.Load(stageInfo, boardInfo));
         }
     }
 
@@ -107,12 +109,21 @@ public class CustomBoardLoader : MonoBehaviour
         }
     }
 
+    public void LoadAllBoardData(BoardType type)
+    {
+        foreach (var loadingUI in loadingUIList)
+        {
+            string name = loadingUI.GetStageInfo().data.stageName;
+            loadingUI.GetBoardInfo().LoadData(name, type);
+        }
+    }
+
     public void ConnectAllCreateGrid()
     {
-        foreach (var ui in loadingUIList)
+        foreach (var loadingUI in loadingUIList)
         {
-            var layoutGroup = ui.GetGridLayoutGroup();
-            ui.CreateGrid(layoutGroup, GameManager.Instance.blockedGrid, GameManager.Instance.unblockedGrid);
+            var layoutGroup = loadingUI.GetGridLayoutGroup();
+            loadingUI.CreateGrid(layoutGroup, GameManager.Instance.blockedGrid, GameManager.Instance.unblockedGrid);
         }
     }
 

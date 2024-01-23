@@ -16,7 +16,7 @@ public class Stage : MonoBehaviour
         if (stageInfo == null)
             return;
 
-        for (int i = 0; i < stageInfo.clearStarCount; i++)
+        for (int i = 0; i < stageInfo.data.clearScore; i++)
         {
             if (stars.Count >= i)
                 stars[i].gameObject.SetActive(true);

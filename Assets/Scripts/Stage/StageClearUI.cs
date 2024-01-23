@@ -29,7 +29,7 @@ public class StageClearUI : MonoBehaviour
 
         string sceneName = string.Empty;
 
-        if (GameManager.Instance.GetStageInfo().isStageMode)    sceneName = MySceneManager.Instance.stageSceneName;
+        if (GameManager.Instance.GetStageInfo().data.isStageMode)    sceneName = MySceneManager.Instance.stageSceneName;
         else                                                    sceneName = MySceneManager.Instance.modeChoiceSceneName;
 
         exitButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(sceneName));

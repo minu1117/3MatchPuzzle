@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Row
 {
-    public void CreateRowPuzzle(IObjectPool<Puzzle> puzzlePool, BoardInfo info, Vector2 size, int rowIndex, int width, int height)
+    public void CreateRowPuzzle(IObjectPool<Puzzle> puzzlePool, Board board, BoardInfo info, Vector2 size, int rowIndex, int width, int height)
     {
         /*
 
@@ -31,8 +31,8 @@ public class Row
             }
             else if (rowIndex < height)
             {
-                info.SetPuzzle(pz, x, rowIndex);
-                SetDuplicationPuzzle(info, pz, x, rowIndex);
+                board.SetPuzzle(pz, x, rowIndex);
+                SetDuplicationPuzzle(board, pz, x, rowIndex);
             }
             else
             {
@@ -42,9 +42,9 @@ public class Row
 
             pz.SetSize(customSize);
             pz.GridNum = gn;
-            pz.RectTransform.localPosition = info.GetGridPosition(x, rowIndex);
-            info.SetPuzzle(pz, x, rowIndex);
-            info.SetGridNum(x, rowIndex);
+            pz.RectTransform.localPosition = board.GetGridPosition(x, rowIndex);
+            board.SetPuzzle(pz, x, rowIndex);
+            board.SetGridNum(x, rowIndex);
         }
     }
 
@@ -66,11 +66,16 @@ public class Row
         bool isDuplicate = true;
         PuzzleType p = PuzzleType.None;
 
+        int tempBreakCount = 0;
         while (isDuplicate)
         {
             p = (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count);
             if (p != t && p != prevT)
                 isDuplicate = false;
+
+            tempBreakCount++;
+            if (tempBreakCount >= 100)
+                break;
         }
 
         return p;
@@ -95,18 +100,18 @@ public class Row
         return newPt;
     }
 
-    public void SetDuplicationPuzzle(BoardInfo info, Puzzle pz, int x, int y)
+    public void SetDuplicationPuzzle(Board board, Puzzle pz, int x, int y)
     {
         Puzzle lp = null;
         Puzzle bp = null;
 
         if (x > 0)
         {
-            lp = info.GetPuzzle(x - 1, y);
+            lp = board.GetPuzzle(x - 1, y);
         }
         if (y > 0)
         {
-            bp = info.GetPuzzle(x, y - 1);
+            bp = board.GetPuzzle(x, y - 1);
         }
 
         // 왼쪽, 아래 타입 검사 후 매치되지 않는 퍼즐로 변경

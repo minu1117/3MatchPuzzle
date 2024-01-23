@@ -19,16 +19,23 @@ public class LoadingBoardUI : MonoBehaviour
     [SerializeField] private Button removeButton;
     [SerializeField] private TextMeshProUGUI startButtonText;
     private StageInfo stageInfo;
+    private BoardInfo boardInfo;
 
-    public void Init(StageInfo info)
+    public BoardInfo GetBoardInfo()
     {
-        SetStageInfo(info);
+        return boardInfo;
+    }
 
-        int width = stageInfo.boardInfo.width;
-        int height = stageInfo.boardInfo.height;
+    public void Init(StageInfo stageInfo, BoardInfo boardInfo)
+    {
+        SetStageInfo(stageInfo);
+        this.boardInfo = boardInfo;
+
+        int width = boardInfo.data.width;
+        int height = boardInfo.data.height;
 
         sizeText.text = $"{width} X {height}";
-        modeText.text = stageInfo.isInfinityMode ? "무한 모드" : "점수 모드";
+        modeText.text = stageInfo.data.isInfinityMode ? "무한 모드" : "점수 모드";
 
         if (SceneManager.GetActiveScene().name == MySceneManager.Instance.boardCreateSceneName)
         {
@@ -63,38 +70,64 @@ public class LoadingBoardUI : MonoBehaviour
         removeButton.onClick.AddListener(action);
     }
 
-    public void AddOnClickRemoveFolder(string folderName)
+    public void AddOnClickRemoveFolder(string folderName, BoardType boardType)
     {
         if (removeButton.gameObject.activeSelf)
-            removeButton.onClick.AddListener(() => RemoveBoard(folderName));
+            removeButton.onClick.AddListener(() => RemoveBoard(folderName, boardType));
     }
 
-    public void RemoveBoard(string folderName)
+    public void RemoveBoard(string name, BoardType boardType)
     {
-        if (!Directory.Exists($"{Application.dataPath}/{folderName}"))
-            return;
+        //if (!Directory.Exists($"{Application.dataPath}/{folderName}"))
+        //    return;
 
-        string[] stageFolders = Directory.GetDirectories(Application.dataPath, $"{folderName}/");
-        foreach (string stageFolder in stageFolders)
+        //string[] stageFolders = Directory.GetDirectories(Application.dataPath, $"{folderName}/");
+        //foreach (string stageFolder in stageFolders)
+        //{
+        //    string name = Path.GetFileName(stageFolder);
+        //    if (name == nameText.text)
+        //    {
+        //        // 폴더 지우기
+        //        if (Directory.Exists(stageFolder))
+        //        {
+        //            Directory.Delete(stageFolder, true);
+
+        //            // 메타 파일 지우기
+        //            string metaFilePath = stageFolder + ".meta";
+        //            if (File.Exists(metaFilePath))
+        //            {
+        //                File.Delete(metaFilePath);
+        //            }
+
+        //            Destroy(gameObject);
+        //            break;
+        //        }
+        //    }
+        //}
+
+        string folderPath = MyJsonUtility.GetSaveFolderPath(boardType);
+        if (!Directory.Exists(folderPath))
         {
-            string name = Path.GetFileName(stageFolder);
-            if (name == nameText.text)
+            return;
+        }
+
+        var folder = Directory.GetFiles(folderPath);
+        foreach (var file in folder)
+        {
+            Debug.Log($"{file}, {nameText.text}, {Path.GetFileName(file)}");
+            if (file == nameText.text)
             {
-                // 폴더 지우기
-                if (Directory.Exists(stageFolder))
+                Directory.Delete(folderPath, true);
+
+                // 메타 파일 지우기
+                string metaFilePath = nameText.text + ".meta";
+                if (File.Exists(metaFilePath))
                 {
-                    Directory.Delete(stageFolder, true);
-
-                    // 메타 파일 지우기
-                    string metaFilePath = stageFolder + ".meta";
-                    if (File.Exists(metaFilePath))
-                    {
-                        File.Delete(metaFilePath);
-                    }
-
-                    Destroy(gameObject);
-                    break;
+                    File.Delete(metaFilePath);
                 }
+
+                Destroy(gameObject);
+                break;
             }
         }
     }
@@ -113,10 +146,10 @@ public class LoadingBoardUI : MonoBehaviour
     {
         if (gridLayoutGroup.transform.childCount > 0)
             yield break;
-
-        int width = stageInfo.boardInfo.width;
-        int height = stageInfo.boardInfo.height;
-        stageInfo.boardInfo.LoadGridsBlockData();
+        
+        int width = boardInfo.data.width;
+        int height = boardInfo.data.height;
+        boardInfo.LoadGridsBlockData();
 
         List<GameObject> createdGrids = new();
         for (int y = 0; y < height; y++)
@@ -124,7 +157,7 @@ public class LoadingBoardUI : MonoBehaviour
             for(int x = 0; x < width; x++)
             {
                 GameObject obj;
-                if (stageInfo.boardInfo.GetBlockedGrid(x, y))
+                if (boardInfo.GetBlockedGrid(x, y))
                     obj = Instantiate(blockedPuzzle, gridLayoutGroup.transform);
                 else
                     obj = Instantiate(unblockedPuzzle, gridLayoutGroup.transform);
@@ -141,7 +174,8 @@ public class LoadingBoardUI : MonoBehaviour
         if (width < height) constraintType = GridLayoutGroup.Constraint.FixedRowCount;
 
         gridLayoutGroup.constraint = constraintType;
-        gridLayoutGroup.constraintCount = stageInfo.boardInfo.GetConstaintCount();
+        gridLayoutGroup.constraintCount = boardInfo.GetConstaintCount();
+
         UIManager.Instance.FitToCell(gridLayoutGroup, width, height);
 
         for (int i = 0; i < createdGrids.Count; i++)

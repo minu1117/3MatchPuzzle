@@ -6,7 +6,10 @@ public class GameManager : Singleton<GameManager>
 
     public PuzzleSceneObjectHolder puzzleSceneHolder;
     public ModeChoiceSceneHolder modeChoiceSceneHolder;
+
     private StageInfo stageInfo;
+    private BoardInfo boardInfo;
+
     public string customBoardSaveFolderName;
     public string stageSaveFolderName;
 
@@ -35,21 +38,21 @@ public class GameManager : Singleton<GameManager>
 
         puzzleSceneHolder = FindAnyObjectByType<PuzzleSceneObjectHolder>();
 
-        puzzleSceneHolder.board.SetBoardInfo(stageInfo.boardInfo);
-        puzzleSceneHolder.board.Init(stageInfo.boardInfo.width, stageInfo.boardInfo.height);
+        puzzleSceneHolder.board.SetBoardInfo(boardInfo);
+        puzzleSceneHolder.board.Init(boardInfo.data.width, boardInfo.data.height);
         EffectManager.Instance.CreateEffects(puzzleSceneHolder.GetEffectPoolParent(), puzzleSceneHolder.board.GetGridSize());
 
         puzzleSceneHolder.boardMixButton.onClick.AddListener(() => puzzleSceneHolder.board.Mix());
         puzzleSceneHolder.clearUI.Init();
 
-        puzzleSceneHolder.modeText.text = stageInfo.isInfinityMode ? "무한 ∞" : $"목표 점수 : {stageInfo.clearScore}";
+        puzzleSceneHolder.modeText.text = stageInfo.data.isInfinityMode ? "무한 ∞" : $"목표 점수 : {stageInfo.data.clearScore}";
     }
 
     public void StartChoiceScene()
     {
         modeChoiceSceneHolder = FindAnyObjectByType<ModeChoiceSceneHolder>();
 
-        modeChoiceSceneHolder.loadUIHolder.loader.LoadCustomBoard(customBoardSaveFolderName);
+        modeChoiceSceneHolder.loadUIHolder.loader.LoadCustomBoard(BoardType.Custom);
         modeChoiceSceneHolder.loadUIHolder.loader.ConnectUIStartButtonOnClick();
 
         modeChoiceSceneHolder.loadUIHolder.controler.ConnectEventTrigger();
@@ -65,9 +68,19 @@ public class GameManager : Singleton<GameManager>
         modeChoiceSceneHolder.createStart.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.boardCreateSceneName));
     }
 
+    public void SetBoardInfo(BoardInfo info)
+    {
+        boardInfo = info;
+    }
+
     public void SetStageInfo(StageInfo info)
     {
         stageInfo = info;
+    }
+
+    public BoardInfo GetBoardInfo()
+    {
+        return boardInfo;
     }
 
     public StageInfo GetStageInfo()
