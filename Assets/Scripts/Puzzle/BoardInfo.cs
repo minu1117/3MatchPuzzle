@@ -12,7 +12,7 @@ public struct BoardInfoData
     public int constraintCount;
 }
 
-public class BoardInfo : IPrefabSaveable
+public class BoardInfo : IBoardSaveable
 {
     private Dictionary<(int, int), bool> saveGridDict = new();
     public BoardInfoData data;
@@ -25,7 +25,6 @@ public class BoardInfo : IPrefabSaveable
     public void Save(string name, BoardType type)
     {
         var json = MyJsonUtility.ToJson(data);
-
         bool changeCreationTime = type == BoardType.Custom;
         MyJsonUtility.SaveJson(json, name, InfoType.Board, type, changeCreationTime);
     }

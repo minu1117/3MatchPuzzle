@@ -49,7 +49,7 @@ public class CustomBoardLoader : MonoBehaviour
             {
                 var loadingUI = Instantiate(loadingUIPrefab, content.transform);
                 loadingUI.Init(stageInfo, boardInfo);
-                loadingUI.AddOnClickRemoveFolder(folderName, boardType);
+                loadingUI.AddOnClickRemoveFolder(boardType);
                 loadingUI.AddOnClickRemoveButton(() => loadingUIList.Remove(loadingUI));
                 loadingUI.AddOnClickRemoveButton(() => OnContentUI());
                 loadingUI.SetStageName(folderName);

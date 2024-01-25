@@ -57,6 +57,7 @@ public class LoadingBoardUI : MonoBehaviour
     public void ConnectChangeSceneStartButtonOnClick()
     {
         startButton.onClick.AddListener(() => GameManager.Instance.SetStageInfo(stageInfo));
+        startButton.onClick.AddListener(() => GameManager.Instance.SetBoardInfo(boardInfo));
         startButton.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.gameSceneName));
     }
 
@@ -70,62 +71,27 @@ public class LoadingBoardUI : MonoBehaviour
         removeButton.onClick.AddListener(action);
     }
 
-    public void AddOnClickRemoveFolder(string folderName, BoardType boardType)
+    public void AddOnClickRemoveFolder(BoardType boardType)
     {
         if (removeButton.gameObject.activeSelf)
-            removeButton.onClick.AddListener(() => RemoveBoard(folderName, boardType));
+            removeButton.onClick.AddListener(() => RemoveBoard(boardType));
     }
 
-    public void RemoveBoard(string name, BoardType boardType)
+    public void RemoveBoard(BoardType boardType)
     {
-        //if (!Directory.Exists($"{Application.dataPath}/{folderName}"))
-        //    return;
-
-        //string[] stageFolders = Directory.GetDirectories(Application.dataPath, $"{folderName}/");
-        //foreach (string stageFolder in stageFolders)
-        //{
-        //    string name = Path.GetFileName(stageFolder);
-        //    if (name == nameText.text)
-        //    {
-        //        // 폴더 지우기
-        //        if (Directory.Exists(stageFolder))
-        //        {
-        //            Directory.Delete(stageFolder, true);
-
-        //            // 메타 파일 지우기
-        //            string metaFilePath = stageFolder + ".meta";
-        //            if (File.Exists(metaFilePath))
-        //            {
-        //                File.Delete(metaFilePath);
-        //            }
-
-        //            Destroy(gameObject);
-        //            break;
-        //        }
-        //    }
-        //}
-
         string folderPath = MyJsonUtility.GetSaveFolderPath(boardType);
         if (!Directory.Exists(folderPath))
         {
             return;
         }
 
-        var folder = Directory.GetFiles(folderPath);
-        foreach (var file in folder)
+        var folders = Directory.GetDirectories(folderPath);
+        foreach (var folder in folders)
         {
-            Debug.Log($"{file}, {nameText.text}, {Path.GetFileName(file)}");
-            if (file == nameText.text)
+            string folderName = Path.GetFileName(folder);
+            if (folderName == nameText.text)
             {
-                Directory.Delete(folderPath, true);
-
-                // 메타 파일 지우기
-                string metaFilePath = nameText.text + ".meta";
-                if (File.Exists(metaFilePath))
-                {
-                    File.Delete(metaFilePath);
-                }
-
+                Directory.Delete(folder, true);
                 Destroy(gameObject);
                 break;
             }

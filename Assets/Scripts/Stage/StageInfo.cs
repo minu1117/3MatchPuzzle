@@ -13,7 +13,7 @@ public struct StageInfoData
     public BoardType boardType;
 }
 
-public class StageInfo : IPrefabSaveable
+public class StageInfo : IBoardSaveable
 {
     public StageInfoData data;
 
@@ -27,7 +27,6 @@ public class StageInfo : IPrefabSaveable
         data.stageName = name;
         data.boardType = type;
         var json = MyJsonUtility.ToJson(data);
-
         bool changeCreationTime = type == BoardType.Custom;
         MyJsonUtility.SaveJson(json, name, InfoType.Stage, type, changeCreationTime);
     }
