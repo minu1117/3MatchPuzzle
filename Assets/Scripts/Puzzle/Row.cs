@@ -44,7 +44,6 @@ public class Row
             pz.GridNum = gn;
             pz.RectTransform.localPosition = board.GetGridPosition(x, rowIndex);
             board.SetPuzzle(pz, x, rowIndex);
-            board.SetGridNum(x, rowIndex);
         }
     }
 

@@ -31,8 +31,8 @@ public class Board : MonoBehaviour
     {
         gameManager = FindAnyObjectByType<GameManager>();
 
-        CreateGrids(gridPrefab, gridParents);
         info.LoadGridsBlockData();
+        CreateGrids(gridPrefab, gridParents);
         puzzlePool = new ObjectPool<Puzzle>(
             CreatePuzzle,
             GetPuzzle,
@@ -50,15 +50,17 @@ public class Board : MonoBehaviour
         rows = new Row[info.data.height * 2];
         grids = new Grid[info.data.height * 2, info.data.width];
 
-        for (int h = 0; h < info.data.height * 2; h++)
+        for (int y = 0; y < info.data.height * 2; y++)
         {
-            rows[h] = new Row();
-            for (int w = 0; w < info.data.width; w++)
+            rows[y] = new Row();
+            for (int x = 0; x < info.data.width; x++)
             {
-                var grid = Instantiate(backgroundTilePrefab, backgroundParentsObject.transform);
-                grids[h, w] = grid;
+                Grid grid = Instantiate(backgroundTilePrefab, backgroundParentsObject.transform);
+                grid.GridNum = (y, x);
+                grid.IsBlocked = info.GetBlockedGrid(x,y);
+                grids[y, x] = grid;
 
-                if (h >= info.data.height)
+                if (y >= info.data.height)
                 {
                     grid.gameObject.SetActive(false);
                 }
@@ -119,8 +121,6 @@ public class Board : MonoBehaviour
     {
         return grids[y, x].IsBlocked;
     }
-
-    //
 
     public Vector2 GetGridSize()
     {

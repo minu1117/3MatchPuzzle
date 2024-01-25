@@ -25,7 +25,9 @@ public class BoardInfo : IPrefabSaveable
     public void Save(string name, BoardType type)
     {
         var json = MyJsonUtility.ToJson(data);
-        MyJsonUtility.SaveJson(json, name, InfoType.Board, type);
+
+        bool changeCreationTime = type == BoardType.Custom;
+        MyJsonUtility.SaveJson(json, name, InfoType.Board, type, changeCreationTime);
     }
 
     public void LoadData(string name, BoardType type)
@@ -76,17 +78,17 @@ public class BoardInfo : IPrefabSaveable
         if (saveGridDict.Count == 0)
         {
             int index = 0;
-            for (int h = 0; h < data.height; h++)
+            for (int y = 0; y < data.height; y++)
             {
-                for (int w = 0; w < data.width; w++)
+                for (int x = 0; x < data.width; x++)
                 {
                     bool blocked = data.blockKeyList[index];
-                    saveGridDict.Add((h, w), blocked);
+                    saveGridDict.Add((y, x), blocked);
 
                     index++;
                 }
             }
-        }      
+        }
 
         //if (grids != null)
         //{

@@ -34,6 +34,7 @@ public class CustomBoardLoader : MonoBehaviour
 
         var folders = Directory.GetDirectories(folderPath);
         Array.Sort(folders, (a, b) => Directory.GetCreationTime(a).CompareTo(Directory.GetCreationTime(b)));
+        
         foreach (var folder in folders)
         {
             var boardFolder = Directory.GetFiles(folder);

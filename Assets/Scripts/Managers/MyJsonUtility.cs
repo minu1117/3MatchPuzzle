@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Xml.Linq;
 using UnityEngine;
@@ -23,7 +24,7 @@ public static class MyJsonUtility
         return JsonUtility.ToJson(obj);
     }
 
-    public static void SaveJson(string json, string name, InfoType infoType, BoardType boardType)
+    public static void SaveJson(string json, string name, InfoType infoType, BoardType boardType, bool changeCreationTime)
     {
         string boardTypeStr = boardType == BoardType.Stage ? "Stage" : "CustomBoard";
         string saveFolder = $"{path}/{boardTypeStr}/{name}";
@@ -35,6 +36,9 @@ public static class MyJsonUtility
         string typeStr = infoType == InfoType.Stage ? "StageInfo" : "BoardInfo";
         string folderPath = $"{saveFolder}/{name}_{typeStr}.json";
         File.WriteAllText(folderPath, json);
+
+        if (changeCreationTime)
+            Directory.SetCreationTime(saveFolder, DateTime.Now);
     }
 
     public static T LoadJson<T>(string name, InfoType infoType, BoardType boardType)
@@ -50,7 +54,6 @@ public static class MyJsonUtility
         string saveFolder = $"{path}/{boardTypeStr}";
         if (!Directory.Exists($"{saveFolder}"))
         {
-            Debug.Log($"{saveFolder}");
             return false;
         }
 
@@ -68,7 +71,6 @@ public static class MyJsonUtility
         string boardTypeStr = boardType == BoardType.Stage ? "Stage" : "CustomBoard";
         string typeStr = infoType == InfoType.Stage ? "StageInfo" : "BoardInfo";
         string saveFolder = $"{path}/{boardTypeStr}/{name}";
-
         return $"{saveFolder}/{name}_{typeStr}.json";
     }
 }

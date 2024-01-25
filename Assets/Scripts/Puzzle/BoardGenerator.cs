@@ -183,7 +183,7 @@ public class BoardGenerator : MonoBehaviour
         }
     }
 
-    private bool CreatePrefab(string folderName, string name)
+    private bool CreateCustomBoard(string name)
     {
         if (nameInputField.text == string.Empty || 
             widthInputField.text == string.Empty ||
@@ -198,57 +198,37 @@ public class BoardGenerator : MonoBehaviour
         BoardType boardType = (GameManager.Instance.developMode && stageCreatedToggle.isOn) ? BoardType.Stage : BoardType.Custom;
 
         /********************* Board Info Save *********************/
-
-        // 프리펩을 저장할 폴더 경로
-        string folderPath = Path.Combine(UnityEngine.Application.dataPath, $"{folderName}/{name}");
-        CreateFolder(folderPath);
-
-        // 새 프리팹 생성, 폴더에 추가
-        //var newBoardInfo = new GameObject().AddComponent<BoardInfo>();
+        BoardInfo boardInfo = new BoardInfo(new BoardInfoData());
 
         // 설정 후 저장
         SetGridNum();
-        //newBoardInfo.SetBoardSize(width, height);
-        //newBoardInfo.SetGridLayoutData(elementsGroup);
+        boardInfo.SetBoardSize(width, height);
+        boardInfo.SetGridLayoutData(elementsGroup);
 
-        //for (int i = 0; i < elements.Count; i++)
-            //newBoardInfo.SaveGridBlocked(elements[i].isBlocked);
+        for (int i = 0; i < elements.Count; i++)
+            boardInfo.SaveGridBlocked(elements[i].isBlocked);
 
-        // StageInfo에 사용될 프리펩
-        //var boardInfoPrefab = newBoardInfo.Save(folderPath, name);
-
-
+        boardInfo.Save(name, boardType);
 
         /********************* Stage Info Save *********************/
+        StageInfo stageInfo = new StageInfo(new StageInfoData());
 
-        //var newStageInfo = new GameObject().AddComponent<StageInfo>();
-        //newStageInfo.boardInfo = boardInfoPrefab.GetComponent<BoardInfo>();
+        if (!infinityModeToggle.isOn)
+        {
+            stageInfo.data.clearScore = int.Parse(scoreInputField.text);
+            stageInfo.data.maxPlayTime = int.Parse(maxPlayTimeInputField.text);
+        }
 
-        //if (!infinityModeToggle.isOn)
-        //{
-        //    newStageInfo.clearScore = int.Parse(scoreInputField.text);
-        //    newStageInfo.maxPlayTime = int.Parse(maxPlayTimeInputField.text);
-        //}
-        //newStageInfo.isInfinityMode = infinityModeToggle.isOn;
-        //newStageInfo.isStageMode = stageCreatedToggle.isOn;
-        //newStageInfo.Save(name, boardType);
+        stageInfo.data.isInfinityMode = infinityModeToggle.isOn;
+        stageInfo.data.isStageMode = stageCreatedToggle.isOn;
+        stageInfo.Save(name, boardType);
 
-        // 생성된 오브젝트들 삭제
-        //Destroy(newBoardInfo.gameObject);
-        //Destroy(newStageInfo.gameObject);
         return true;
     }
 
     private void Save()
     {
-        string folderName = string.Empty;
-
-        if (stageCreatedToggle.gameObject.activeSelf && stageCreatedToggle.isOn && GameManager.Instance.developMode)
-            folderName = GameManager.Instance.stageSaveFolderName;
-        else
-            folderName = GameManager.Instance.customBoardSaveFolderName;
-
-        if (CreatePrefab(folderName, nameInputField.text))
+        if (CreateCustomBoard(nameInputField.text))
         {
             saveImage.sprite = spriteSaveSuccess;
             saveText.text = "저장 성공";

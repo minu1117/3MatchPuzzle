@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using System;
 
 public class StageManager : MonoBehaviour
 {
@@ -18,41 +18,43 @@ public class StageManager : MonoBehaviour
 
     private void LoadStage()
     {
-        // 스테이지 폴더들 로딩
-        string folderName = GameManager.Instance.stageSaveFolderName;
-        if (!Directory.Exists($"{Application.dataPath}/{folderName}"))
+        BoardType boardType = BoardType.Stage;
+        string folderPath = MyJsonUtility.GetSaveFolderPath(boardType);
+        if (!Directory.Exists(folderPath))
+        {
+            Debug.Log($"{folderPath}, None");
             return;
+        }
+
+        var folders = Directory.GetDirectories(folderPath);
+        Array.Sort(folders, (a, b) => Directory.GetCreationTime(a).CompareTo(Directory.GetCreationTime(b)));
 
         int nameOrder = 1;
-        DirectoryInfo directoryInfo = new($"{Application.dataPath}/{folderName}");
-        List<DirectoryInfo> stageFolders = new(directoryInfo.GetDirectories());
-        stageFolders.Sort((a, b) => a.CreationTime.CompareTo(b.CreationTime));
-
-        foreach (DirectoryInfo stageFolder in stageFolders)
+        foreach (var folder in folders)
         {
-            FileInfo[] prefabs = stageFolder.GetFiles("*StageInfo.prefab"); // 각 폴더 내의 StageInfo 프리펩 가져오기
-            foreach (FileInfo prefabFile in prefabs)
+            var boardFolder = Directory.GetFiles(folder);
+            string folderName = Path.GetFileName(folder);
+
+            StageInfoData stageInfoData = MyJsonUtility.LoadJson<StageInfoData>(folderName, InfoType.Stage, boardType);
+            BoardInfoData boardInfoData = MyJsonUtility.LoadJson<BoardInfoData>(folderName, InfoType.Board, boardType);
+            StageInfo stageInfo = new StageInfo(stageInfoData);
+            BoardInfo boardInfo = new BoardInfo(boardInfoData);
+
+            if (stageInfo != null && boardInfo != null)
             {
                 var stage = Instantiate(stagePrefab, stageObjectParent.transform);
+                stage.stageInfo = stageInfo;
+                stage.boardInfo = boardInfo;
+                stage.OnStars();
 
-                string prefabPath = prefabFile.FullName;
-                GameObject prefab = PrefabUtility.LoadPrefabContents(prefabPath);
-                if (prefab != null && prefab.TryGetComponent(out StageInfo stageInfo))
-                {
-                    stage.stageInfo = stageInfo;
-                    stage.OnStars();
-                }
+                stage.stageName.text = nameOrder.ToString();
+                stage.button.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
+                stage.button.onClick.AddListener(() => GameManager.Instance.SetStageInfo(stage.stageInfo));
+                stage.button.onClick.AddListener(() => GameManager.Instance.SetBoardInfo(stage.boardInfo));
+                stage.button.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.gameSceneName));
+                stageList.Add(stage);
 
-                if (stage.stageInfo != null)
-                {
-                    stage.stageName.text = nameOrder.ToString();
-                    stage.button.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
-                    stage.button.onClick.AddListener(() => GameManager.Instance.SetStageInfo(stage.stageInfo));
-                    stage.button.onClick.AddListener(() => MySceneManager.Instance.StartCoLoadScene(MySceneManager.Instance.gameSceneName));
-                    stageList.Add(stage);
-
-                    nameOrder++;
-                }
+                nameOrder++;
             }
         }
     }

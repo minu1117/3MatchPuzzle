@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Stage : MonoBehaviour
 {
     public StageInfo stageInfo;
+    public BoardInfo boardInfo;
     public TextMeshProUGUI stageName;
     public Button button;
 
@@ -16,9 +17,9 @@ public class Stage : MonoBehaviour
         if (stageInfo == null)
             return;
 
-        for (int i = 0; i < stageInfo.data.clearScore; i++)
+        for (int i = 0; i < stageInfo.data.clearStarCount; i++)
         {
-            if (stars.Count >= i)
+            if (stars.Count-1 >= i)
                 stars[i].gameObject.SetActive(true);
         }
     }
