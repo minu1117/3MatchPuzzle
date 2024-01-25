@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
@@ -22,6 +25,70 @@ public class GameManager : Singleton<GameManager>
     protected override void Awake()
     {
         base.Awake();
+    }
+
+    private void Start()
+    {
+        // Stage 파일이 없을 시 PlayerPrefs 초기화
+        string filePath = Path.Combine(Application.persistentDataPath, "Stage");
+        if (!File.Exists(filePath))
+        {
+            PlayerPrefs.DeleteAll();
+        }
+
+        bool isFirstStart = System.Convert.ToBoolean(PlayerPrefs.GetInt("FirstStart"));
+        if (!isFirstStart)
+        {
+            string sourcePath = Path.Combine(Application.streamingAssetsPath, "DefaultStages");
+            string destinationPath = Path.Combine(Application.persistentDataPath, "Stage");
+            MoveFolder(sourcePath, destinationPath);
+
+            int convertTrue = Convert.ToInt32(true);
+            PlayerPrefs.SetInt("FirstStart", convertTrue);
+
+            SoundManager.Instance.ChangeBGMVolume("100");
+            SoundManager.Instance.ChangeSFXVolume("100");
+
+            PlayerPrefs.Save();
+        }
+    }
+
+    private void MoveFolder(string sourcePath, string path)
+    {
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+
+        var folders = Directory.GetFiles(sourcePath);
+        foreach (string filePath in folders)
+        {
+            // .meta 파일 무시
+            if (!filePath.EndsWith(".meta"))
+            {
+                string fileName = Path.GetFileName(filePath);
+                string destFilePath = Path.Combine(path, fileName);
+                File.Copy(filePath, destFilePath, true);
+            }
+        }
+
+        var directories = Directory.GetDirectories(sourcePath);
+        Array.Sort(directories, (x, y) => ExtractNumber(x).CompareTo(ExtractNumber(y)));
+        foreach (string subfolderPath in directories)
+        {
+            string folderName = Path.GetFileName(subfolderPath);
+            string destSubfolderPath = Path.Combine(path, folderName);
+
+            // 폴더 이동
+            MoveFolder(subfolderPath, destSubfolderPath);
+        }
+    }
+
+    private int ExtractNumber(string text)
+    {
+        // 문자열에서 숫자를 추출하여 반환
+        string numberString = string.Concat(text.Where(char.IsDigit));
+        return int.Parse(numberString);
     }
 
     private void LoadPuzzleSprites()

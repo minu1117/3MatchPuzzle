@@ -169,20 +169,6 @@ public class BoardGenerator : MonoBehaviour
         }
     }
 
-    private void CreateFolder(string folderPath)
-    {
-        // 경로에 폴더가 없으면 생성
-        if (!Directory.Exists(folderPath))
-        {
-            Directory.CreateDirectory(folderPath);
-        }
-        else
-        {
-            // ui 연결해서 이름 중복되었다고 출력
-            // bool형으로 return해서 중복됐을 때 저장 실행 안 하게 추가
-        }
-    }
-
     private bool CreateCustomBoard(string name)
     {
         if (nameInputField.text == string.Empty || 
@@ -213,12 +199,8 @@ public class BoardGenerator : MonoBehaviour
         /********************* Stage Info Save *********************/
         StageInfo stageInfo = new StageInfo(new StageInfoData());
 
-        if (!infinityModeToggle.isOn)
-        {
-            stageInfo.data.clearScore = int.Parse(scoreInputField.text);
-            stageInfo.data.maxPlayTime = int.Parse(maxPlayTimeInputField.text);
-        }
-
+        stageInfo.data.clearScore = int.Parse(scoreInputField.text);
+        stageInfo.data.maxPlayTime = int.Parse(maxPlayTimeInputField.text);
         stageInfo.data.isInfinityMode = infinityModeToggle.isOn;
         stageInfo.data.isStageMode = stageCreatedToggle.isOn;
         stageInfo.Save(name, boardType);

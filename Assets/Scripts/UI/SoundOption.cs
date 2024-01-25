@@ -28,10 +28,6 @@ public class SoundOption : MonoBehaviour
     {
         SoundManager.Instance.LoadMuteData();
 
-        // Button
-        //optionButton.onClick.AddListener(() => optionObject.gameObject.SetActive(true));
-        //exitButton.onClick.AddListener(() => optionObject.gameObject.SetActive(false));
-
         // Slider
         bgmSlider.onValueChanged.AddListener(SoundManager.Instance.ChangeBGMVolume);
         bgmSlider.onValueChanged.AddListener(SwitchBgmVolumeImage);

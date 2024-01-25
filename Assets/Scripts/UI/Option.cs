@@ -11,6 +11,7 @@ public class Option : MonoBehaviour
     [SerializeField] private Button menuExitButton;
     [SerializeField] private Button modeChoiceExitButton;
     [SerializeField] private Button stageExitButton;
+    [SerializeField] private Button exitButton;
 
     public void Update()
     {
@@ -27,6 +28,11 @@ public class Option : MonoBehaviour
             optionOnButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
             optionOnButton.onClick.AddListener(() => OnOptionPanel());
         }
+        if (exitButton != null)
+        {
+            exitButton.onClick.AddListener(() => Application.Quit());
+        }
+
         soundOptionButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
         soundOptionButton.onClick.AddListener(() => soundOption.gameObject.SetActive(true));
         InitSoundOption();
@@ -35,7 +41,8 @@ public class Option : MonoBehaviour
 
     public void EscapeControl()
     {
-        SoundManager.Instance.PlayButtonClickSound();
+        if (optionPanel.activeSelf)
+            SoundManager.Instance.PlayButtonClickSound();
 
         if (soundOption.gameObject.activeSelf)
         {
@@ -67,8 +74,8 @@ public class Option : MonoBehaviour
 
     public void SwitchOptionActive()
     {
-        bool isActive = !optionPanel.gameObject.activeSelf;
-        optionPanel.gameObject.SetActive(isActive);
+        bool isActive = !optionPanel.activeSelf;
+        optionPanel.SetActive(isActive);
         
         if (isActive)
             GameManager.Instance.Pause();

@@ -14,7 +14,6 @@ public class CustomBoardLoader : MonoBehaviour
 
     public void LoadCustomBoard(BoardType boardType)
     {
-        // 스테이지 폴더들 로딩
         if (!MyJsonUtility.Exists(boardType))
             return;
 
@@ -32,9 +31,9 @@ public class CustomBoardLoader : MonoBehaviour
         }
         loadingUIList.Clear();
 
+        // 폴더 로딩, 생성 시간 순 대로 정렬
         var folders = Directory.GetDirectories(folderPath);
         Array.Sort(folders, (a, b) => Directory.GetCreationTime(a).CompareTo(Directory.GetCreationTime(b)));
-        
         foreach (var folder in folders)
         {
             var boardFolder = Directory.GetFiles(folder);

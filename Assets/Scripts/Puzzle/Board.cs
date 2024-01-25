@@ -44,7 +44,6 @@ public class Board : MonoBehaviour
         StartCoroutine(CoCreateBoard(width, height));
     }
 
-    // temp
     public void CreateGrids(Grid backgroundTilePrefab, GridLayoutGroup backgroundParentsObject)
     {
         rows = new Row[info.data.height * 2];

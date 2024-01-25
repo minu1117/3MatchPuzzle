@@ -75,6 +75,7 @@ public class SoundManager : Singleton<SoundManager>
     {
         sfxGroup.audioMixer.SetFloat(sfxGroup.name, Mathf.Log10(value) * 20);
         PlayerPrefs.SetFloat(sfxGroup.name, value);
+        PlayerPrefs.Save();
     }
 
     public void ChangeSFXVolume(string value)
@@ -84,6 +85,7 @@ public class SoundManager : Singleton<SoundManager>
             float parseFloatValue = parseInt / 100f;
             sfxGroup.audioMixer.SetFloat(sfxGroup.name, Mathf.Log10(parseFloatValue) * 20);
             PlayerPrefs.SetFloat(sfxGroup.name, parseFloatValue);
+            PlayerPrefs.Save();
         }
     }
 
@@ -91,6 +93,7 @@ public class SoundManager : Singleton<SoundManager>
     {
         bgmGroup.audioMixer.SetFloat(bgmGroup.name, Mathf.Log10(value) * 20);
         PlayerPrefs.SetFloat(bgmGroup.name, value);
+        PlayerPrefs.Save();
     }
 
     public void ChangeBGMVolume(string value)
@@ -100,6 +103,7 @@ public class SoundManager : Singleton<SoundManager>
             float parseFloatValue = parseInt / 100f;
             bgmGroup.audioMixer.SetFloat(bgmGroup.name, Mathf.Log10(parseFloatValue) * 20);
             PlayerPrefs.SetFloat(bgmGroup.name, parseFloatValue);
+            PlayerPrefs.Save();
         }
     }
 
