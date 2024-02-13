@@ -36,7 +36,6 @@ public class CustomBoardLoader : MonoBehaviour
         Array.Sort(folders, (a, b) => Directory.GetCreationTime(a).CompareTo(Directory.GetCreationTime(b)));
         foreach (var folder in folders)
         {
-            var boardFolder = Directory.GetFiles(folder);
             string folderName = Path.GetFileName(folder);
 
             StageInfoData stageInfoData = MyJsonUtility.LoadJson<StageInfoData>(folderName, InfoType.Stage, boardType);

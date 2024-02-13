@@ -61,7 +61,7 @@ public class BoardGenerator : MonoBehaviour
         holder.controler.ConnectEventTrigger();
         holder.controler.Off();
 
-        ConnectLoadButtonOnClick(GameManager.Instance.customBoardSaveFolderName, BoardType.Custom);
+        ConnectLoadButtonOnClick(BoardType.Custom);
     }
 
     public void Update()
@@ -181,6 +181,12 @@ public class BoardGenerator : MonoBehaviour
         if (!GameManager.Instance.developMode)
             stageCreatedToggle.isOn = false;
 
+        if (!infinityModeToggle.isOn)
+        {
+            if (scoreInputField.text == string.Empty || maxPlayTimeInputField.text == string.Empty)
+                return false;
+        }
+
         BoardType boardType = (GameManager.Instance.developMode && stageCreatedToggle.isOn) ? BoardType.Stage : BoardType.Custom;
 
         /********************* Board Info Save *********************/
@@ -199,8 +205,11 @@ public class BoardGenerator : MonoBehaviour
         /********************* Stage Info Save *********************/
         StageInfo stageInfo = new StageInfo(new StageInfoData());
 
-        stageInfo.data.clearScore = int.Parse(scoreInputField.text);
-        stageInfo.data.maxPlayTime = int.Parse(maxPlayTimeInputField.text);
+        if (!infinityModeToggle.isOn)
+        {
+            stageInfo.data.clearScore = int.Parse(scoreInputField.text);
+            stageInfo.data.maxPlayTime = int.Parse(maxPlayTimeInputField.text);
+        }
         stageInfo.data.isInfinityMode = infinityModeToggle.isOn;
         stageInfo.data.isStageMode = stageCreatedToggle.isOn;
         stageInfo.Save(name, boardType);
@@ -264,23 +273,11 @@ public class BoardGenerator : MonoBehaviour
         bool set = GameManager.Instance.developMode = !GameManager.Instance.developMode;
         stageModeGameObject.SetActive(set);
 
-        string folderName = string.Empty;
-        BoardType type;
-        if (set)
-        {
-            folderName = GameManager.Instance.stageSaveFolderName;
-            type = BoardType.Stage;
-        }
-        else
-        {
-            folderName = GameManager.Instance.customBoardSaveFolderName;
-            type = BoardType.Custom;
-        }
-
-        ConnectLoadButtonOnClick(folderName, type);
+        BoardType type = set == true ? BoardType.Stage : BoardType.Custom;
+        ConnectLoadButtonOnClick(type);
     }
 
-    private void ConnectLoadButtonOnClick(string folderName, BoardType type)
+    private void ConnectLoadButtonOnClick(BoardType type)
     {
         loadButton.onClick.AddListener(() => SoundManager.Instance.PlayButtonClickSound());
         loadButton.onClick.AddListener(() => holder.loader.LoadCustomBoard(type));

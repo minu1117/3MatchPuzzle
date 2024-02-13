@@ -65,16 +65,11 @@ public class Row
         bool isDuplicate = true;
         PuzzleType p = PuzzleType.None;
 
-        int tempBreakCount = 0;
         while (isDuplicate)
         {
             p = (PuzzleType)UnityEngine.Random.Range(0, (int)PuzzleType.Count);
             if (p != t && p != prevT)
                 isDuplicate = false;
-
-            tempBreakCount++;
-            if (tempBreakCount >= 100)
-                break;
         }
 
         return p;

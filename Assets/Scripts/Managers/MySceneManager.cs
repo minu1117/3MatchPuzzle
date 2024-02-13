@@ -1,6 +1,4 @@
 using System.Collections;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
 

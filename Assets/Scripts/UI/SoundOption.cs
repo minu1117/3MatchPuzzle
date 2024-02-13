@@ -77,7 +77,8 @@ public class SoundOption : MonoBehaviour
 
     private void SwitchBgmVolumeImage(float value)
     {
-        if (!SoundManager.Instance.GetIsMuteBGM()) SwitchVolumeImage(value, bgmVolumeImage);
+        if (!SoundManager.Instance.GetIsMuteBGM())
+            SwitchVolumeImage(value, bgmVolumeImage);
 
         bgmInputField.text = MathF.Round(value * 100).ToString();
     }
@@ -87,7 +88,8 @@ public class SoundOption : MonoBehaviour
         {
             float parseFloatValue = parseInt / 100f;
 
-            if (!SoundManager.Instance.GetIsMuteBGM()) SwitchVolumeImage(parseFloatValue, bgmVolumeImage);
+            if (!SoundManager.Instance.GetIsMuteBGM())
+                SwitchVolumeImage(parseFloatValue, bgmVolumeImage);
 
             bgmSlider.value = parseFloatValue;
             bgmInputField.text = value;
@@ -96,7 +98,8 @@ public class SoundOption : MonoBehaviour
 
     private void SwitchSfxVolumeImage(float value)
     {
-        if (!SoundManager.Instance.GetIsMuteSFX()) SwitchVolumeImage(value, sfxVolumeImage);
+        if (!SoundManager.Instance.GetIsMuteSFX())
+            SwitchVolumeImage(value, sfxVolumeImage);
 
         sfxInputField.text = MathF.Round(value * 100).ToString();
     }
@@ -106,7 +109,8 @@ public class SoundOption : MonoBehaviour
         {
             float parseFloatValue = parseInt / 100f;
 
-            if (!SoundManager.Instance.GetIsMuteSFX()) SwitchVolumeImage(parseFloatValue, sfxVolumeImage);
+            if (!SoundManager.Instance.GetIsMuteSFX())
+                SwitchVolumeImage(parseFloatValue, sfxVolumeImage);
 
             sfxSlider.value = parseFloatValue;
             sfxInputField.text = value;

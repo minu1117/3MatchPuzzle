@@ -258,7 +258,6 @@ public class Board : MonoBehaviour
     public void Update()
     {
         playTime += Time.deltaTime;
-        MoveAndFillAsync();
     }
 
     private void CheckThreeMatchPuzzle()
@@ -317,6 +316,8 @@ public class Board : MonoBehaviour
                 }
             }
         }
+
+        MoveAndFillAsync();
     }
 
     private async void MoveAndFillAsync()
