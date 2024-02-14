@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using System;
+using Unity.VisualScripting;
 
 public class StageManager : MonoBehaviour
 {
@@ -35,11 +36,14 @@ public class StageManager : MonoBehaviour
             var boardFolder = Directory.GetFiles(folder);
             string folderName = Path.GetFileName(folder);
 
-            StageInfoData stageInfoData = MyJsonUtility.LoadJson<StageInfoData>(folderName, InfoType.Stage, boardType);
-            BoardInfoData boardInfoData = MyJsonUtility.LoadJson<BoardInfoData>(folderName, InfoType.Board, boardType);
-            StageInfo stageInfo = new StageInfo(stageInfoData);
-            BoardInfo boardInfo = new BoardInfo(boardInfoData);
+            var stageInfoDataLoad = MyJsonUtility.LoadJson<StageInfoData>(folderName, InfoType.Stage, boardType);
+            var boardInfoDataLoad = MyJsonUtility.LoadJson<BoardInfoData>(folderName, InfoType.Board, boardType);
 
+            if (!stageInfoDataLoad.Item2 || !boardInfoDataLoad.Item2)
+                return;
+
+            StageInfo stageInfo = new StageInfo(stageInfoDataLoad.Item1);
+            BoardInfo boardInfo = new BoardInfo(boardInfoDataLoad.Item1);
             if (stageInfo != null && boardInfo != null)
             {
                 var stage = Instantiate(stagePrefab, stageObjectParent.transform);

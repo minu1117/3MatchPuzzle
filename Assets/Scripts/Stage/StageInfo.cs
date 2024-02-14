@@ -33,7 +33,11 @@ public class StageInfo : IBoardSaveable
 
     public void LoadData(string name, BoardType type)
     {
-        data = MyJsonUtility.LoadJson<StageInfoData>(name, InfoType.Board, type);
+        var jsonLoad = MyJsonUtility.LoadJson<StageInfoData>(name, InfoType.Board, type);
+        if (!jsonLoad.Item2)
+            return;
+
+        data = jsonLoad.Item1;
     }
 
     public void OverWriteData()

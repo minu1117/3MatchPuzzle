@@ -40,11 +40,13 @@ public static class MyJsonUtility
             Directory.SetCreationTime(saveFolder, DateTime.Now);
     }
 
-    public static T LoadJson<T>(string name, InfoType infoType, BoardType boardType)
+    public static (T, bool) LoadJson<T>(string name, InfoType infoType, BoardType boardType)
     {
         string json = GetSaveFilePath(name, infoType, boardType);
         string jsonParse = File.ReadAllText(json);
-        return JsonUtility.FromJson<T>(jsonParse);
+
+        bool isLoaded = jsonParse != string.Empty;
+        return (JsonUtility.FromJson<T>(jsonParse), isLoaded);
     }
 
     public static bool Exists(BoardType boardType)

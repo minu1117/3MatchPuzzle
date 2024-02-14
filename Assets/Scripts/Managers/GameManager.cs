@@ -29,27 +29,18 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
-        // Stage 파일이 없을 시 PlayerPrefs 초기화
-        string filePath = Path.Combine(Application.persistentDataPath, "Stage");
-        if (!File.Exists(filePath))
+        // Stage 파일이 없을 시 생성
+        string filePath = $"{Application.persistentDataPath}/Stage";
+        if (!Directory.Exists(filePath))
         {
-            PlayerPrefs.DeleteAll();
-        }
+            Directory.CreateDirectory(filePath);
 
-        bool isFirstStart = System.Convert.ToBoolean(PlayerPrefs.GetInt("FirstStart"));
-        if (!isFirstStart)
-        {
-            string sourcePath = Path.Combine(Application.streamingAssetsPath, "DefaultStages");
-            string destinationPath = Path.Combine(Application.persistentDataPath, "Stage");
+            string sourcePath = $"{Application.streamingAssetsPath}/DefaultStages";
+            string destinationPath = $"{Application.persistentDataPath}/Stage";
             MoveFolder(sourcePath, destinationPath);
-
-            int convertTrue = Convert.ToInt32(true);
-            PlayerPrefs.SetInt("FirstStart", convertTrue);
 
             SoundManager.Instance.ChangeBGMVolume("100");
             SoundManager.Instance.ChangeSFXVolume("100");
-
-            PlayerPrefs.Save();
         }
     }
 
