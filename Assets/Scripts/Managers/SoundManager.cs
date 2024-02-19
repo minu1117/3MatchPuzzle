@@ -22,6 +22,7 @@ public class SoundManager : Singleton<SoundManager>
 
     private bool muteBGM;
     private bool muteSFX;
+    private float minVolume = -80f;
 
     protected override void Awake()
     {
@@ -73,9 +74,9 @@ public class SoundManager : Singleton<SoundManager>
 
     public void ChangeSFXVolume(float value)
     {
-        sfxGroup.audioMixer.SetFloat(sfxGroup.name, Mathf.Log10(value) * 20);
+        float volume = value <= 0 ? minVolume : Mathf.Log10(value) * 20;
+        sfxGroup.audioMixer.SetFloat(sfxGroup.name, volume);
         PlayerPrefs.SetFloat(sfxGroup.name, value);
-        PlayerPrefs.Save();
     }
 
     public void ChangeSFXVolume(string value)
@@ -83,17 +84,17 @@ public class SoundManager : Singleton<SoundManager>
         if (int.TryParse(value, out int parseInt)) 
         {
             float parseFloatValue = parseInt / 100f;
-            sfxGroup.audioMixer.SetFloat(sfxGroup.name, Mathf.Log10(parseFloatValue) * 20);
+            float volume = parseFloatValue <= 0 ? minVolume : Mathf.Log10(parseFloatValue) * 20;
+            sfxGroup.audioMixer.SetFloat(sfxGroup.name, volume);
             PlayerPrefs.SetFloat(sfxGroup.name, parseFloatValue);
-            PlayerPrefs.Save();
         }
     }
 
     public void ChangeBGMVolume(float value)
     {
-        bgmGroup.audioMixer.SetFloat(bgmGroup.name, Mathf.Log10(value) * 20);
+        float volume = value <= 0 ? minVolume : Mathf.Log10(value) * 20;
+        bgmGroup.audioMixer.SetFloat(bgmGroup.name, volume);
         PlayerPrefs.SetFloat(bgmGroup.name, value);
-        PlayerPrefs.Save();
     }
 
     public void ChangeBGMVolume(string value)
@@ -101,9 +102,9 @@ public class SoundManager : Singleton<SoundManager>
         if (int.TryParse(value, out int parseInt))
         {
             float parseFloatValue = parseInt / 100f;
-            bgmGroup.audioMixer.SetFloat(bgmGroup.name, Mathf.Log10(parseFloatValue) * 20);
+            float volume = parseFloatValue <= 0 ? minVolume : Mathf.Log10(parseFloatValue) * 20;
+            bgmGroup.audioMixer.SetFloat(bgmGroup.name, volume);
             PlayerPrefs.SetFloat(bgmGroup.name, parseFloatValue);
-            PlayerPrefs.Save();
         }
     }
 
