@@ -39,8 +39,8 @@ public class GameManager : Singleton<GameManager>
             string destinationPath = $"{Application.persistentDataPath}/Stage";
             MoveFolder(sourcePath, destinationPath);
 
-            SoundManager.Instance.ChangeBGMVolume("100");
-            SoundManager.Instance.ChangeSFXVolume("100");
+            SoundManager.Instance.ChangeBGMVolume(100f);
+            SoundManager.Instance.ChangeSFXVolume(100f);
         }
     }
 
