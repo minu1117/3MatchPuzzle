@@ -50,14 +50,7 @@ public class Option : MonoBehaviour
             return;
         }
 
-        if (optionOnButton != null)
-        {
-            OffOptionPanel();
-        }
-        else
-        {
-            SwitchOptionActive();
-        }
+        SwitchOptionActive();
     }
 
     public void OnOptionPanel()
